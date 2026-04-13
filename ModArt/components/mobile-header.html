@@ -1,0 +1,39 @@
+<!--
+  Component: Mobile Header
+  File: components/mobile-header.html
+  
+  Description:
+  Top header for mobile viewports (<768px). Contains menu button, logo, 
+  and action buttons (search, bag). Hidden on desktop, visible on mobile.
+  
+  CSS Classes:
+  - .mobile-hdr: Main header container
+  - .mobile-hdr-actions: Right-side action buttons container
+  - .nav-icon-btn: Icon buttons (menu, search, bag)
+  - .cart-badge: Cart count badge
+  
+  JavaScript:
+  - Hidden on admin page via updateNavState()
+  - onclick handlers for navigation (goTo function)
+  - Cart badge updated by rendering.js
+  
+  Responsive:
+  - display: flex on mobile (<768px)
+  - display: none on desktop (≥768px)
+  
+  Accessibility:
+  - ARIA labels on all interactive elements
+  - Semantic button elements for all actions
+-->
+
+<header class="mobile-hdr" id="mobile-hdr">
+  <button class="nav-icon-btn" aria-label="Menu"><span class="material-symbols-outlined icon">menu</span></button>
+  <button style="font-size:16px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;background:none;border:none;cursor:pointer" onclick="goTo('home')">Modart</button>
+  <div class="mobile-hdr-actions">
+    <button class="nav-icon-btn" aria-label="Search"><span class="material-symbols-outlined icon">search</span></button>
+    <button class="nav-icon-btn" aria-label="Bag" onclick="goTo('bag')" style="position:relative">
+      <span class="material-symbols-outlined icon">shopping_bag</span>
+      <span class="cart-badge" id="cart-badge-mob">3</span>
+    </button>
+  </div>
+</header>

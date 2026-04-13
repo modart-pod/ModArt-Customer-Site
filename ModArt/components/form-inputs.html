@@ -1,0 +1,174 @@
+<!-- Form Input Components -->
+
+<!-- Standard Form Input -->
+<div class="form-group">
+  <label class="form-label">Full Name</label>
+  <input class="form-input" type="text" placeholder="Enter your name" aria-label="Full name"/>
+</div>
+
+<!-- Email Input -->
+<div class="form-group">
+  <label class="form-label">Email</label>
+  <input class="form-input" type="email" placeholder="name@domain.com" aria-label="Email address"/>
+</div>
+
+<!-- Text Input with Value -->
+<div class="form-group">
+  <label class="form-label">Street Address</label>
+  <input class="form-input" type="text" value="1200 Beverly Hills Dr." aria-label="Street address"/>
+</div>
+
+<!-- Form Row with Two Inputs -->
+<div class="form-row-2">
+  <div class="form-group">
+    <label class="form-label">City</label>
+    <input class="form-input" type="text" placeholder="City" aria-label="City"/>
+  </div>
+  <div class="form-group">
+    <label class="form-label">Postal Code</label>
+    <input class="form-input" type="text" placeholder="90210" aria-label="Postal code"/>
+  </div>
+</div>
+
+<!-- Select Dropdown -->
+<div class="form-group">
+  <label class="form-label">Country</label>
+  <select class="form-input" aria-label="Country">
+    <option value="us">United States</option>
+    <option value="ca">Canada</option>
+    <option value="uk">United Kingdom</option>
+  </select>
+</div>
+
+<!-- Product Picker Select -->
+<select class="form-input" style="padding:12px 14px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:0" aria-label="Product">
+  <option value="hoodie">Vanta Hoodie — $240</option>
+  <option value="tee">Vanta Black Tee — $120</option>
+  <option value="crewneck">Vanta Crewneck — $180</option>
+</select>
+
+<!-- Early Access Email Input -->
+<input class="early-input" type="email" placeholder="name@domain.com" aria-label="Email address"/>
+
+<!-- Modal Input -->
+<div class="form-group">
+  <label class="modal-lbl">Email Address</label>
+  <input class="modal-input" type="email" placeholder="name@domain.com" aria-label="Email address"/>
+</div>
+
+<!-- Modal Select -->
+<div class="form-group">
+  <label class="modal-lbl">Fit Preference</label>
+  <select class="modal-select" aria-label="Fit preference">
+    <option value="relaxed">Relaxed Fit</option>
+    <option value="regular">Regular Fit</option>
+    <option value="slim">Slim Fit</option>
+  </select>
+</div>
+
+<!-- Text Tool Input -->
+<input class="text-input" type="text" placeholder="Your text here..." aria-label="Design text"/>
+
+<!-- Discount Code Input -->
+<div class="discount-row">
+  <input class="discount-input" type="text" placeholder="Discount code" aria-label="Discount code"/>
+  <button class="discount-apply">Apply</button>
+</div>
+
+<!-- Range Sliders -->
+<div class="tool-slider-group">
+  <div class="tool-slider-row">
+    <span class="tool-slider-lbl">Scale</span>
+    <span class="tool-slider-val">100%</span>
+  </div>
+  <input type="range" class="tool-slider" min="20" max="200" value="100" aria-label="Scale"/>
+</div>
+
+<div class="tool-slider-group">
+  <div class="tool-slider-row">
+    <span class="tool-slider-lbl">Rotation</span>
+    <span class="tool-slider-val">0°</span>
+  </div>
+  <input type="range" class="tool-slider" min="-180" max="180" value="0" aria-label="Rotation"/>
+</div>
+
+<div class="tool-slider-group">
+  <div class="tool-slider-row">
+    <span class="tool-slider-lbl">Opacity</span>
+    <span class="tool-slider-val">100%</span>
+  </div>
+  <input type="range" class="tool-slider" min="10" max="100" value="100" aria-label="Opacity"/>
+</div>
+
+<!-- File Upload Input (Hidden) -->
+<label class="tool-btn">
+  <span class="material-symbols-outlined icon">upload</span>
+  <span class="tool-btn-lbl">Upload</span>
+  <input type="file" accept="image/*" style="display:none" aria-label="Upload image"/>
+</label>
+
+<!-- Modal Inputs for Size Finder -->
+<div class="form-group">
+  <label class="modal-lbl">Height (cm)</label>
+  <input class="modal-input" type="number" placeholder="175" min="120" max="220" aria-label="Height in centimeters"/>
+</div>
+
+<div class="form-group">
+  <label class="modal-lbl">Weight (kg)</label>
+  <input class="modal-input" type="number" placeholder="70" min="30" max="200" aria-label="Weight in kilograms"/>
+</div>
+
+<!-- Modal Textarea for AI Generator -->
+<div class="form-group">
+  <label class="modal-lbl">Design Description</label>
+  <textarea class="modal-input" placeholder="Describe your design idea..." rows="3" aria-label="Design description"></textarea>
+</div>
+
+<!-- Credit Card Inputs -->
+<div class="form-group">
+  <label class="form-label">Card Number</label>
+  <input class="form-input" type="text" placeholder="1234 5678 9012 3456" aria-label="Card number"/>
+</div>
+
+<div class="form-row-2">
+  <div class="form-group">
+    <label class="form-label">Expiry</label>
+    <input class="form-input" type="text" placeholder="MM/YY" aria-label="Card expiry"/>
+  </div>
+  <div class="form-group">
+    <label class="form-label">CVC</label>
+    <input class="form-input" type="text" placeholder="123" aria-label="Card CVC"/>
+  </div>
+</div>
+
+<!-- Search Input -->
+<input class="form-input" type="search" placeholder="Search products..." aria-label="Search"/>
+
+<!-- Password Input -->
+<div class="form-group">
+  <label class="form-label">Password</label>
+  <input class="form-input" type="password" placeholder="Enter password" aria-label="Password"/>
+</div>
+
+<!-- Checkbox Input -->
+<div class="form-group">
+  <label class="form-label">
+    <input type="checkbox" style="margin-right:8px"/>
+    I agree to the terms and conditions
+  </label>
+</div>
+
+<!-- Radio Button Group -->
+<div class="form-group">
+  <label class="form-label">Shipping Method</label>
+  <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+    <label style="display:flex;align-items:center;gap:8px;font-size:14px;font-weight:500">
+      <input type="radio" name="shipping" value="standard"/>
+      Standard Shipping (5-7 days) - Free
+    </label>
+    <label style="display:flex;align-items:center;gap:8px;font-size:14px;font-weight:500">
+      <input type="radio" name="shipping" value="express"/>
+      Express Shipping (2-3 days) - $15
+    </label>
+  </div>
+</div>

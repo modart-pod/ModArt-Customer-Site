@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" href="assets/images/modart-logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="assets/images/modart-logo.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Premium in-house garment studio — Design your own limited drops. Owned manufacturing, culture-first streetwear, built for creators.">
+  <meta property="og:type" content="website"/>
+  <meta property="og:title" content="ModArt — Premium Custom Garment Studio"/>
+  <meta property="og:description" content="Design your own limited drop. Wear art that means something. Built for creators, worn by culture."/>
+  <meta property="og:image" content="https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=1200&q=85"/>
+  <meta property="og:url" content="https://modart.com"/>
+  <meta property="og:site_name" content="ModArt"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content="ModArt — Premium Custom Garment Studio"/>
+  <meta name="twitter:description" content="Design your own limited drop. Wear art that means something."/>
+  <meta name="twitter:image" content="https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=1200&q=85"/>
+  <title>ModArt — Premium Custom Garment Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/fixes.css">
+  <script>try{var t=localStorage.getItem('modart-theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}</script>
+  <style>
+    .fade-in-section{opacity:0;transform:translateY(20px);transition:opacity .55s ease,transform .55s ease}
+    .fade-in-section.visible{opacity:1;transform:translateY(0)}
+  </style>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- ============================================================
+       DESKTOP NAVIGATION
+       ============================================================ -->
+  <nav class="desktop-nav" aria-label="Main navigation">
+    <div class="nav-inner-grid">
+      <div class="nav-logo-wrap">
+        <button class="nav-logo" onclick="goTo('home')" aria-label="ModArt home">
+          <img src="assets/images/modart-logo.png" alt="ModArt" class="nav-logo-img"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
+          <span class="nav-logo-fallback">MODART</span>
+        </button>
+      </div>
+      <ul class="nav-links" role="list">
+        <li><button class="nav-link active" id="nl-home" onclick="goTo('home')">Home</button></li>
+        <li><button class="nav-link" id="nl-shop" onclick="goTo('shop')">Shop</button></li>
+        <li><button class="nav-link" id="nl-drops" onclick="goTo('home');setTimeout(()=>{const s=document.getElementById('drop-archive-section');if(s)s.scrollIntoView({behavior:'smooth'});},80)">Drops <span class="nav-live-badge">Live</span></button></li>
+        <li><button class="nav-link" id="nl-customize" onclick="goTo('customize')">Customize</button></li>
+        <li><button class="nav-link" id="nl-community" onclick="goTo('community')">Community</button></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="theme-toggle-btn nav-icon-btn" aria-label="Toggle dark mode" onclick="toggleTheme()">
+          <span class="material-symbols-outlined icon icon-moon">dark_mode</span>
+          <span class="material-symbols-outlined icon icon-sun">light_mode</span>
+        </button>
+        <button class="nav-icon-btn" aria-label="Search" onclick="toggleSearch()"><span class="material-symbols-outlined icon">search</span></button>
+        <button class="nav-icon-btn" aria-label="Wishlist" onclick="goTo('wishlist')"><span class="material-symbols-outlined icon">favorite_border</span></button>
+        <button class="nav-icon-btn" aria-label="Bag" onclick="goTo('bag')" style="position:relative">
+          <span class="material-symbols-outlined icon">shopping_bag</span>
+          <span class="cart-badge" id="cart-badge-desk" style="display:none">0</span>
+        </button>
+        <button class="nav-icon-btn" data-show-when="logged-out" onclick="goTo('login')" aria-label="Sign in" style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:8px 12px">Sign In</button>
+        <button class="nav-icon-btn nav-avatar-btn" data-show-when="logged-in" onclick="goTo('account')" aria-label="My account" style="display:none">
+          <span class="nav-avatar" id="nav-avatar" aria-hidden="true"></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ============================================================
+       MOBILE HEADER
+       ============================================================ -->
+  <header class="mobile-hdr" id="mobile-hdr">
+    <button class="nav-icon-btn" aria-label="Menu" onclick="toggleMobileMenu()"><span class="material-symbols-outlined icon">menu</span></button>
+    <button class="mobile-logo-btn" onclick="goTo('home')" aria-label="ModArt home">
+      <img src="assets/images/modart-logo.png" alt="ModArt" class="nav-logo-img"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
+      <span class="nav-logo-fallback">MODART</span>
+    </button>
+    <div class="mobile-hdr-actions">
+      <button class="nav-icon-btn" aria-label="Search" onclick="toggleSearch()"><span class="material-symbols-outlined icon">search</span></button>
+      <button class="nav-icon-btn" aria-label="Bag" onclick="goTo('bag')" style="position:relative">
+        <span class="material-symbols-outlined icon">shopping_bag</span>
+        <span class="cart-badge" id="cart-badge-mob" style="display:none">0</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile drawer overlay -->
+  <div id="mobile-menu-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:998" onclick="toggleMobileMenu()"></div>
+  <nav id="mobile-menu-drawer" style="display:none;position:fixed;top:0;left:0;width:80%;max-width:300px;height:100%;background:var(--black);z-index:999;flex-direction:column;padding:24px 20px;overflow-y:auto" aria-label="Mobile navigation drawer">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:32px">
+      <span style="font-size:14px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#fff">Menu</span>
+      <button onclick="toggleMobileMenu()" style="background:none;border:none;cursor:pointer;color:rgba(255,255,255,.5);font-size:22px;line-height:1;padding:4px">✕</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4px">
+      <button onclick="goTo('home');toggleMobileMenu()" style="text-align:left;background:none;border:none;cursor:pointer;font-family:var(--font);font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#fff;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.07)">Home</button>
+      <button onclick="goTo('shop');toggleMobileMenu()" style="text-align:left;background:none;border:none;cursor:pointer;font-family:var(--font);font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#fff;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.07)">Shop</button>
+      <button onclick="goTo('customize');toggleMobileMenu()" style="text-align:left;background:none;border:none;cursor:pointer;font-family:var(--font);font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#fff;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.07)">Customize</button>
+      <button onclick="goTo('community');toggleMobileMenu()" style="text-align:left;background:none;border:none;cursor:pointer;font-family:var(--font);font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#fff;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.07)">Community</button>
+      <button onclick="goTo('about');toggleMobileMenu()" style="text-align:left;background:none;border:none;cursor:pointer;font-family:var(--font);font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#fff;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.07)">About</button>
+      <button onclick="goTo('contact');toggleMobileMenu()" style="text-align:left;background:none;border:none;cursor:pointer;font-family:var(--font);font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#fff;padding:14px 0">Contact</button>
+    </div>
+    <div style="margin-top:auto;padding-top:24px;border-top:1px solid rgba(255,255,255,.1)">
+      <button onclick="goTo(window.currentUser?'account':'login');toggleMobileMenu()" style="width:100%;padding:14px;background:var(--red);border:none;border-radius:var(--r-full);font-family:var(--font);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#fff;cursor:pointer"><span data-user-name>Sign In / Account</span></button>
+    </div>
+  </nav>
+
+  <!-- ============================================================
+       MOBILE BOTTOM NAV
+       ============================================================ -->
+  <nav class="mobile-bottom-nav" id="mobile-bottom-nav" aria-label="Navigation">
+    <button class="mob-nav-item active" id="mob-nav-home" onclick="goTo('home')">
+      <span class="material-symbols-outlined icon">home</span>Home
+    </button>
+    <button class="mob-nav-item" id="mob-nav-shop" onclick="goTo('shop')">
+      <span class="material-symbols-outlined icon">search</span>Shop
+    </button>
+    <button class="mob-nav-item" id="mob-nav-customize" onclick="goTo('customize')">
+      <span class="material-symbols-outlined icon">palette</span>Create
+    </button>
+    <button class="mob-nav-item" id="mob-nav-bag" onclick="goTo('bag')" style="position:relative">
+      <span class="material-symbols-outlined icon">shopping_bag</span>
+      <span class="cart-badge" id="cart-badge-nav" style="display:none;top:6px;right:calc(50% - 18px)">0</span>Bag
+    </button>
+    <button class="mob-nav-item" id="mob-nav-community" onclick="goTo('community')">
+      <span class="material-symbols-outlined icon">groups</span>Community
+    </button>
+  </nav>
+
+  <!-- ============================================================
+       SEARCH OVERLAY
+       ============================================================ -->
+  <div id="search-overlay" style="display:none;position:fixed;inset:0;z-index:1100;background:rgba(247,245,241,.97);flex-direction:column;align-items:center;padding-top:80px">
+    <div style="width:100%;max-width:600px;padding:0 24px">
+      <div style="display:flex;align-items:center;gap:12px;border-bottom:2px solid var(--black);padding-bottom:12px;margin-bottom:24px">
+        <span class="material-symbols-outlined" style="font-size:24px;color:var(--g3)">search</span>
+        <input id="search-input" type="text" placeholder="Search products…" oninput="handleSearch(this.value)"
+          style="flex:1;border:none;background:none;font-family:var(--font);font-size:18px;font-weight:500;color:var(--black);outline:none"/>
+        <button onclick="toggleSearch()" style="background:none;border:none;cursor:pointer;color:var(--g3)"><span class="material-symbols-outlined">close</span></button>
+      </div>
+      <div id="search-results"></div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       COOKIE BANNER
+       ============================================================ -->
+  <div id="cookie-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:1200;background:var(--white);border-top:1px solid var(--border);padding:16px 24px;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+    <p style="font-size:12px;color:var(--g2);margin:0;max-width:600px">We use cookies to improve your experience. By continuing, you agree to our <button onclick="goTo('privacy')" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:12px;font-weight:700;padding:0">Privacy Policy</button>.</p>
+    <div style="display:flex;gap:10px">
+      <button onclick="declineCookies()" class="btn-ghost" style="font-size:11px">Decline</button>
+      <button onclick="acceptCookies()" class="btn-red" style="padding:10px 20px;font-size:11px">Accept</button>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+       PAGE: HOME
+       ============================================================ -->
+  <main class="page active" id="page-home" aria-label="Home">
+
+    <!-- HERO -->
+    <section class="home-hero">
+      <img class="home-hero-img" src="https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=1400&q=85"
+        srcset="https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=800&q=80 800w, https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=1400&q=85 1400w"
+        sizes="100vw" alt="ModArt campaign" loading="eager"/>
+      <div class="home-hero-overlay" aria-hidden="true"></div>
+      <div class="home-hero-content">
+        <div class="hero-badge"><span class="material-symbols-outlined icon">local_fire_department</span> Drop 02 — Live Now</div>
+        <h1 class="hero-title">Custom<br>Garment<br>Studio</h1>
+        <p class="hero-sub">Design your own limited drop. Wear art that means something. Built for creators, worn by culture.</p>
+        <div class="hero-actions">
+          <button class="btn-red btn-red-pill" onclick="goTo('customize')">Create Your Drop <span class="material-symbols-outlined icon" style="font-size:16px">arrow_forward</span></button>
+          <button class="btn-outline" style="color:rgba(255,255,255,.8);border-color:rgba(255,255,255,.22);border-radius:var(--r-full)" onclick="goTo('shop')">Browse Collection</button>
+        </div>
+        <div class="live-orders-ticker">
+          <strong id="live-count">27</strong> orders in the last 3 hours · Only <strong id="drop-stock">12</strong> left in this batch
+        </div>
+        <div class="hero-countdown" aria-label="Drop timer">
+          <span class="hero-cd-label">Drop Closes</span>
+          <div class="hero-cd-timer">
+            <span class="hero-cd-unit" id="h-h">02</span><span class="hero-cd-colon">:</span>
+            <span class="hero-cd-unit" id="h-m">45</span><span class="hero-cd-colon">:</span>
+            <span class="hero-cd-unit hero-cd-unit-sec" id="h-s">18</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TRUST STRIP -->
+    <div class="trust-strip">
+      <div class="container trust-items">
+        <div class="trust-item"><span class="material-symbols-outlined icon">verified</span><span class="trust-item-txt">Print Guarantee</span></div>
+        <div class="trust-item"><span class="material-symbols-outlined icon">local_shipping</span><span class="trust-item-txt">Ships 4–6 Days</span></div>
+        <div class="trust-item"><span class="material-symbols-outlined icon">replay</span><span class="trust-item-txt">30-Day Returns</span></div>
+        <div class="trust-item"><span class="material-symbols-outlined icon">lock</span><span class="trust-item-txt">Secure Checkout</span></div>
+        <div class="trust-item"><span class="material-symbols-outlined icon">eco</span><span class="trust-item-txt">Made In-House</span></div>
+      </div>
+    </div>
+
+    <!-- TICKER -->
+    <div class="ticker-bar" aria-hidden="true">
+      <div class="ticker-track">
+        <span class="ticker-item">Limited Drop 02 Live<span class="ticker-dot"></span></span>
+        <span class="ticker-item">600 GSM Supima Cotton<span class="ticker-dot"></span></span>
+        <span class="ticker-item">In-House Quality Control<span class="ticker-dot"></span></span>
+        <span class="ticker-item">Culture-First Streetwear<span class="ticker-dot"></span></span>
+        <span class="ticker-item">Limited Drop 02 Live<span class="ticker-dot"></span></span>
+        <span class="ticker-item">600 GSM Supima Cotton<span class="ticker-dot"></span></span>
+        <span class="ticker-item">In-House Quality Control<span class="ticker-dot"></span></span>
+        <span class="ticker-item">Culture-First Streetwear<span class="ticker-dot"></span></span>
+      </div>
+    </div>
+
+    <!-- ESSENTIAL PIECES CAROUSEL -->
+    <section class="section">
+      <div class="container">
+        <div class="section-hdr">
+          <div><div class="eyebrow eyebrow-red" style="margin-bottom:6px">Craftsmanship Series</div><h2 class="section-title">Essential Pieces</h2></div>
+          <button class="section-link" onclick="goTo('shop')">View All <span class="material-symbols-outlined icon">arrow_forward</span></button>
+        </div>
+        <div class="home-carousel" id="home-carousel">
+          <div class="home-carousel-track" id="home-product-grid"></div>
+          <button class="carousel-btn carousel-btn-prev" aria-label="Previous" onclick="scrollCarousel(-1)">
+            <span class="material-symbols-outlined">chevron_left</span>
+          </button>
+          <button class="carousel-btn carousel-btn-next" aria-label="Next" onclick="scrollCarousel(1)">
+            <span class="material-symbols-outlined">chevron_right</span>
+          </button>
+        </div>
+        <div class="carousel-dots" id="carousel-dots"></div>
+      </div>
+    </section>
+
+    <!-- CUSTOMIZER CTA BANNER -->
+    <section style="background:var(--red);padding:clamp(36px,6vw,64px) 0">
+      <div class="container" style="text-align:center">
+        <div class="eyebrow eyebrow-white" style="margin-bottom:12px">For Creators</div>
+        <h2 style="font-size:clamp(28px,5.5vw,60px);font-weight:900;font-style:italic;text-transform:uppercase;color:#fff;line-height:.93;margin-bottom:16px;letter-spacing:-.02em">Design Your Own<br>Limited Drop</h2>
+        <p style="font-size:clamp(13px,1.5vw,17px);color:rgba(255,255,255,.65);line-height:1.65;max-width:440px;margin:0 auto 32px">Upload your art. Set your price. Sell to your community. Get 15% from every sale.</p>
+        <div style="display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap">
+          <button class="btn-black btn-red-pill" onclick="goTo('customize')" style="background:#fff;color:var(--black)">Open the Studio <span class="material-symbols-outlined icon" style="font-size:16px">palette</span></button>
+          <button class="btn-outline" style="color:#fff;border-color:rgba(255,255,255,.3);border-radius:var(--r-full)" onclick="goTo('community')">See Creator Spotlight</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- MANIFESTO -->
+    <section class="manifesto">
+      <div class="manifesto-bg-txt" aria-hidden="true">Modart</div>
+      <div class="container">
+        <div class="manifesto-layout">
+          <div>
+            <div class="eyebrow eyebrow-white" style="margin-bottom:16px">Our Manifesto</div>
+            <h2 class="manifesto-title">Built for the Bold.<br>Not the Many.</h2>
+            <p class="manifesto-body">We don't chase trends — we architect them. Every ModArt piece starts with a single question: what does the modern anti-consumer wear? The answer is always the same. Something that refuses to disappear.</p>
+            <button class="btn-red btn-red-pill" onclick="goTo('shop')">Explore the Collection</button>
+            <div class="manifesto-stats">
+              <div><div class="manifesto-stat-num">3</div><div class="manifesto-stat-lbl">Drops Live</div></div>
+              <div><div class="manifesto-stat-num">200</div><div class="manifesto-stat-lbl">Units Per Drop</div></div>
+              <div><div class="manifesto-stat-num">100%</div><div class="manifesto-stat-lbl">In-House</div></div>
+            </div>
+          </div>
+          <div style="position:relative">
+            <img class="manifesto-img" src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=800&q=85" alt="Craftsmanship" loading="lazy"/>
+            <div class="manifesto-img-badge">
+              <div class="manifesto-img-badge-title">Drop 02 — Cyber Core Series</div>
+              <div class="manifesto-img-badge-sub">600 GSM · Limited to 200 Units · Own Manufacture</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- COMMUNITY SPOTLIGHT -->
+    <section class="community">
+      <div class="container">
+        <div class="section-hdr">
+          <div><div class="eyebrow eyebrow-red" style="margin-bottom:6px">Creator Economy</div><h2 class="section-title">Community Spotlight</h2></div>
+          <button class="section-link" onclick="goTo('community')">Leaderboard <span class="material-symbols-outlined icon">arrow_forward</span></button>
+        </div>
+        <div class="creator-grid">
+          <div class="creator-card"><img class="creator-img" src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&q=80" alt="Kira Sato" loading="lazy"/><div class="creator-info"><div class="creator-name">Kira Sato</div><div class="creator-handle">@kirasato.design</div><div class="creator-footer"><div class="creator-drops-lbl"><span>4</span> Drops</div><button class="creator-follow">Follow</button></div></div></div>
+          <div class="creator-card"><img class="creator-img" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&q=80" alt="Zane Mori" loading="lazy"/><div class="creator-info"><div class="creator-name">Zane Mori</div><div class="creator-handle">@zanemori.art</div><div class="creator-footer"><div class="creator-drops-lbl"><span>7</span> Drops</div><button class="creator-follow">Follow</button></div></div></div>
+          <div class="creator-card"><img class="creator-img" src="https://images.unsplash.com/photo-1494790108755-2616b612b130?w=400&q=80" alt="Noe Park" loading="lazy"/><div class="creator-info"><div class="creator-name">Noe Park</div><div class="creator-handle">@noepark.creates</div><div class="creator-footer"><div class="creator-drops-lbl"><span>3</span> Drops</div><button class="creator-follow">Follow</button></div></div></div>
+          <div class="creator-card"><img class="creator-img" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&q=80" alt="Alex Rivera" loading="lazy"/><div class="creator-info"><div class="creator-name">Alex Rivera</div><div class="creator-handle">@alexrivera.mod</div><div class="creator-footer"><div class="creator-drops-lbl"><span>11</span> Drops</div><button class="creator-follow">Follow</button></div></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DROP ARCHIVE -->
+    <section class="drop-archive" id="drop-archive-section">
+      <div class="container">
+        <div class="section-hdr">
+          <div><div class="eyebrow eyebrow-muted" style="margin-bottom:6px">History</div><h2 class="section-title">Drop Archive</h2></div>
+        </div>
+        <div class="drop-list">
+          <div class="drop-row" onclick="goTo('shop')">
+            <div class="drop-num">02</div>
+            <div class="drop-info"><div class="drop-name">Cyber-Core Series</div><div class="drop-meta">Oct 2023 · 200 Units · Vanta Hoodie + Grid Cargo</div></div>
+            <div class="drop-status drop-live">Live Now</div>
+            <span class="material-symbols-outlined" style="font-size:20px;color:var(--g3)">arrow_forward</span>
+          </div>
+          <div class="drop-row">
+            <div class="drop-num">01</div>
+            <div class="drop-info"><div class="drop-name">Industrial Line</div><div class="drop-meta">Aug 2023 · 150 Units · Cargo Heavyweight + Boxy Knit</div></div>
+            <div class="drop-status drop-sold">Sold Out</div>
+            <span class="material-symbols-outlined" style="font-size:20px;color:var(--g3)">arrow_forward</span>
+          </div>
+          <div class="drop-row" style="opacity:.5">
+            <div class="drop-num">00</div>
+            <div class="drop-info"><div class="drop-name">Founding Collection</div><div class="drop-meta">Jun 2023 · 50 Units · Numbered Edition</div></div>
+            <div class="drop-status drop-archived">Archived</div>
+            <span class="material-symbols-outlined" style="font-size:20px;color:var(--g3)">arrow_forward</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- REVIEWS -->
+    <section class="reviews-section">
+      <div class="container">
+        <div class="section-hdr">
+          <div><div class="eyebrow eyebrow-muted" style="margin-bottom:6px">Real Buyers</div><h2 class="section-title">4.9 Stars. No BS.</h2></div>
+          <div style="font-size:clamp(28px,4.5vw,44px);font-weight:900;font-style:italic">4.9<span style="font-size:14px;color:var(--g3);font-style:normal;font-weight:500"> / 5.0</span></div>
+        </div>
+        <div class="review-grid">
+          <div class="review-card"><div class="review-stars"><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span></div><p class="review-text">"The Vanta Hoodie is worth every cent. 600gsm feels like wearing a building. The DTG print is sharp and hasn't faded after 10 washes."</p><div class="review-author"><img class="review-avatar" src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=80&q=80" alt="Kira S" loading="lazy"/><div><div class="review-name">Kira S.</div><div class="review-date">Oct 12, 2023</div></div><span class="review-verified">✓ Verified</span></div></div>
+          <div class="review-card"><div class="review-stars"><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span></div><p class="review-text">"My custom drop sold 38 units in 48 hours. The studio tool is actually usable, the puff print looks incredible IRL."</p><div class="review-author"><img class="review-avatar" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&q=80" alt="Zane M" loading="lazy"/><div><div class="review-name">Zane M.</div><div class="review-date">Sep 28, 2023</div></div><span class="review-verified">✓ Verified</span></div></div>
+          <div class="review-card"><div class="review-stars"><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star_half</span></div><p class="review-text">"Never seen quality this good from a streetwear brand. Looks exactly like the render — somehow better in hand."</p><div class="review-author"><img class="review-avatar" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=80&q=80" alt="Alex R" loading="lazy"/><div><div class="review-name">Alex R.</div><div class="review-date">Oct 5, 2023</div></div><span class="review-verified">✓ Verified</span></div></div>
+        </div>
+        <div class="ugc-grid">
+          <div class="ugc-card"><img class="ugc-photo" src="https://images.unsplash.com/photo-1523398002811-999ca8deecb5?w=400&q=80" alt="UGC" loading="lazy"/><div class="ugc-overlay"><span class="ugc-overlay-handle">@kirasato</span><button class="ugc-overlay-remix" onclick="goTo('customize')">Remix</button></div></div>
+          <div class="ugc-card"><img class="ugc-photo" src="https://images.unsplash.com/photo-1554568218-0f1715e72254?w=400&q=80" alt="UGC" loading="lazy"/><div class="ugc-overlay"><span class="ugc-overlay-handle">@zanemori</span><button class="ugc-overlay-remix" onclick="goTo('customize')">Remix</button></div></div>
+          <div class="ugc-card"><img class="ugc-photo" src="https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=400&q=80" alt="UGC" loading="lazy"/><div class="ugc-overlay"><span class="ugc-overlay-handle">@noepark</span><button class="ugc-overlay-remix" onclick="goTo('customize')">Remix</button></div></div>
+          <div class="ugc-card"><img class="ugc-photo" src="https://images.unsplash.com/photo-1509631179647-0177331693ae?w=400&q=80" alt="UGC" loading="lazy"/><div class="ugc-overlay"><span class="ugc-overlay-handle">@alexrivera</span><button class="ugc-overlay-remix" onclick="goTo('customize')">Remix</button></div></div>
+          <div class="ugc-card"><img class="ugc-photo" src="https://images.unsplash.com/photo-1507643179773-3e975d7ac515?w=400&q=80" alt="UGC" loading="lazy"/><div class="ugc-overlay"><span class="ugc-overlay-handle">@modartfan</span><button class="ugc-overlay-remix" onclick="goTo('customize')">Remix</button></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EARLY ACCESS -->
+    <section class="early-access">
+      <div class="container">
+        <div class="spots-counter"><span id="spots-left">347</span> of 500 Spots Remaining</div>
+        <h2 class="early-access-title">Get In Before<br>It Sells Out.</h2>
+        <p class="early-access-sub">First access every drop. Creator revenue share. Zero spam.</p>
+        <div class="early-access-form">
+          <input class="early-input" type="email" placeholder="name@domain.com" aria-label="Email address"/>
+          <button class="btn-red btn-red-pill" onclick="openModal('waitlist')">Secure Access</button>
+        </div>
+        <div class="early-privacy">Private & Encrypted. Unsubscribe anytime.</div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div>
+            <div class="footer-brand-logo">ModArt</div>
+            <p class="footer-brand-desc">Premium custom garment studio. Limited drops. No restocks. Creator-driven.</p>
+            <div class="footer-social">
+              <button class="footer-social-btn" aria-label="Instagram"><span class="material-symbols-outlined icon">photo_camera</span></button>
+              <button class="footer-social-btn" aria-label="Twitter"><span class="material-symbols-outlined icon">tag</span></button>
+              <button class="footer-social-btn" aria-label="Discord"><span class="material-symbols-outlined icon">forum</span></button>
+            </div>
+          </div>
+          <div>
+            <div class="footer-col-title">Shop</div>
+            <div class="footer-links">
+              <button class="footer-link" onclick="goTo('shop')">All Products</button>
+              <button class="footer-link" onclick="goTo('shop')">New Drops</button>
+              <button class="footer-link">Sold Out Archive</button>
+              <button class="footer-link">Size Guide</button>
+            </div>
+          </div>
+          <div>
+            <div class="footer-col-title">Create</div>
+            <div class="footer-links">
+              <button class="footer-link" onclick="goTo('customize')">Open Studio</button>
+              <button class="footer-link" onclick="goTo('community')">Creators</button>
+              <button class="footer-link">Revenue Share</button>
+              <button class="footer-link">Wholesale</button>
+            </div>
+          </div>
+          <div>
+            <div class="footer-col-title">Support</div>
+            <div class="footer-links">
+              <button class="footer-link" onclick="goTo('orders')">Track Order</button>
+              <button class="footer-link" onclick="goTo('faq')">FAQ</button>
+              <button class="footer-link" onclick="goTo('contact')">Contact</button>
+              <button class="footer-link" onclick="goTo('admin')">Admin</button>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <span class="footer-copy">© 2025 ModArt. All rights reserved.</span>
+          <div class="footer-legal">
+            <button class="footer-legal-link" onclick="goTo('privacy')">Privacy</button>
+            <button class="footer-legal-link" onclick="goTo('terms')">Terms</button>
+            <button class="footer-legal-link" onclick="acceptCookies()">Cookies</button>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <div class="mob-nav-spacer"></div>
+  </main>
+
+<!-- PAGE: SHOP -->
+  <main class="page" id="page-shop" aria-label="Shop">
+    <div class="ticker-bar" aria-hidden="true" style="padding:8px 0"><div class="ticker-track"><span class="ticker-item">Drop 02 Live<span class="ticker-dot"></span></span><span class="ticker-item">Free Shipping ₹2499+<span class="ticker-dot"></span></span><span class="ticker-item">Drop 02 Live<span class="ticker-dot"></span></span><span class="ticker-item">Free Shipping ₹2499+<span class="ticker-dot"></span></span></div></div>
+    <div class="container">
+      <div class="section">
+        <div class="section-hdr" style="margin-bottom:clamp(16px,3vw,28px)">
+          <div><div class="eyebrow eyebrow-red" style="margin-bottom:6px">Craftsmanship Series</div><h1 class="section-title">All Products</h1></div>
+          <div class="scarcity-pill" aria-live="polite"><span class="scarcity-dot"></span> Only <span id="shop-scarcity-count">12</span> Left</div>
+        </div>
+        <div id="shop-filter-bar" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:clamp(16px,3vw,24px)">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;flex:1">
+            <button class="shop-filter-btn active" onclick="filterShop('all',this)">All</button>
+            <button class="shop-filter-btn" onclick="filterShop('hoodies',this)">Hoodies</button>
+            <button class="shop-filter-btn" onclick="filterShop('tees',this)">Tees</button>
+            <button class="shop-filter-btn" onclick="filterShop('bottoms',this)">Bottoms</button>
+            <button class="shop-filter-btn" onclick="filterShop('instock',this)">In Stock</button>
+          </div>
+          <select id="shop-sort" onchange="sortShop(this.value)" style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:8px 14px;border:1.5px solid var(--border);border-radius:var(--r-full);background:var(--bg);font-family:var(--font);cursor:pointer;color:var(--black)">
+            <option value="default">Sort: Featured</option>
+            <option value="price-asc">Price: Low → High</option>
+            <option value="price-desc">Price: High → Low</option>
+            <option value="name-asc">Name: A → Z</option>
+          </select>
+        </div>
+        <div class="product-grid shop-grid" id="shop-product-grid"></div>
+      </div>
+    </div>
+    <div class="mob-nav-spacer"></div>
+  </main>
+
+  <!-- PAGE: PRODUCT DETAIL -->
+  <main class="page" id="page-product" aria-label="Product detail">
+    <div class="container">
+      <div class="section" style="padding-top:clamp(20px,3vw,40px)">
+        <button class="btn-outline" style="margin-bottom:24px;width:auto;padding:10px 16px" onclick="goTo('shop')"><span class="material-symbols-outlined icon" style="font-size:16px">arrow_back</span> Back</button>
+        <div class="product-detail-grid">
+          <div class="product-img-stack">
+            <div style="position:relative">
+              <img class="product-img-main" src="https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=900&q=85" alt="Product" id="product-main-img" loading="lazy" onclick="zoomImage(this)" style="cursor:zoom-in"/>
+              <div class="product-view-tag"><span class="material-symbols-outlined icon">view_in_ar</span> 360° View</div>
+            </div>
+            <div class="product-img-thumbs">
+              <img class="product-img-thumb active" src="https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=200&q=80" alt="Front" loading="lazy" onclick="switchImg(this,'https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=900&q=85')"/>
+              <img class="product-img-thumb" src="https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=200&q=80" alt="Back" loading="lazy" onclick="switchImg(this,'https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=900&q=85')"/>
+              <img class="product-img-thumb" src="https://images.unsplash.com/photo-1621072156002-e2fccdc0b176?w=200&q=80" alt="Detail" loading="lazy" onclick="switchImg(this,'https://images.unsplash.com/photo-1621072156002-e2fccdc0b176?w=900&q=85')"/>
+            </div>
+          </div>
+          <div>
+            <div class="eyebrow eyebrow-red" style="margin-bottom:10px">Vanta Collection</div>
+            <h1 class="product-detail-title">Vanta Black<br>Hoodie</h1>
+            <div class="product-detail-subtitle">600 GSM Supima Cotton / Limited Release / Drop 02</div>
+            <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:10px">
+              <div class="product-detail-price" id="detail-price">₹19,999</div>
+              <div class="scarcity-pill" style="font-size:9px;padding:4px 10px" aria-live="polite"><span class="scarcity-dot"></span> 7 Left</div>
+            </div>
+            <div class="prod-timeline">
+              <span class="material-symbols-outlined icon">schedule</span>
+              <div><div class="prod-timeline-txt">Made-to-Order</div><div class="prod-timeline-sub">Dispatched in 1–2 business days · Express available</div></div>
+            </div>
+            <p class="product-detail-desc">Engineered for the modern minimalist. Oversized silhouette crafted from rare high-density Supima cotton, providing a structured drape that resists wrinkling and maintains its deep matte finish indefinitely.</p>
+            <div class="print-type-section">
+              <div class="print-type-lbl-row"><span class="form-lbl">Print Method</span><span style="font-size:10px;color:var(--g3)">Affects final price</span></div>
+              <div class="print-types">
+                <button class="print-type-btn sel" onclick="selectPrint(this,'DTG Flatbed',0)"><span class="print-type-name">DTG Flatbed</span><span class="print-type-plus">+₹0 included</span></button>
+                <button class="print-type-btn" onclick="selectPrint(this,'Puff Print',1500)"><span class="print-type-name">Puff Print</span><span class="print-type-plus cost">+₹1,500</span></button>
+                <button class="print-type-btn" onclick="selectPrint(this,'Embroidery',2500)"><span class="print-type-name">Embroidery</span><span class="print-type-plus cost">+₹2,500</span></button>
+              </div>
+            </div>
+            <div class="fabric-specs">
+              <div class="fabric-specs-title">Fabric Specifications</div>
+              <div class="fabric-grid">
+                <div class="fabric-item"><div class="fabric-item-lbl">GSM</div><div class="fabric-item-val">600 GSM</div></div>
+                <div class="fabric-item"><div class="fabric-item-lbl">Fabric</div><div class="fabric-item-val">100% Supima</div></div>
+                <div class="fabric-item"><div class="fabric-item-lbl">Shrinkage</div><div class="fabric-item-val">&lt;2%</div></div>
+                <div class="fabric-item"><div class="fabric-item-lbl">Print Durability</div><div class="fabric-item-val">50+ Washes</div></div>
+                <div class="fabric-item"><div class="fabric-item-lbl">Origin</div><div class="fabric-item-val">Portugal</div></div>
+                <div class="fabric-item"><div class="fabric-item-lbl">Finish</div><div class="fabric-item-val">Matte</div></div>
+              </div>
+              <div class="wash-row"><div class="wash-icon"><span class="material-symbols-outlined icon">local_laundry_service</span></div><span class="wash-txt">Cold wash, no tumble dry, iron inside-out · Dry flat for best shape retention</span></div>
+            </div>
+            <div class="size-section">
+              <div class="size-label-row"><span class="form-lbl">Select Size</span><div><button class="size-guide-link">Size Guide</button><button class="size-finder-cta" onclick="openModal('sizefinder')">Find My Size</button></div></div>
+              <div class="size-options" id="size-options-dynamic"><button class="size-btn sel" onclick="selSize(this)" data-size="M">M</button></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
+              <button class="btn-black btn-red-full" style="padding:18px;border-radius:var(--r-full)" onclick="addToCart('vanta-hoodie');goTo('bag')">Add to Bag — <span id="detail-price-btn">₹19,999</span></button>
+              <button class="btn-red btn-red-full btn-red-pill" onclick="goTo('customize')"><span class="material-symbols-outlined icon" style="font-size:18px">palette</span> Customise This Piece</button>
+              <button class="btn-outline" style="border-radius:var(--r-full);width:100%;padding:16px" id="wishlist-detail-btn" onclick="toggleWishlistDetail(this)"><span class="material-symbols-outlined icon" style="font-size:17px">favorite_border</span> Wishlist</button>
+            </div>
+            <div class="product-trust">
+              <div class="trust-row"><span class="material-symbols-outlined icon">verified</span><span class="trust-row-txt">Print Guarantee — Fades or cracks, we reprint free</span></div>
+              <div class="trust-row"><span class="material-symbols-outlined icon">local_shipping</span><span class="trust-row-txt">Ships in 4–6 days · Express 2-day available</span></div>
+              <div class="trust-row"><span class="material-symbols-outlined icon">replay</span><span class="trust-row-txt">30-day returns on unworn items</span></div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:clamp(40px,6vw,72px)">
+          <div class="section-hdr"><div class="eyebrow eyebrow-muted">You May Also Like</div></div>
+          <div class="product-grid" id="related-product-grid"></div>
+        </div>
+      </div>
+    </div>
+    <div class="mob-nav-spacer"></div>
+  </main>
+
+  <!-- PAGE: CUSTOMIZE -->
+  <main class="page" id="page-customize" aria-label="Design studio">
+    <div class="customizer-page" style="min-height:100vh;display:flex;flex-direction:column;background:var(--bg-d)">
+      <div class="customizer-topbar" style="background:var(--bg);border-bottom:1px solid var(--border);padding:12px clamp(16px,3vw,32px);display:flex;align-items:center;justify-content:space-between;gap:16px">
+        <div style="display:flex;align-items:center;gap:16px">
+          <button class="btn-ghost" onclick="goTo('shop')" style="display:flex;align-items:center;gap:6px"><span class="material-symbols-outlined icon" style="font-size:18px">arrow_back</span> Back</button>
+          <select onchange="changeCustProduct(this.value)" style="font-size:11px;font-weight:700;padding:8px 12px;border:1.5px solid var(--border);border-radius:var(--r-sm);background:var(--bg);font-family:var(--font);color:var(--black)">
+            <option value="hoodie">Hoodie</option>
+            <option value="tee">T-Shirt</option>
+            <option value="cargo">Cargo Pants</option>
+          </select>
+        </div>
+        <div style="font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase">Design Studio</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <button class="btn-ghost" onclick="undoLayer()"><span class="material-symbols-outlined icon">undo</span></button>
+          <button class="btn-ghost" onclick="redoLayer()"><span class="material-symbols-outlined icon">redo</span></button>
+          <button class="btn-red btn-red-pill" style="padding:10px 20px" onclick="goTo('bag')">Add to Bag</button>
+        </div>
+      </div>
+      <div class="customizer-body" style="flex:1;display:flex;overflow:hidden">
+        <div class="customizer-tools-col" style="width:clamp(200px,22vw,260px);border-right:1px solid var(--border);padding:16px;overflow-y:auto;background:var(--bg)">
+          <div style="font-size:9px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--g3);margin-bottom:12px">Tools</div>
+          <div class="tool-btns-row" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px">
+            <button class="tool-btn active" onclick="this.closest('.tool-btns-row').querySelectorAll('.tool-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active')" style="flex:1;min-width:60px;padding:10px 6px;border:1.5px solid var(--border);border-radius:var(--r-md);background:var(--bg-c);font-family:var(--font);font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--black);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px"><span class="material-symbols-outlined icon" style="font-size:20px">palette</span>Colors</button>
+            <button class="tool-btn" onclick="this.closest('.tool-btns-row').querySelectorAll('.tool-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active')" style="flex:1;min-width:60px;padding:10px 6px;border:1.5px solid var(--border);border-radius:var(--r-md);background:var(--bg-c);font-family:var(--font);font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--black);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px"><span class="material-symbols-outlined icon" style="font-size:20px">image</span>Graphics</button>
+            <button class="tool-btn" onclick="this.closest('.tool-btns-row').querySelectorAll('.tool-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active')" style="flex:1;min-width:60px;padding:10px 6px;border:1.5px solid var(--border);border-radius:var(--r-md);background:var(--bg-c);font-family:var(--font);font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--black);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px"><span class="material-symbols-outlined icon" style="font-size:20px">title</span>Text</button>
+          </div>
+          <div style="font-size:9px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--g3);margin-bottom:10px">Garment Color</div>
+          <div class="color-swatches" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px">
+            <button class="color-swatch" onclick="selectColour(this,'#111','https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=600&q=80')" style="width:28px;height:28px;border-radius:50%;background:#111;border:2px solid var(--border);cursor:pointer" title="Black"></button>
+            <button class="color-swatch" onclick="selectColour(this,'#fff','https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=600&q=80')" style="width:28px;height:28px;border-radius:50%;background:#fff;border:2px solid var(--border);cursor:pointer" title="White"></button>
+            <button class="color-swatch" onclick="selectColour(this,'#1e3a5f','https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=600&q=80')" style="width:28px;height:28px;border-radius:50%;background:#1e3a5f;border:2px solid var(--border);cursor:pointer" title="Navy"></button>
+            <button class="color-swatch" onclick="selectColour(this,'#D72638','https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&q=80')" style="width:28px;height:28px;border-radius:50%;background:#D72638;border:2px solid var(--border);cursor:pointer" title="Red"></button>
+          </div>
+          <div style="font-size:9px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--g3);margin-bottom:10px">Upload Design</div>
+          <label style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;border:1.5px dashed var(--border);border-radius:var(--r-md);cursor:pointer;font-size:11px;font-weight:600;color:var(--g2);margin-bottom:16px">
+            <span class="material-symbols-outlined icon" style="font-size:20px">upload</span> Upload File
+            <input type="file" accept="image/*" style="display:none" onchange="uploadDesign(this)"/>
+          </label>
+          <button class="btn-outline" style="width:100%;margin-bottom:8px" onclick="openModal('ai')"><span class="material-symbols-outlined icon" style="font-size:16px">auto_awesome</span> AI Generate</button>
+          <button class="btn-outline" style="width:100%" onclick="addTextLayer()"><span class="material-symbols-outlined icon" style="font-size:16px">title</span> Add Text</button>
+        </div>
+        <div class="customizer-canvas-col" style="flex:1;display:flex;align-items:center;justify-content:center;padding:clamp(16px,3vw,32px)">
+          <div class="canvas-wrap" style="position:relative;width:clamp(260px,40vw,440px);height:clamp(320px,50vw,540px)">
+            <img id="cust-product-img" src="https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=600&q=80" alt="Garment" style="width:100%;height:100%;object-fit:contain;border-radius:var(--r-lg)"/>
+            <div id="design-canvas" style="position:absolute;inset:0;border-radius:var(--r-lg)"></div>
+          </div>
+        </div>
+        <div class="customizer-layers-col" style="width:clamp(180px,20vw,220px);border-left:1px solid var(--border);padding:16px;overflow-y:auto;background:var(--bg)">
+          <div style="font-size:9px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--g3);margin-bottom:12px">Layer Properties</div>
+          <div style="margin-bottom:12px"><div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g2);margin-bottom:6px">Opacity</div><input type="range" id="opacity-slider" min="0" max="100" value="100" style="width:100%;accent-color:var(--red)"/></div>
+          <div style="margin-bottom:16px"><div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g2);margin-bottom:6px">Scale</div><input type="range" id="scale-slider" min="20" max="200" value="100" style="width:100%;accent-color:var(--red)"/></div>
+          <div style="margin-bottom:16px"><div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g2);margin-bottom:6px">Rotation</div><input type="range" id="rot-slider" min="-180" max="180" value="0" style="width:100%;accent-color:var(--red)"/></div>
+          <button class="btn-outline" style="width:100%;margin-bottom:8px" onclick="centerLayer()">Center</button>
+          <button class="btn-outline" style="width:100%;margin-bottom:8px" onclick="deleteLayer()">Delete Layer</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- PAGE: BAG -->
+  <main class="page" id="page-bag" aria-label="Shopping bag">
+    <div class="container">
+      <div class="bag-layout">
+        <div>
+          <h1 style="font-size:clamp(22px,3.5vw,32px);font-weight:900;font-style:italic;text-transform:uppercase;margin-bottom:clamp(20px,3vw,32px)">Your Bag <span id="bag-count" style="font-size:14px;font-weight:500;font-style:normal;color:var(--g3)"></span></h1>
+          <div id="bag-empty" style="display:none;text-align:center;padding:48px 0">
+            <span class="material-symbols-outlined" style="font-size:48px;color:var(--border);display:block;margin-bottom:16px">shopping_bag</span>
+            <div style="font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g3);margin-bottom:20px">Your bag is empty</div>
+            <button class="btn-red btn-red-pill" onclick="goTo('shop')">Browse Collection</button>
+          </div>
+          <div id="bag-items-list" class="bag-items"></div>
+        </div>
+        <div class="bag-summary-col">
+          <div class="bag-summary" style="background:var(--bg-c);border:1px solid var(--border);border-radius:var(--r-lg);padding:clamp(20px,3vw,28px)">
+            <div style="font-size:11px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;margin-bottom:20px">Order Summary</div>
+            <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--r-md);padding:10px 14px;margin-bottom:16px">
+              <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g3);margin-bottom:4px">Free Shipping Progress</div>
+              <div id="shipping-progress-msg" style="font-size:11px;color:var(--g2);margin-bottom:6px">Add more to unlock free shipping</div>
+              <div style="height:4px;background:var(--border);border-radius:2px;overflow:hidden"><div id="shipping-progress-bar" style="height:100%;background:var(--green);width:0%;transition:width .4s ease;border-radius:2px"></div></div>
+            </div>
+            <div id="discount-row" style="display:none;gap:8px;margin-bottom:16px">
+              <input id="discount-input" class="form-input" placeholder="Promo code" style="flex:1"/>
+              <button class="btn-black" style="padding:14px 16px;border-radius:var(--r-sm)" onclick="applyDiscount()">Apply</button>
+            </div>
+            <button style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--red);background:none;border:none;cursor:pointer;margin-bottom:16px" onclick="document.getElementById('discount-row').style.display='flex'">+ Add Promo Code</button>
+            <div class="bag-sum-row"><span style="font-size:13px;color:var(--g2)">Subtotal</span><span id="bag-subtotal" style="font-size:13px;font-weight:700">₹0</span></div>
+            <div id="discount-row-display" style="display:none" class="bag-sum-row"><span style="font-size:13px;color:var(--green)">Discount (10%)</span><span id="discount-val" style="font-size:13px;font-weight:700;color:var(--green)">−₹0</span></div>
+            <div class="bag-sum-row"><span style="font-size:13px;color:var(--g2)">Shipping</span><span style="font-size:13px;font-weight:700">Calculated at checkout</span></div>
+            <div style="border-top:1px solid var(--border);margin:16px 0"></div>
+            <div class="bag-sum-row" style="margin-bottom:20px"><span style="font-size:15px;font-weight:800">Total</span><span id="bag-total" style="font-size:18px;font-weight:900">₹0</span></div>
+            <button class="btn-red btn-red-full btn-red-pill" style="padding:18px" onclick="goTo('checkout')">Checkout</button>
+            <div style="text-align:center;margin-top:12px"><button class="btn-ghost" onclick="goTo('shop')">Continue Shopping</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mob-nav-spacer"></div>
+  </main>
+
+  <!-- PAGE: CHECKOUT -->
+  <main class="page" id="page-checkout" aria-label="Checkout">
+    <div class="container">
+      <div class="checkout-layout">
+        <div>
+          <h1 style="font-size:clamp(22px,3.5vw,32px);font-weight:900;font-style:italic;text-transform:uppercase;margin-bottom:clamp(20px,3vw,32px)">Checkout</h1>
+          <div class="form-section">
+            <div class="form-section-title">Contact</div>
+            <div class="form-group"><label class="form-label">Full Name</label><input class="form-input" type="text" autocomplete="name" placeholder="Your full name"/></div>
+            <div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" autocomplete="email" placeholder="you@email.com"/></div>
+          </div>
+          <div class="form-section">
+            <div class="form-section-title">Shipping Address</div>
+            <div class="form-group"><label class="form-label">Street Address</label><input class="form-input" type="text" placeholder="123 Street, Area"/></div>
+            <div class="form-row-2">
+              <div class="form-group"><label class="form-label">City</label><input class="form-input" type="text" placeholder="Mumbai"/></div>
+              <div class="form-group"><label class="form-label">PIN Code</label><input class="form-input" type="text" placeholder="400001"/></div>
+            </div>
+            <div class="form-group"><label class="form-label">Country</label><select class="form-input"><option value="IN">India</option><option value="US">United States</option><option value="GB">United Kingdom</option><option value="SG">Singapore</option><option value="AE">UAE</option></select></div>
+          </div>
+          <div class="form-section">
+            <div class="form-section-title">Shipping Method</div>
+            <label style="display:flex;align-items:center;gap:12px;padding:14px;border:1.5px solid var(--red);border-radius:var(--r-md);cursor:pointer;margin-bottom:8px"><input type="radio" name="shipping" value="standard" checked style="accent-color:var(--red)"/><div><div style="font-size:12px;font-weight:700">Standard — 4–6 days</div><div style="font-size:11px;color:var(--g3)">Free on orders over ₹2,499</div></div><span style="margin-left:auto;font-weight:700">₹149</span></label>
+            <label style="display:flex;align-items:center;gap:12px;padding:14px;border:1.5px solid var(--border);border-radius:var(--r-md);cursor:pointer"><input type="radio" name="shipping" value="express" style="accent-color:var(--red)"/><div><div style="font-size:12px;font-weight:700">Express — 1–2 days</div><div style="font-size:11px;color:var(--g3)">Priority production + shipping</div></div><span style="margin-left:auto;font-weight:700">₹499</span></label>
+          </div>
+          <button class="btn-red btn-red-full btn-red-pill" id="pay-now-btn" style="padding:18px;font-size:14px" onclick="handleCheckoutSubmit()">Place Order — Cash on Delivery</button>
+          <div style="display:flex;justify-content:center;gap:clamp(16px,3vw,36px);margin-top:20px">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:4px"><span class="material-symbols-outlined" style="font-size:22px;color:var(--g3)">lock</span><span style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g3)">SSL Secure</span></div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:4px"><span class="material-symbols-outlined" style="font-size:22px;color:var(--g3)">replay</span><span style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g3)">30-Day Returns</span></div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:4px"><span class="material-symbols-outlined" style="font-size:22px;color:var(--g3)">verified</span><span style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g3)">Print Guarantee</span></div>
+          </div>
+        </div>
+        <div class="bag-summary-col">
+          <div class="bag-summary" style="background:var(--bg-c);border:1px solid var(--border);border-radius:var(--r-lg);padding:clamp(20px,3vw,28px)">
+            <div style="font-size:11px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;margin-bottom:16px">Order Summary</div>
+            <div id="checkout-items" style="margin-bottom:16px"></div>
+            <div style="border-top:1px solid var(--border);padding-top:14px">
+              <div class="bag-sum-row"><span style="font-size:13px;color:var(--g2)">Subtotal</span><span id="co-subtotal" style="font-size:13px;font-weight:700">₹0</span></div>
+              <div class="bag-sum-row"><span style="font-size:13px;color:var(--g2)">Shipping</span><span style="font-size:13px;font-weight:700">₹149</span></div>
+              <div style="border-top:1px solid var(--border);margin:12px 0"></div>
+              <div class="bag-sum-row"><span style="font-size:15px;font-weight:800">Total</span><span id="co-total" style="font-size:18px;font-weight:900">₹0</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mob-nav-spacer"></div>
+  </main>
+
+  <!-- PAGE: CONFIRMATION -->
+  <main class="page" id="page-confirmation" aria-label="Order confirmation">
+    <section class="confirmation-hero" style="background:var(--dark);padding:clamp(48px,8vw,96px) 0;text-align:center">
+      <div class="container">
+        <div class="confirmation-icon" style="width:72px;height:72px;border-radius:50%;background:rgba(34,197,94,.15);border:2px solid rgba(34,197,94,.3);display:flex;align-items:center;justify-content:center;margin:0 auto 24px">
+          <span class="material-symbols-outlined" style="font-size:36px;color:var(--green)">check_circle</span>
+        </div>
+        <div class="eyebrow eyebrow-white" style="margin-bottom:12px">Order Confirmed</div>
+        <h1 style="font-size:clamp(28px,5vw,52px);font-weight:900;font-style:italic;text-transform:uppercase;color:#fff;line-height:.93;margin-bottom:16px">You're In The Drop.</h1>
+        <div id="confirmation-order-badge" style="display:inline-block;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);padding:8px 20px;border-radius:var(--r-full);font-size:12px;font-weight:700;color:rgba(255,255,255,.7);margin-bottom:32px">Order placed successfully</div>
+        <div style="display:flex;flex-direction:column;gap:16px;max-width:480px;margin:0 auto 32px">
+          <div class="confirmation-step" style="display:flex;align-items:flex-start;gap:16px;text-align:left">
+            <div style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0"><span class="material-symbols-outlined" style="font-size:18px;color:rgba(255,255,255,.6)">email</span></div>
+            <div><div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:3px">Confirmation Email Sent</div><div style="font-size:11px;color:rgba(255,255,255,.45)">Check your inbox for order details</div></div>
+          </div>
+          <div class="confirmation-step" style="display:flex;align-items:flex-start;gap:16px;text-align:left">
+            <div style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0"><span class="material-symbols-outlined" style="font-size:18px;color:rgba(255,255,255,.6)">manufacturing</span></div>
+            <div><div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:3px">Production Starts Today</div><div style="font-size:11px;color:rgba(255,255,255,.45)">Your garment enters the print queue immediately</div></div>
+          </div>
+          <div class="confirmation-step" style="display:flex;align-items:flex-start;gap:16px;text-align:left">
+            <div style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0"><span class="material-symbols-outlined" style="font-size:18px;color:rgba(255,255,255,.6)">local_shipping</span></div>
+            <div><div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:3px">Ships in 4–6 Days</div><div style="font-size:11px;color:rgba(255,255,255,.45)">Tracking link sent when dispatched</div></div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap">
+          <button class="btn-red btn-red-pill" onclick="goTo('orders')">Track My Order</button>
+          <button class="btn-outline" style="color:rgba(255,255,255,.8);border-color:rgba(255,255,255,.2)" onclick="goTo('shop')">Continue Shopping</button>
+        </div>
+      </div>
+    </section>
+    <div class="mob-nav-spacer"></div>
+  </main>
+
+  <!-- PAGE: ORDERS -->
+  <main class="page" id="page-orders" aria-label="Orders">
+    <div class="container">
+      <div class="orders-page-layout" style="padding:clamp(32px,5vw,64px) 0;max-width:720px;margin:0 auto">
+        <h1 style="font-size:clamp(22px,3.5vw,32px);font-weight:900;font-style:italic;text-transform:uppercase;margin-bottom:clamp(20px,3vw,32px)">My Orders</h1>
+        <div id="orders-loading" style="text-align:center;padding:48px 0;color:var(--g3)"><span class="material-symbols-outlined" style="font-size:32px;display:block;margin-bottom:12px;animation:spin 1s linear infinite">autorenew</span>Loading orders…</div>
+        <div id="orders-logged-out" style="display:none;text-align:center;padding:48px 0">
+          <div style="font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g3);margin-bottom:20px">Sign in to view your orders</div>
+          <button class="btn-red btn-red-pill" onclick="goTo('login')">Sign In</button>
+        </div>
+        <div id="orders-empty" style="display:none;text-align:center;padding:48px 0">
+          <span class="material-symbols-outlined" style="font-size:48px;color:var(--border);display:block;margin-bottom:16px">receipt_long</span>
+          <div style="font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g3);margin-bottom:20px">No orders yet</div>
+          <button class="btn-red btn-red-pill" onclick="goTo('shop')">Start Shopping</button>
+        </div>
+        <div id="orders-list" style="display:none;flex-direction:column;gap:16px"></div>
+      </div>
+    </div>
+    <div class="mob-nav-spacer"></div>
+  </main>
+
+  <!-- PAGE: LOGIN -->
+  <main class="page" id="page-login" aria-label="Login">
+    <div class="container">
+      <div class="section" style="max-width:440px;margin:0 auto;padding-top:clamp(40px,6vw,80px)">
+        <div class="eyebrow eyebrow-red" style="margin-bottom:12px;text-align:center">Welcome Back</div>
+        <h1 style="font-size:clamp(28px,4.5vw,42px);font-weight:900;font-style:italic;text-transform:uppercase;text-align:center;margin-bottom:32px">Sign In</h1>
+        <div id="login-error" style="display:none;background:rgba(215,38,56,.08);border:1px solid rgba(215,38,56,.25);color:var(--red);font-size:12px;font-weight:600;padding:10px 14px;border-radius:var(--r-sm);margin-bottom:16px"></div>
+        <div id="google-error" style="display:none;background:rgba(215,38,56,.08);border:1px solid rgba(215,38,56,.25);color:var(--red);font-size:12px;font-weight:600;padding:10px 14px;border-radius:var(--r-sm);margin-bottom:16px"></div>
+
+        <!-- Google Sign In -->
+        <button class="btn-outline btn-red-full" style="padding:14px;border-radius:var(--r-full);margin-bottom:16px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:13px;font-weight:600;letter-spacing:.02em;text-transform:none" onclick="loginWithGoogle()">
+          <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+            <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/>
+            <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/>
+            <path fill="#FBBC05" d="M3.964 10.707A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.707V4.961H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.039l3.007-2.332z"/>
+            <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.961L3.964 6.293C4.672 4.166 6.656 3.58 9 3.58z"/>
+          </svg>
+          Continue with Google
+        </button>
+
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+          <div style="flex:1;height:1px;background:var(--border)"></div>
+          <span style="font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--g3)">or</span>
+          <div style="flex:1;height:1px;background:var(--border)"></div>
+        </div>
+
+        <div class="form-group"><label class="form-label">Email</label><input id="login-email" class="form-input" type="email" autocomplete="email" placeholder="you@email.com"/></div>
+        <div class="form-group" style="position:relative"><label class="form-label">Password</label>
+          <input id="login-password" class="form-input" type="password" autocomplete="current-password" placeholder="••••••••" style="padding-right:44px"/>
+          <button type="button" onclick="this.previousElementSibling.type=this.previousElementSibling.type==='password'?'text':'password';this.querySelector('span').textContent=this.previousElementSibling.type==='password'?'visibility':'visibility_off'" style="position:absolute;right:12px;top:50%;transform:translateY(4px);background:none;border:none;cursor:pointer;color:var(--g3);display:flex;align-items:center"><span class="material-symbols-outlined" style="font-size:20px">visibility</span></button>
+        </div>
+        <div style="display:flex;justify-content:flex-end;margin-bottom:20px"><button class="btn-ghost" onclick="goTo('forgot-password')" style="font-size:11px">Forgot password?</button></div>
+        <button id="login-submit-btn" class="btn-red btn-red-full btn-red-pill" style="padding:16px;margin-bottom:24px" onclick="handleLogin()">Sign In</button>
+        <div style="text-align:center;font-size:13px;color:var(--g3)">Don't have an account? <button class="btn-ghost" onclick="goTo('register')" style="color:var(--red);font-size:13px;text-transform:none;letter-spacing:0">Create one</button></div>
+      </div>
+    </div>
+    <div class="mob-nav-spacer"></div>
+  </main>
+
+  <!-- PAGE: REGISTER -->
+  <main class="page" id="page-register" aria-label="Register">
+    <div class="container">
+      <div class="section" style="max-width:440px;margin:0 auto;padding-top:clamp(40px,6vw,80px)">
+        <div class="eyebrow eyebrow-red" style="margin-bottom:12px;text-align:center">Join ModArt</div>
+        <h1 style="font-size:clamp(28px,4.5vw,42px);font-weight:900;font-style:italic;text-transform:uppercase;text-align:center;margin-bottom:32px">Create Account</h1>
+        <div id="register-error" style="display:none;background:rgba(215,38,56,.08);border:1px solid rgba(215,38,56,.25);color:var(--red);font-size:12px;font-weight:600;padding:10px 14px;border-radius:var(--r-sm);margin-bottom:16px"></div>
+        <div id="register-success" style="display:none;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.25);color:var(--green);font-size:12px;font-weight:600;padding:10px 14px;border-radius:var(--r-sm);margin-bottom:16px"></div>
+        <div class="form-group"><label class="form-label">Full Name</label><input id="register-name" class="form-input" type="text" autocomplete="name" placeholder="Your name"/></div>
+        <div class="form-group"><label class="form-label">Email</label><input id="register-email" class="form-input" type="email" autocomplete="email" placeholder="you@email.com"/></div>
+        <div class="form-group"><label class="form-label">Password</label><input id="register-password" class="form-input" type="password" autocomplete="new-password" placeholder="Min 8 characters" oninput="checkPasswordStrength(this.value)"/>
+          <div style="margin-top:6px;height:3px;background:var(--border);border-radius:2px;overflow:hidden"><div id="pw-strength-bar" style="height:100%;width:0%;transition:width .3s,background .3s;border-radius:2px"></div></div>
+          <div id="pw-strength-lbl" style="font-size:10px;color:var(--g3);margin-top:4px;font-weight:600"></div>
+        </div>
+        <label style="display:flex;align-items:flex-start;gap:10px;margin-bottom:20px;cursor:pointer"><input id="register-terms" type="checkbox" style="margin-top:2px;accent-color:var(--red)"/><span style="font-size:12px;color:var(--g2)">I agree to the <button class="btn-ghost" onclick="goTo('terms')" style="font-size:12px;text-transform:none;letter-spacing:0;color:var(--red)">Terms</button> and <button class="btn-ghost" onclick="goTo('privacy')" style="font-size:12px;text-transform:none;letter-spacing:0;color:var(--red)">Privacy Policy</button></span></label>
+        <button id="register-submit-btn" class="btn-red btn-red-full btn-red-pill" style="padding:16px;margin-bottom:16px" onclick="handleRegister()">Create Account</button>
+        <button class="btn-outline btn-red-full" style="padding:14px;border-radius:var(--r-full);margin-bottom:24px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:13px;font-weight:600;letter-spacing:.02em;text-transform:none" onclick="loginWithGoogle()">
+          <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+            <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/>
+            <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/>
+            <path fill="#FBBC05" d="M3.964 10.707A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.707V4.961H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.039l3.007-2.332z"/>
+            <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.961L3.964 6.293C4.672 4.166 6.656 3.58 9 3.58z"/>
+          </svg>
+          Sign up with Google
+        </button>
+        <div style="text-align:center;font-size:13px;color:var(--g3)">Already have an account? <button class="btn-ghost" onclick="goTo('login')" style="color:var(--red);font-size:13px;text-transform:none;letter-spacing:0">Sign in</button></div>
+      </div>
+    </div>
+    <div class="mob-nav-spacer"></div>
+  </main>
+
+  <!-- PAGE: FORGOT PASSWORD -->
+  <main class="page" id="page-forgot-password" aria-label="Forgot password">
+    <div class="container">
+      <div class="section" style="max-width:440px;margin:0 auto;padding-top:clamp(40px,6vw,80px)">
+        <h1 style="font-size:clamp(28px,4.5vw,42px);font-weight:900;font-style:italic;text-transform:uppercase;text-align:center;margin-bottom:12px">Reset Password</h1>
+        <p style="text-align:center;color:var(--g2);font-size:14px;margin-bottom:32px">Enter your email and we'll send a reset link.</p>
+        <div id="reset-error" style="display:none;background:rgba(215,38,56,.08);border:1px solid rgba(215,38,56,.25);color:var(--red);font-size:12px;font-weight:600;padding:10px 14px;border-radius:var(--r-sm);margin-bottom:16px"></div>
+        <div id="reset-success" style="display:none;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.25);color:var(--green);font-size:12px;font-weight:600;padding:10px 14px;border-radius:var(--r-sm);margin-bottom:16px"></div>
+        <div class="form-group"><label class="form-label">Email</label><input id="reset-email" class="form-input" type="email" placeholder="you@email.com"/></div>
+        <button class="btn-red btn-red-full btn-red-pill" style="padding:16px;margin-bottom:16px" onclick="handlePasswordReset()">Send Reset Link</button>
+        <div style="text-align:center"><button class="btn-ghost" onclick="goTo('login')">Back to Sign In</button></div>
+      </div>
+    </div>
+    <div class="mob-nav-spacer"></div>
+  </main>
+
+  <!-- PAGE: ACCOUNT -->
+  <main class="page" id="page-account" aria-label="My account">
+    <div class="container">
+      <div class="section" style="padding-top:clamp(32px,5vw,56px)">
+        <div id="account-logged-out" style="display:none;text-align:center;padding:48px 0">
+          <div style="font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g3);margin-bottom:20px">Sign in to view your account</div>
+          <button class="btn-red btn-red-pill" onclick="goTo('login')">Sign In</button>
+        </div>
+        <div id="account-logged-in" style="display:none">
+          <div style="display:flex;align-items:center;gap:20px;margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid var(--border)">
+            <div id="account-avatar" style="width:64px;height:64px;border-radius:50%;background:var(--bg-d);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:var(--dark)"></div>
+            <div>
+              <div id="account-name" style="font-size:20px;font-weight:800;margin-bottom:4px"></div>
+              <div id="account-email" style="font-size:13px;color:var(--g3)"></div>
+            </div>
+            <button class="btn-ghost" onclick="logout()" style="margin-left:auto">Sign Out</button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:32px">
+            <div style="background:var(--bg-c);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;cursor:pointer" onclick="goTo('orders')"><div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--g3);margin-bottom:8px">Orders</div><div style="font-size:24px;font-weight:900">→</div></div>
+            <div style="background:var(--bg-c);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;cursor:pointer" onclick="goTo('wishlist')"><div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--g3);margin-bottom:8px">Wishlist</div><div id="acct-wish-count" style="font-size:24px;font-weight:900">0</div></div>
+          </div>
+          <div style="max-width:480px">
+            <div class="form-section-title">Edit Profile</div>
+            <div class="form-group"><label class="form-label">Full Name</label><input id="profile-name" class="form-input" type="text"/></div>
+            <div class="form-group"><label class="form-label">Email</label><input id="profile-email" class="form-input" type="email" disabled style="opacity:.6"/></div>
+            <div id="profile-success" style="display:none;color:var(--green);font-size:12px;font-weight:600;margin-bottom:12px"></div>
+            <button class="btn-red btn-red-pill" onclick="saveProfile()">Save Changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mob-nav-spacer"></div>
+  </main>
+
+  <!-- PAGE: WISHLIST -->
+  <main class="page" id="page-wishlist" aria-label="Wishlist">
+    <div class="container">
+      <div class="section">
+        <div class="section-hdr">
+          <div><h1 class="section-title">Wishlist <span id="wishlist-count" style="font-size:14px;font-weight:500;font-style:normal;color:var(--g3)"></span></h1></div>
+          <button id="share-wishlist-btn" class="section-link" style="display:none" onclick="shareWishlist()"><span class="material-symbols-outlined icon">share</span> Share</button>
+        </div>
+        <div id="wishlist-empty" style="display:none;text-align:center;padding:48px 0">
+          <span class="material-symbols-outlined" style="font-size:48px;color:var(--border);display:block;margin-bottom:16px">favorite_border</span>
+          <div style="font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g3);margin-bottom:20px">Your wishlist is empty</div>
+          <button class="btn-red btn-red-pill" onclick="goTo('shop')">Browse Collection</button>
+        </div>
+        <div id="wishlist-grid" class="product-grid" style="display:none"></div>
+      </div>
+    </div>
+    <div class="mob-nav-spacer"></div>
+  </main>
+
+  <!-- PAGE: COMMUNITY -->
+  <main class="page" id="page-community" aria-label="Community">
+    <div class="container">
+      <div class="section">
+        <div class="section-hdr"><div><div class="eyebrow eyebrow-red" style="margin-bottom:6px">Creator Economy</div><h1 class="section-title">Community</h1></div></div>
+        <div class="creator-grid">
+          <div class="creator-card"><img class="creator-img" src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&q=80" alt="Kira Sato" loading="lazy"/><div class="creator-info"><div class="creator-name">Kira Sato</div><div class="creator-handle">@kirasato.design</div><div class="creator-footer"><div class="creator-drops-lbl"><span>4</span> Drops</div><button class="creator-follow">Follow</button></div></div></div>
+          <div class="creator-card"><img class="creator-img" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&q=80" alt="Zane Mori" loading="lazy"/><div class="creator-info"><div class="creator-name">Zane Mori</div><div class="creator-handle">@zanemori.art</div><div class="creator-footer"><div class="creator-drops-lbl"><span>7</span> Drops</div><button class="creator-follow">Follow</button></div></div></div>
+          <div class="creator-card"><img class="creator-img" src="https://images.unsplash.com/photo-1494790108755-2616b612b130?w=400&q=80" alt="Noe Park" loading="lazy"/><div class="creator-info"><div class="creator-name">Noe Park</div><div class="creator-handle">@noepark.creates</div><div class="creator-footer"><div class="creator-drops-lbl"><span>3</span> Drops</div><button class="creator-follow">Follow</button></div></div></div>
+          <div class="creator-card"><img class="creator-img" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&q=80" alt="Alex Rivera" loading="lazy"/><div class="creator-info"><div class="creator-name">Alex Rivera</div><div class="creator-handle">@alexrivera.mod</div><div class="creator-footer"><div class="creator-drops-lbl"><span>11</span> Drops</div><button class="creator-follow">Follow</button></div></div></div>
+        </div>
+        <div style="margin-top:clamp(40px,6vw,64px)">
+          <div class="section-hdr"><div class="eyebrow eyebrow-muted" style="margin-bottom:6px">Top Earners</div><h2 class="section-title">Leaderboard</h2></div>
+          <div style="border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden">
+            <div class="leaderboard-item"><div style="font-size:20px;font-weight:900;font-style:italic;color:var(--amber);min-width:32px">1</div><div style="display:flex;align-items:center;gap:12px"><div class="lb-avatar" style="width:40px;height:40px;border-radius:50%;background:var(--bg-d);overflow:hidden"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=80&q=80" alt="Alex" style="width:100%;height:100%;object-fit:cover"/></div><div><div class="lb-name" style="font-size:13px;font-weight:800">Alex Rivera</div><div class="lb-handle" style="font-size:11px;color:var(--g3)">@alexrivera.mod</div></div></div><div style="margin-left:auto;text-align:right"><div style="font-size:14px;font-weight:800;color:var(--green)">₹1,24,800</div><div style="font-size:10px;color:var(--g3)">11 drops</div></div></div>
+            <div class="leaderboard-item"><div style="font-size:20px;font-weight:900;font-style:italic;color:var(--g2);min-width:32px">2</div><div style="display:flex;align-items:center;gap:12px"><div class="lb-avatar" style="width:40px;height:40px;border-radius:50%;background:var(--bg-d);overflow:hidden"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&q=80" alt="Zane" style="width:100%;height:100%;object-fit:cover"/></div><div><div class="lb-name" style="font-size:13px;font-weight:800">Zane Mori</div><div class="lb-handle" style="font-size:11px;color:var(--g3)">@zanemori.art</div></div></div><div style="margin-left:auto;text-align:right"><div style="font-size:14px;font-weight:800;color:var(--green)">₹84,200</div><div style="font-size:10px;color:var(--g3)">7 drops</div></div></div>
+            <div class="leaderboard-item"><div style="font-size:20px;font-weight:900;font-style:italic;color:var(--g3);min-width:32px">3</div><div style="display:flex;align-items:center;gap:12px"><div class="lb-avatar" style="width:40px;height:40px;border-radius:50%;background:var(--bg-d);overflow:hidden"><img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=80&q=80" alt="Kira" style="width:100%;height:100%;object-fit:cover"/></div><div><div class="lb-name" style="font-size:13px;font-weight:800">Kira Sato</div><div class="lb-handle" style="font-size:11px;color:var(--g3)">@kirasato.design</div></div></div><div style="margin-left:auto;text-align:right"><div style="font-size:14px;font-weight:800;color:var(--green)">₹52,600</div><div style="font-size:10px;color:var(--g3)">4 drops</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mob-nav-spacer"></div>
+  </main>
+
+  <!-- PAGE: ABOUT -->
+  <main class="page" id="page-about" aria-label="About ModArt">
+    <div class="container">
+      <section style="padding-top:clamp(48px,7vw,88px);padding-bottom:clamp(48px,7vw,80px)">
+        <div class="eyebrow eyebrow-red" style="margin-bottom:12px">Our Story</div>
+        <h1 class="section-title" style="margin-bottom:24px">Built Different.<br>Made In-House.</h1>
+        <p style="font-size:clamp(14px,1.5vw,17px);line-height:1.75;color:var(--g2);max-width:640px;margin-bottom:32px">ModArt is a premium custom garment studio built for creators who refuse to compromise. Every piece is manufactured in-house — no third-party print shops, no quality shortcuts. We own the entire process from blank to box.</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px;margin-bottom:40px">
+          <div style="padding:24px;background:var(--bg-c);border:1px solid var(--border);border-radius:var(--r-lg)"><div style="font-size:32px;font-weight:900;font-style:italic;margin-bottom:6px">600</div><div style="font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--g3)">GSM Supima Cotton</div></div>
+          <div style="padding:24px;background:var(--bg-c);border:1px solid var(--border);border-radius:var(--r-lg)"><div style="font-size:32px;font-weight:900;font-style:italic;margin-bottom:6px">200</div><div style="font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--g3)">Units Per Drop Max</div></div>
+          <div style="padding:24px;background:var(--bg-c);border:1px solid var(--border);border-radius:var(--r-lg)"><div style="font-size:32px;font-weight:900;font-style:italic;margin-bottom:6px">100%</div><div style="font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--g3)">In-House Production</div></div>
+        </div>
+        <button class="btn-red btn-red-pill" onclick="goTo('shop')">Shop the Collection</button>
+      </section>
+    </div>
+    <div class="mob-nav-spacer"></div>
+  </main>
+
+  <!-- PAGE: CONTACT -->
+  <main class="page" id="page-contact" aria-label="Contact">
+    <div class="container">
+      <div class="section" style="padding-top:clamp(48px,7vw,80px);padding-bottom:clamp(60px,8vw,100px)">
+        <div class="eyebrow eyebrow-red" style="margin-bottom:12px">Get In Touch</div>
+        <h1 class="section-title" style="margin-bottom:32px">Contact Us</h1>
+        <div style="max-width:560px">
+          <div id="contact-error" style="display:none;background:rgba(215,38,56,.08);border:1px solid rgba(215,38,56,.25);color:var(--red);font-size:12px;font-weight:600;padding:10px 14px;border-radius:var(--r-sm);margin-bottom:16px"></div>
+          <div id="contact-success" style="display:none;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.25);color:var(--green);font-size:12px;font-weight:600;padding:10px 14px;border-radius:var(--r-sm);margin-bottom:16px"></div>
+          <div class="form-group"><label class="form-label">Name</label><input id="contact-name" class="form-input" type="text" placeholder="Your name"/></div>
+          <div class="form-group"><label class="form-label">Email</label><input id="contact-email" class="form-input" type="email" placeholder="you@email.com"/></div>
+          <div class="form-group"><label class="form-label">Subject</label>
+            <select id="contact-subject" class="form-input">
+              <option value="">Select a topic</option>
+              <option>Order Issue</option>
+              <option>Product Question</option>
+              <option>Creator Partnership</option>
+              <option>Wholesale Inquiry</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group"><label class="form-label">Message</label><textarea id="contact-message" class="form-input" rows="5" placeholder="How can we help?"></textarea></div>
+          <button class="btn-red btn-red-pill" style="padding:16px 32px" onclick="handleContactSubmit()">Send Message</button>
+        </div>
+      </div>
+    </div>
+    <div class="mob-nav-spacer"></div>
+  </main>
+
+  <!-- PAGE: FAQ -->
+  <main class="page" id="page-faq" aria-label="FAQ">
+    <div class="container">
+      <div class="section" style="padding-top:clamp(48px,7vw,80px);padding-bottom:clamp(60px,8vw,100px);max-width:720px;margin:0 auto">
+        <div class="eyebrow eyebrow-red" style="margin-bottom:12px">Help Center</div>
+        <h1 class="section-title" style="margin-bottom:40px">FAQ</h1>
+        <div class="acc-list">
+          <div class="faq-item acc-item"><button class="faq-q acc-hdr" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">How long does production take?<span class="material-symbols-outlined icon">expand_more</span></button><div class="faq-a acc-body">Standard orders ship in 4–6 business days. Express orders ship in 1–2 days. All garments are made-to-order — we don't hold stock.</div></div>
+          <div class="faq-item acc-item"><button class="faq-q acc-hdr" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">What is your return policy?<span class="material-symbols-outlined icon">expand_more</span></button><div class="faq-a acc-body">We accept returns on unworn, unwashed items within 30 days. Custom-designed pieces are non-returnable unless there's a print defect.</div></div>
+          <div class="faq-item acc-item"><button class="faq-q acc-hdr" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">What fabric do you use?<span class="material-symbols-outlined icon">expand_more</span></button><div class="faq-a acc-body">All ModArt garments use 600 GSM 100% Supima cotton. This is significantly heavier than standard streetwear (typically 280–380 GSM), giving a structured, premium feel.</div></div>
+          <div class="faq-item acc-item"><button class="faq-q acc-hdr" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">How do I become a creator?<span class="material-symbols-outlined icon">expand_more</span></button><div class="faq-a acc-body">Create an account, open the Design Studio, upload your artwork, and launch your drop. You earn 15% commission on every sale of your design.</div></div>
+          <div class="faq-item acc-item"><button class="faq-q acc-hdr" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">Do you ship internationally?<span class="material-symbols-outlined icon">expand_more</span></button><div class="faq-a acc-body">Yes — we ship to 40+ countries. International orders typically arrive in 8–14 business days. Customs duties may apply depending on your country.</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="mob-nav-spacer"></div>
+  </main>
+
+  <!-- PAGE: PRIVACY -->
+  <main class="page" id="page-privacy" aria-label="Privacy Policy">
+    <div class="container">
+      <div class="section" style="max-width:720px;margin:0 auto;padding-top:clamp(40px,6vw,72px);padding-bottom:clamp(60px,8vw,100px)">
+        <h1 class="section-title" style="margin-bottom:8px">Privacy Policy</h1>
+        <p style="font-size:12px;color:var(--g3);margin-bottom:32px">Last updated: January 2025</p>
+        <div style="font-size:15px;line-height:1.75;color:var(--g2)">
+          <p style="margin-bottom:20px"><strong style="color:var(--black)">Data We Collect:</strong> We collect your name, email, shipping address, and order history when you make a purchase or create an account. We do not store payment card details — all payments are processed by Stripe or Razorpay.</p>
+          <p style="margin-bottom:20px"><strong style="color:var(--black)">How We Use It:</strong> Your data is used solely to process orders, send shipping updates, and improve your experience. We do not sell your data to third parties.</p>
+          <p style="margin-bottom:20px"><strong style="color:var(--black)">Cookies:</strong> We use essential cookies for session management and optional analytics cookies. You can decline analytics cookies via the cookie banner.</p>
+          <p style="margin-bottom:20px"><strong style="color:var(--black)">Your Rights:</strong> You can request deletion of your account and all associated data at any time by contacting us at privacy@modart.com.</p>
+          <p><strong style="color:var(--black)">Contact:</strong> For privacy concerns, email privacy@modart.com.</p>
+        </div>
+      </div>
+    </div>
+    <div class="mob-nav-spacer"></div>
+  </main>
+
+  <!-- PAGE: TERMS -->
+  <main class="page" id="page-terms" aria-label="Terms and Conditions">
+    <div class="container">
+      <div class="section" style="max-width:720px;margin:0 auto;padding-top:clamp(40px,6vw,72px);padding-bottom:clamp(60px,8vw,100px)">
+        <h1 class="section-title" style="margin-bottom:8px">Terms &amp; Conditions</h1>
+        <p style="font-size:12px;color:var(--g3);margin-bottom:32px">Last updated: January 2025</p>
+        <div style="font-size:15px;line-height:1.75;color:var(--g2)">
+          <p style="margin-bottom:20px"><strong style="color:var(--black)">Products:</strong> All ModArt garments are made-to-order. Once production begins, orders cannot be cancelled. Sizes and colors are as described — minor variations in print placement (±5mm) are within acceptable tolerance.</p>
+          <p style="margin-bottom:20px"><strong style="color:var(--black)">Creator Drops:</strong> Creators retain full rights to their uploaded artwork. By listing a design on ModArt, you grant us a non-exclusive licence to reproduce it on garments sold through the platform. Creator commission is 15% of net revenue per unit sold.</p>
+          <p style="margin-bottom:20px"><strong style="color:var(--black)">Returns:</strong> Unworn items may be returned within 30 days for a full refund. Custom-designed pieces are non-refundable unless defective. Shipping costs for returns are the customer's responsibility.</p>
+          <p><strong style="color:var(--black)">Governing Law:</strong> These terms are governed by the laws of India. Disputes shall be resolved in the courts of Mumbai, Maharashtra.</p>
+        </div>
+      </div>
+    </div>
+    <div class="mob-nav-spacer"></div>
+  </main>
+
+  <!-- PAGE: ADMIN -->
+  <main class="page" id="page-admin" aria-label="Admin">
+    <div id="admin-lock" class="admin-entry" style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg)">
+      <div style="width:100%;max-width:380px;padding:clamp(32px,5vw,48px);background:var(--bg-c);border:1px solid var(--border);border-radius:var(--r-xl);box-shadow:var(--sh-lg)">
+        <div style="text-align:center;margin-bottom:28px">
+          <div style="font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--g3);margin-bottom:8px">ModArt</div>
+          <div style="font-size:20px;font-weight:900;font-style:italic;text-transform:uppercase">Admin Access</div>
+        </div>
+        <div id="admin-login-error" style="display:none;background:rgba(215,38,56,.08);border:1px solid rgba(215,38,56,.25);color:var(--red);font-size:12px;font-weight:600;padding:10px 14px;border-radius:var(--r-sm);margin-bottom:16px"></div>
+        <div class="form-group"><label class="form-label">Email</label><input id="admin-email" class="form-input" type="email" placeholder="admin@modart.co"/></div>
+        <div class="form-group"><label class="form-label">Password</label><input id="admin-password" class="form-input" type="password" placeholder="••••••••"/></div>
+        <button class="btn-red btn-red-full btn-red-pill" style="padding:16px;margin-top:8px" onclick="adminLogin()">Access Dashboard</button>
+      </div>
+    </div>
+    <div id="admin-dashboard" style="display:none;padding:32px;min-height:100vh">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:32px">
+        <div style="font-size:20px;font-weight:900;font-style:italic;text-transform:uppercase">Admin Dashboard</div>
+        <button class="btn-ghost" onclick="goTo('home')">← Back to Site</button>
+      </div>
+      <p style="color:var(--g2)">Full admin panel is in <button class="btn-ghost" onclick="window.open('admin.html','_blank')" style="color:var(--red)">admin.html</button></p>
+    </div>
+  </main>
+
+  <!-- SEARCH OVERLAY -->
+  <div id="search-overlay" style="display:none;position:fixed;inset:0;z-index:2000;background:rgba(247,245,241,.97);flex-direction:column;align-items:center;padding-top:clamp(60px,10vh,100px)">
+    <div style="width:100%;max-width:600px;padding:0 20px">
+      <div style="display:flex;align-items:center;gap:12px;border-bottom:2px solid var(--black);padding-bottom:12px;margin-bottom:24px">
+        <span class="material-symbols-outlined" style="font-size:24px;color:var(--g3)">search</span>
+        <input id="search-input" type="text" placeholder="Search products…" oninput="handleSearch(this.value)" style="flex:1;border:none;background:none;font-family:var(--font);font-size:18px;font-weight:500;color:var(--black);outline:none"/>
+        <button onclick="toggleSearch()" style="background:none;border:none;cursor:pointer;color:var(--g3)"><span class="material-symbols-outlined" style="font-size:24px">close</span></button>
+      </div>
+      <div id="search-results"></div>
+    </div>
+  </div>
+
+  <!-- MODAL (waitlist / sizefinder / ai) -->
+  <div id="modal" style="display:none;position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:20px">
+    <div class="modal-card" style="position:relative;background:var(--white);border-radius:var(--r-xl);padding:clamp(24px,4vw,36px);max-width:480px;width:100%;max-height:90vh;overflow-y:auto">
+      <button class="modal-close" onclick="closeModal()" style="position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;background:var(--bg-c);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer"><span class="material-symbols-outlined icon" style="font-size:18px">close</span></button>
+      <div id="modal-waitlist">
+        <div class="modal-header" style="text-align:center;margin-bottom:24px">
+          <div style="font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--g3);margin-bottom:8px" id="modal-brand-lbl">Modart</div>
+          <div class="modal-title" style="font-size:clamp(20px,3vw,28px);font-weight:900;font-style:italic;text-transform:uppercase;margin-bottom:8px">Get Early Access</div>
+          <div class="modal-subtitle" style="font-size:13px;color:var(--g3)"><span id="modal-spots">347</span> spots remaining</div>
+        </div>
+        <input class="modal-input" type="email" placeholder="your@email.com" style="width:100%;padding:14px 16px;border:1.5px solid var(--border);background:var(--white);font-family:var(--font);font-size:14px;color:var(--black);border-radius:var(--r-sm);outline:none;margin-bottom:14px"/>
+        <button class="btn-red btn-red-full btn-red-pill modal-cta" style="padding:16px" onclick="joinList()">Secure My Spot</button>
+      </div>
+      <div id="modal-sizefinder" style="display:none">
+        <div class="modal-header" style="text-align:center;margin-bottom:24px">
+          <div class="modal-title" style="font-size:clamp(20px,3vw,28px);font-weight:900;font-style:italic;text-transform:uppercase;margin-bottom:8px">Find My Size</div>
+        </div>
+        <div class="form-group"><label class="form-label">Height (cm)</label><input id="sf-height" class="form-input" type="number" placeholder="175"/></div>
+        <div class="form-group"><label class="form-label">Weight (kg)</label><input id="sf-weight" class="form-input" type="number" placeholder="75"/></div>
+        <div class="form-group"><label class="form-label">Preferred Fit</label><select id="sf-fit" class="form-input"><option value="regular">Regular</option><option value="oversized">Oversized</option><option value="slim">Slim</option></select></div>
+        <button class="btn-red btn-red-full btn-red-pill" style="padding:14px;margin-bottom:16px" onclick="calcSize()">Calculate My Size</button>
+        <div id="size-result" style="display:none;text-align:center;padding:16px;background:var(--bg-c);border-radius:var(--r-md)"><div id="size-result-val" style="font-size:36px;font-weight:900;font-style:italic"></div><div id="size-result-sub" style="font-size:12px;color:var(--g3);margin-top:4px"></div></div>
+      </div>
+      <div id="modal-ai" style="display:none">
+        <div class="modal-header" style="text-align:center;margin-bottom:24px">
+          <div class="modal-title" style="font-size:clamp(20px,3vw,28px);font-weight:900;font-style:italic;text-transform:uppercase;margin-bottom:8px">AI Artwork</div>
+          <div class="modal-subtitle" style="font-size:13px;color:var(--g3)">Describe your design idea</div>
+        </div>
+        <textarea id="ai-prompt" class="form-input" rows="3" placeholder="e.g. Cyber samurai in neon Tokyo rain…" style="margin-bottom:14px"></textarea>
+        <button id="ai-cta" class="btn-red btn-red-full btn-red-pill" style="padding:14px;display:flex;align-items:center;justify-content:center;gap:8px" onclick="generateAI()">Generate Artwork <span class="material-symbols-outlined icon">auto_awesome</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- COOKIE BANNER -->
+  <div id="cookie-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:1500;background:var(--white);border-top:1px solid var(--border);padding:16px clamp(16px,4vw,48px);align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;box-shadow:0 -4px 24px rgba(0,0,0,.08)">
+    <p style="font-size:13px;color:var(--g2);max-width:600px">We use cookies to improve your experience. <button class="btn-ghost" onclick="goTo('privacy')" style="font-size:13px;text-transform:none;letter-spacing:0;color:var(--red)">Learn more</button></p>
+    <div style="display:flex;gap:10px">
+      <button class="btn-outline" style="padding:10px 20px;border-radius:var(--r-full)" onclick="declineCookies()">Decline</button>
+      <button class="btn-red btn-red-pill" style="padding:10px 20px" onclick="acceptCookies()">Accept</button>
+    </div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+
+</body>
+</html>

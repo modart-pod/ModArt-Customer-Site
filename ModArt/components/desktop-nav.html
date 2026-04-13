@@ -1,0 +1,49 @@
+<!--
+  Component: Desktop Navigation
+  File: components/desktop-nav.html
+  
+  Description:
+  Primary navigation for desktop viewports (≥768px). Sticky header with logo, 
+  nav links, and action buttons. Hidden on mobile, visible on desktop.
+  
+  CSS Classes:
+  - .desktop-nav: Main container
+  - .desktop-nav-inner: Inner flex container
+  - .nav-logo: Logo button
+  - .nav-links: Navigation links list
+  - .nav-link: Individual nav link
+  - .nav-actions: Right-side action buttons
+  - .nav-icon-btn: Icon buttons (search, wishlist, bag)
+  - .cart-badge: Cart count badge
+  - .customize-nav-btn: Primary CTA button
+  
+  JavaScript:
+  - Controlled by router.js for active state updates
+  - onclick handlers for navigation (goTo function)
+  
+  Responsive:
+  - display: none on mobile (<768px)
+  - display: block on desktop (≥768px)
+-->
+
+<nav class="desktop-nav" aria-label="Main navigation">
+  <div class="container desktop-nav-inner">
+    <button class="nav-logo" onclick="goTo('home')">Modart</button>
+    <ul class="nav-links" role="list">
+      <li><button class="nav-link active" id="nl-home" onclick="goTo('home')">Home</button></li>
+      <li><button class="nav-link" id="nl-shop" onclick="goTo('shop')">Shop</button></li>
+      <li><button class="nav-link" id="nl-drops" onclick="goTo('home')">Drops <span style="background:var(--red);color:#fff;font-size:8px;font-weight:800;padding:2px 6px;border-radius:var(--r-full);margin-left:4px;letter-spacing:.12em;vertical-align:middle">Live</span></button></li>
+      <li><button class="nav-link" id="nl-customize" onclick="goTo('customize')">Customize</button></li>
+      <li><button class="nav-link" id="nl-community" onclick="goTo('community')">Community</button></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="nav-icon-btn" aria-label="Search"><span class="material-symbols-outlined icon">search</span></button>
+      <button class="nav-icon-btn" aria-label="Wishlist"><span class="material-symbols-outlined icon">favorite_border</span></button>
+      <button class="nav-icon-btn" aria-label="Bag" onclick="goTo('bag')" style="position:relative">
+        <span class="material-symbols-outlined icon">shopping_bag</span>
+        <span class="cart-badge" id="cart-badge-desk">3</span>
+      </button>
+      <button class="customize-nav-btn" onclick="goTo('customize')">Create a Drop</button>
+    </div>
+  </div>
+</nav>

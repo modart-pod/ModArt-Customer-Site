@@ -1,0 +1,55 @@
+<!--
+  Component: Mobile Bottom Navigation
+  File: components/mobile-bottom-nav.html
+  
+  Description:
+  Fixed bottom navigation for mobile viewports (<768px). Contains 5 nav items:
+  home, shop, customize, bag, and community. Hidden on desktop and on 
+  customize/admin pages.
+  
+  CSS Classes:
+  - .mobile-bottom-nav: Main navigation container
+  - .mob-nav-item: Individual navigation item
+  - .mob-nav-item.active: Active navigation state
+  - .cart-badge: Cart count badge on bag item
+  
+  JavaScript:
+  - Active state managed by router.js updateNavState()
+  - Hidden on customize and admin pages
+  - onclick handlers for navigation (goTo function)
+  - Cart badge updated by rendering.js
+  
+  Responsive:
+  - display: flex on mobile (<768px)
+  - display: none on desktop (≥768px)
+  - Includes safe-area-inset-bottom for notched devices
+  
+  Accessibility:
+  - ARIA label on navigation container
+  - Semantic button elements for all nav items
+  - Material Icons with text labels for clarity
+-->
+
+<nav class="mobile-bottom-nav" id="mobile-bottom-nav" aria-label="Navigation">
+  <button class="mob-nav-item active" id="mob-nav-home" onclick="goTo('home')">
+    <span class="material-symbols-outlined icon">home</span>
+    Home
+  </button>
+  <button class="mob-nav-item" id="mob-nav-shop" onclick="goTo('shop')">
+    <span class="material-symbols-outlined icon">search</span>
+    Shop
+  </button>
+  <button class="mob-nav-item" id="mob-nav-customize" onclick="goTo('customize')">
+    <span class="material-symbols-outlined icon">palette</span>
+    Create
+  </button>
+  <button class="mob-nav-item" id="mob-nav-bag" onclick="goTo('bag')" style="position:relative">
+    <span class="material-symbols-outlined icon">shopping_bag</span>
+    <span class="cart-badge" id="cart-badge-nav" style="top:6px;right:calc(50% - 18px)">3</span>
+    Bag
+  </button>
+  <button class="mob-nav-item" id="mob-nav-community" onclick="goTo('community')">
+    <span class="material-symbols-outlined icon">group</span>
+    Community
+  </button>
+</nav>

@@ -1,0 +1,119 @@
+<!-- ================================================================
+     MODALS COMPONENT
+     ================================================================
+     
+     This component contains the modal system with three modal types:
+     - Waitlist Modal: Email signup for exclusive drop access
+     - Size Finder Modal: Calculate recommended size based on measurements
+     - AI Generator Modal: Generate custom artwork using AI
+     
+     Features:
+     - Focus trap for accessibility
+     - ESC key and click-outside to close
+     - ARIA labels and semantic markup
+     - Responsive design with mobile-first approach
+     
+     Usage:
+     - openModal('waitlist') - Opens waitlist signup modal
+     - openModal('sizefinder') - Opens size calculation modal  
+     - openModal('ai') - Opens AI artwork generator modal
+     - closeModal() - Closes any open modal
+     
+     ================================================================ -->
+
+<!-- Modal Overlay Container -->
+<div class="modal-overlay" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title-txt">
+  <div class="modal-sheet" id="modal-sheet">
+    
+    <!-- Modal Header -->
+    <div class="modal-hdr">
+      <span class="modal-brand" id="modal-brand-lbl">Modart</span>
+      <button class="modal-close-btn" aria-label="Close" onclick="closeModal()">✕</button>
+    </div>
+    
+    <!-- WAITLIST MODAL -->
+    <div id="modal-waitlist">
+      <div style="width:60px;height:60px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;margin:0 auto 18px">
+        <span class="material-symbols-outlined icon" style="font-size:28px;color:#fff">priority_high</span>
+      </div>
+      <h2 class="modal-title" id="modal-title-txt">Get Exclusive<br>Drop Access</h2>
+      <p class="modal-desc" id="modal-desc-txt">Be first when Drop 02 goes live.</p>
+      <div style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--red);text-align:center;margin-bottom:20px">
+        <span id="modal-spots">347</span> of 500 spots remain
+      </div>
+      <div class="modal-lbl">Email Address</div>
+      <input class="modal-input" id="modal-email" type="email" placeholder="name@domain.com" aria-label="Email address"/>
+      <button class="modal-cta" onclick="joinList()">
+        Join the List 
+        <span class="material-symbols-outlined icon">arrow_forward</span>
+      </button>
+      <div class="modal-privacy">Encrypted. Unsubscribe anytime.</div>
+    </div>
+    
+    <!-- SIZE FINDER MODAL -->
+    <div id="modal-sizefinder" style="display:none">
+      <h2 class="modal-title" id="modal-title-txt">Find Your<br>Perfect Size</h2>
+      <p class="modal-desc">We'll calculate your best fit in seconds.</p>
+      
+      <!-- Size Result Display (hidden by default) -->
+      <div class="modal-result" id="size-result">
+        <div class="modal-result-size" id="size-result-val">M</div>
+        <div class="modal-result-lbl" id="size-result-sub">Recommended Size</div>
+      </div>
+      
+      <!-- Height Input -->
+      <div class="modal-lbl">Height (cm)</div>
+      <input class="modal-input" id="sf-height" type="number" placeholder="175" aria-label="Height in cm"/>
+      
+      <!-- Weight Input -->
+      <div class="modal-lbl">Weight (kg)</div>
+      <input class="modal-input" id="sf-weight" type="number" placeholder="75" aria-label="Weight in kg"/>
+      
+      <!-- Fit Preference -->
+      <div class="modal-lbl">Preferred Fit</div>
+      <select class="modal-select" id="sf-fit" aria-label="Preferred fit">
+        <option value="oversized">Oversized</option>
+        <option value="regular">Regular</option>
+        <option value="slim">Slim</option>
+      </select>
+      
+      <!-- Calculate Button -->
+      <button class="modal-cta" onclick="calcSize()">
+        Calculate My Size 
+        <span class="material-symbols-outlined icon">auto_awesome</span>
+      </button>
+    </div>
+    
+    <!-- AI GENERATOR MODAL -->
+    <div id="modal-ai" style="display:none">
+      <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--red),#ff6b6b);display:flex;align-items:center;justify-content:center;margin:0 auto 18px">
+        <span class="material-symbols-outlined icon" style="font-size:28px;color:#fff">auto_awesome</span>
+      </div>
+      <h2 class="modal-title">AI Anime<br>Generator</h2>
+      <p class="modal-desc">Describe your design. We'll generate the artwork and fit it to your piece.</p>
+      
+      <!-- Design Description Input -->
+      <div class="modal-lbl">Describe your design</div>
+      <input class="modal-input" id="ai-prompt" type="text" placeholder="Cyber samurai with red aura..." aria-label="Design description"/>
+      
+      <!-- Style Selection -->
+      <div class="modal-lbl" style="margin-top:4px">Style</div>
+      <select class="modal-select" id="ai-style" aria-label="Art style">
+        <option>Anime / Manga</option>
+        <option>Cyberpunk</option>
+        <option>Minimalist</option>
+        <option>Grunge / Distressed</option>
+        <option>Geometric</option>
+      </select>
+      
+      <!-- Generate Button -->
+      <button class="modal-cta" onclick="generateAI()" id="ai-cta">
+        Generate Artwork 
+        <span class="material-symbols-outlined icon">auto_awesome</span>
+      </button>
+      
+      <div class="modal-privacy">AI-generated art is royalty-free for your use.</div>
+    </div>
+    
+  </div>
+</div>

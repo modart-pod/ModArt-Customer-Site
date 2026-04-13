@@ -1,0 +1,135 @@
+<!-- ================================================================
+     CUSTOMIZER TOOLS PANEL COMPONENT
+     Left sidebar with design tools and controls
+     ================================================================ -->
+
+<!-- LEFT: Tools panel -->
+<div class="customizer-tools-col">
+
+  <!-- Product picker -->
+  <div class="tool-section">
+    <div class="tool-section-title">Product</div>
+    <select class="form-input" style="padding:12px 14px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:0" onchange="changeCustProduct(this.value)" aria-label="Product">
+      <option value="hoodie">Vanta Hoodie — $240</option>
+      <option value="tee">Vanta Black Tee — $120</option>
+      <option value="cargo">Grid Cargo Pants — $175</option>
+    </select>
+  </div>
+
+  <!-- Colour picker -->
+  <div class="tool-section">
+    <div class="tool-section-title">Colour</div>
+    <div class="color-swatches">
+      <div class="color-swatch sel" style="background:#1a1a1a" title="Black" onclick="selectColour(this,'#1a1a1a','https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=600&q=80')"></div>
+      <div class="color-swatch" style="background:#f7f5f1;border:1.5px solid #e2dfd8" title="White" onclick="selectColour(this,'#f7f5f1','https://images.unsplash.com/photo-1621072156002-e2fccdc0b176?w=600&q=80')"></div>
+      <div class="color-swatch" style="background:#D72638" title="Red" onclick="selectColour(this,'#D72638','https://images.unsplash.com/photo-1543508282-6319a3e2621f?w=600&q=80')"></div>
+      <div class="color-swatch" style="background:#2d3a4a" title="Navy" onclick="selectColour(this,'#2d3a4a','https://images.unsplash.com/photo-1554568218-0f1715e72254?w=600&q=80')"></div>
+      <div class="color-swatch" style="background:#4a3728" title="Mocha" onclick="selectColour(this,'#4a3728','https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=600&q=80')"></div>
+    </div>
+  </div>
+
+  <!-- Print zone -->
+  <div class="tool-section">
+    <div class="tool-section-title">Print Zone</div>
+    <div class="zone-picker">
+      <button class="zone-btn active" onclick="selectZone(this,'front')">Front</button>
+      <button class="zone-btn" onclick="selectZone(this,'back')">Back</button>
+      <button class="zone-btn" onclick="selectZone(this,'sleeve')">Sleeve</button>
+    </div>
+  </div>
+
+  <!-- Upload / AI -->
+  <div class="tool-section">
+    <div class="tool-section-title">Add Design</div>
+    <div class="tool-btns-row">
+      <label class="tool-btn" style="cursor:pointer">
+        <span class="material-symbols-outlined icon">upload</span>
+        <span class="tool-btn-lbl">Upload</span>
+        <input type="file" accept="image/*" style="display:none" onchange="uploadDesign(this)" aria-label="Upload image"/>
+      </label>
+      <button class="tool-btn" onclick="openModal('ai')">
+        <span class="material-symbols-outlined icon">auto_awesome</span>
+        <span class="tool-btn-lbl">AI Generate</span>
+      </button>
+      <button class="tool-btn" onclick="addTextLayer()">
+        <span class="material-symbols-outlined icon">title</span>
+        <span class="tool-btn-lbl">Add Text</span>
+      </button>
+    </div>
+  </div>
+  <!-- Text tool (shown when text active) -->
+  <div class="text-tool-panel" id="text-tool-panel" style="display:none">
+    <div class="text-tool-title">Text Tool</div>
+    <input class="text-input" id="text-tool-input" type="text" placeholder="Your text here..." oninput="updateTextLayer(this.value)" aria-label="Design text"/>
+    <div class="tool-section-title" style="margin-bottom:8px">Font</div>
+    <div class="font-options">
+      <button class="font-btn sel" onclick="selFont(this,'Space Grotesk')">Grotesk</button>
+      <button class="font-btn" onclick="selFont(this,'serif')">Serif</button>
+      <button class="font-btn" onclick="selFont(this,'monospace')">Mono</button>
+    </div>
+    <div class="color-swatches" style="margin-top:12px">
+      <div class="color-swatch sel" style="background:#fff;border:1.5px solid #e2dfd8" title="White" onclick="selTextColor(this,'#fff')"></div>
+      <div class="color-swatch" style="background:#111" title="Black" onclick="selTextColor(this,'#111')"></div>
+      <div class="color-swatch" style="background:#D72638" title="Red" onclick="selTextColor(this,'#D72638')"></div>
+      <div class="color-swatch" style="background:#F59E0B" title="Gold" onclick="selTextColor(this,'#F59E0B')"></div>
+    </div>
+  </div>
+
+  <!-- Transform sliders -->
+  <div class="tool-section" id="transform-section" style="display:none">
+    <div class="tool-section-title">Transform</div>
+    <div class="tool-slider-group">
+      <div class="tool-slider-row"><span class="tool-slider-lbl">Scale</span><span class="tool-slider-val" id="scale-val">100%</span></div>
+      <input type="range" class="tool-slider" id="scale-slider" min="20" max="200" value="100" oninput="applyTransform()" aria-label="Scale"/>
+    </div>
+    <div class="tool-slider-group">
+      <div class="tool-slider-row"><span class="tool-slider-lbl">Rotation</span><span class="tool-slider-val" id="rot-val">0°</span></div>
+      <input type="range" class="tool-slider" id="rot-slider" min="-180" max="180" value="0" oninput="applyTransform()" aria-label="Rotation"/>
+    </div>
+    <div class="tool-slider-group">
+      <div class="tool-slider-row"><span class="tool-slider-lbl">Opacity</span><span class="tool-slider-val" id="opacity-val">100%</span></div>
+      <input type="range" class="tool-slider" id="opacity-slider" min="10" max="100" value="100" oninput="applyTransform()" aria-label="Opacity"/>
+    </div>
+    <button class="btn-outline" style="width:100%;padding:10px;font-size:10px" onclick="centerLayer()" aria-label="Center design">
+      <span class="material-symbols-outlined icon" style="font-size:16px">center_focus_strong</span> Auto-Center
+    </button>
+  </div>
+  <!-- Quality meter -->
+  <div class="quality-meter" id="quality-section" style="display:none">
+    <div class="quality-meter-title">Print Quality</div>
+    <div class="quality-bar-track">
+      <div class="quality-bar-fill" id="quality-bar" style="width:0%;background:var(--border)"></div>
+    </div>
+    <div class="quality-status-row">
+      <div style="display:flex;align-items:center;gap:6px">
+        <div class="quality-status-dot" id="quality-dot" style="background:var(--border)"></div>
+        <span class="quality-status-lbl" id="quality-lbl" style="color:var(--g3)">Upload to check</span>
+      </div>
+      <span style="font-size:10px;color:var(--g3);font-weight:600;letter-spacing:.06em;text-transform:uppercase" id="quality-dpi">— DPI</span>
+    </div>
+  </div>
+
+  <!-- Live cost engine -->
+  <div class="cost-engine">
+    <div class="cost-engine-title">Live Pricing</div>
+    <div class="cost-rows">
+      <div class="cost-row"><span class="cost-row-lbl">Base Product</span><span class="cost-row-val" id="cost-base">$240.00</span></div>
+      <div class="cost-row" id="cost-print-row" style="display:none"><span class="cost-row-lbl">Print Upgrade</span><span class="cost-row-val cost-row-val-add" id="cost-print">+$0</span></div>
+      <div class="cost-row" id="cost-zone-row" style="display:none"><span class="cost-row-lbl">Extra Zone</span><span class="cost-row-val cost-row-val-add" id="cost-zone">+$15</span></div>
+    </div>
+    <hr class="cost-divider"/>
+    <div class="cost-total-row">
+      <span class="cost-total-lbl">Total</span>
+      <span class="cost-total-val" id="cost-total">$240.00</span>
+    </div>
+    <div class="prod-time-row">
+      <span class="material-symbols-outlined prod-time-icon">schedule</span>
+      <span class="prod-time-txt">Ships in 4–6 days</span>
+    </div>
+  </div>
+
+  <button class="btn-red btn-red-full" style="padding:16px;border-radius:var(--r-full)" onclick="addCustToCart()">
+    Add to Bag — <span id="cost-total-btn">$240.00</span>
+  </button>
+
+</div>

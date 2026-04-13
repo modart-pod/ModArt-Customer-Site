@@ -1,0 +1,333 @@
+/**
+ * ModArt Orders Module
+ * Creates, fetches, and updates orders in Supabase.
+ */
+
+import { supabase, currentUser } from './auth.js';
+import { cart }                  from './state.js';
+import { decrementStock, validateCartStock } from './products.js';
+
+const EMAIL_FN_URL = '/api/send-order-email';
+
+/** Sanitize a string for safe innerHTML insertion */
+function esc(str) {
+  return String(str ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+/**
+ * Sends an order-related email via the Netlify serverless function.
+ * Never throws — failures are silent so they don't break the order flow.
+ */
+export async function sendOrderEmail(payload) {
+  try {
+    const res = await fetch(EMAIL_FN_URL, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload),
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Creates a new order in Supabase from the current cart.
+ * Validates stock before inserting.
+ * Returns { orderId, orderNumber, total, error }
+ */
+export async function createOrder(shippingAddress, paymentMethod = 'cod') {
+  try {
+    // ── Stock validation before order creation ──────────────────
+    const stockCheck = validateCartStock(cart.items);
+    if (!stockCheck.valid) {
+      return { orderId: null, orderNumber: null, total: 0, error: stockCheck.message };
+    }
+
+    const items = cart.items.map(item => ({
+      productId: item.productId,
+      size:      item.size,
+      qty:       item.qty,
+      price:     window._PRODUCTS?.find(p => p.id === item.productId)?.price || 0,
+      name:      window._PRODUCTS?.find(p => p.id === item.productId)?.name  || item.productId,
+    }));
+
+    const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0);
+    const shipping = subtotal >= 2499 ? 0 : 149;
+    const total    = subtotal + shipping;
+    const orderNum = 'MA-' + Date.now().toString().slice(-8);
+
+    const payload = {
+      order_number:     orderNum,
+      user_id:          currentUser?.id || null,
+      guest_email:      currentUser ? null : shippingAddress.email,
+      items:            JSON.stringify(items),
+      shipping_address: JSON.stringify(shippingAddress),
+      subtotal_inr:     subtotal,
+      shipping_inr:     shipping,
+      total_inr:        total,
+      status:           'pending',
+      payment_method:   paymentMethod,
+    };
+
+    const { data, error } = await supabase.from('orders').insert(payload).select().single();
+    if (error) throw error;
+    return { orderId: data.id, orderNumber: data.order_number, total, error: null };
+  } catch (e) {
+    return { orderId: null, orderNumber: null, total: 0, error: e.message };
+  }
+}
+
+/**
+ * Confirms an order after successful payment.
+ * Updates status, decrements inventory, sends confirmation email.
+ */
+export async function confirmOrder(orderId, paymentId = 'COD') {
+  try {
+    const { data: order, error: fetchErr } = await supabase
+      .from('orders').select('*').eq('id', orderId).single();
+    if (fetchErr) throw fetchErr;
+
+    const { error: updateErr } = await supabase
+      .from('orders')
+      .update({ status: 'confirmed', payment_id: paymentId, updated_at: new Date().toISOString() })
+      .eq('id', orderId);
+    if (updateErr) throw updateErr;
+
+    const items = JSON.parse(order.items || '[]');
+    for (const item of items) {
+      await decrementStock(item.productId, item.size, item.qty);
+    }
+
+    cart.items = [];
+    cart.sync();
+    return { success: true, order };
+  } catch (e) {
+    return { success: false, error: e.message };
+  }
+}
+
+/**
+ * Fetches all orders for the current logged-in user.
+ */
+export async function fetchUserOrders() {
+  if (!currentUser) return [];
+  try {
+    const { data, error } = await supabase
+      .from('orders')
+      .select('*')
+      .eq('user_id', currentUser.id)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  } catch (e) {
+    console.warn('Orders fetch failed:', e.message);
+    return [];
+  }
+}
+
+/**
+ * Updates order status (for admin use).
+ * Sends tracking email when status → 'dispatched'.
+ */
+export async function updateOrderStatus(orderId, status, extra = {}) {
+  try {
+    const { error } = await supabase
+      .from('orders')
+      .update({ status, updated_at: new Date().toISOString(), ...extra })
+      .eq('id', orderId);
+    if (error) throw error;
+
+    if (status === 'dispatched' && extra.tracking_number) {
+      const { data: order } = await supabase
+        .from('orders').select('*').eq('id', orderId).single();
+      if (order) {
+        // Get recipient email from guest_email or shipping address
+        const addr = (() => { try { return JSON.parse(order.shipping_address || '{}'); } catch { return {}; } })();
+        const recipientEmail = order.guest_email || addr.email || null;
+        if (recipientEmail) {
+          sendOrderEmail({
+            type:            'tracking_update',
+            to:              recipientEmail,
+            orderNumber:     order.order_number,
+            trackingNumber:  extra.tracking_number,
+            courier:         extra.courier || '',
+            shippingAddress: addr,
+          }).catch(() => {});
+        }
+      }
+    }
+
+    return { success: true };
+  } catch (e) {
+    return { success: false, error: e.message };
+  }
+}
+
+/**
+ * Renders the orders page with real Supabase data.
+ */
+export async function renderOrdersPage() {
+  const loadingEl   = document.getElementById('orders-loading');
+  const emptyEl     = document.getElementById('orders-empty');
+  const listEl      = document.getElementById('orders-list');
+  const loggedOutEl = document.getElementById('orders-logged-out');
+  if (!loadingEl) return;
+
+  if (!currentUser) {
+    loadingEl.style.display   = 'none';
+    if (loggedOutEl) loggedOutEl.style.display = 'block';
+    return;
+  }
+
+  const orders = await fetchUserOrders();
+  loadingEl.style.display = 'none';
+
+  if (orders.length === 0) {
+    if (emptyEl) emptyEl.style.display = 'block';
+    return;
+  }
+
+  if (listEl) listEl.style.display = 'flex';
+
+  const STATUS_STEPS  = { pending:0, confirmed:1, processing:1, packed:2, dispatched:3, delivered:4 };
+  const STATUS_LABELS = { pending:'Pending', confirmed:'Confirmed', processing:'In Production', packed:'Packed', dispatched:'Dispatched', delivered:'Delivered' };
+  const STATUS_COLORS = { pending:'var(--g3)', confirmed:'#F59E0B', processing:'#F59E0B', packed:'#F59E0B', dispatched:'var(--red)', delivered:'#22C55E' };
+  const STEPS         = ['Placed','Confirmed','Packed','Dispatched','Delivered'];
+
+  if (listEl) {
+    listEl.innerHTML = orders.map(order => {
+      const items = (() => { try { return JSON.parse(order.items || '[]'); } catch { return []; } })();
+      const step  = STATUS_STEPS[order.status] ?? 0;
+      const total = window.formatPrice ? window.formatPrice(order.total_inr) : '₹' + order.total_inr;
+      const date  = new Date(order.created_at).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
+      // Use esc() for all user-supplied data to prevent XSS
+      return `<div class="order-card">
+        <div class="order-card-hdr">
+          <div class="order-card-status" style="color:${STATUS_COLORS[order.status]||'var(--g2)'}">${esc(STATUS_LABELS[order.status]||order.status)}</div>
+          <div class="order-card-num">${esc(order.order_number)}</div>
+          <div class="order-card-meta">${esc(date)} · ${items.length} item${items.length!==1?'s':''} · ${esc(total)}</div>
+        </div>
+        <div class="tracking-stepper">
+          <div class="stepper-track"><div class="stepper-fill" style="width:${(step/(STEPS.length-1))*100}%"></div></div>
+          <div class="stepper-nodes">${STEPS.map((s,i)=>`<div class="stepper-node"><div class="stepper-dot ${i<step?'done':i===step?'active':''}"></div><span class="stepper-lbl ${i<step?'done':i===step?'active':''}">${esc(s)}</span></div>`).join('')}</div>
+        </div>
+        ${order.tracking_number?`<div style="padding:12px 0;font-size:12px;color:var(--g2);border-top:1px solid var(--border);margin-top:4px"><span style="font-weight:700;color:var(--black)">Tracking:</span> ${order.courier?esc(order.courier)+' — ':''}${esc(order.tracking_number)}</div>`:''}
+        <div style="display:flex;flex-wrap:wrap;gap:8px;padding:12px 0 4px;border-top:1px solid var(--border)">
+          ${items.slice(0,3).map(item=>`<div style="font-size:11px;background:var(--bg-c);padding:4px 10px;border-radius:var(--r-full);color:var(--g1);font-weight:600">${esc(item.name)} · ${esc(item.size)}</div>`).join('')}
+          ${items.length>3?`<div style="font-size:11px;color:var(--g3);padding:4px 0">+${items.length-3} more</div>`:''}
+        </div>
+      </div>`;
+    }).join('');
+  }
+}
+
+/**
+ * Validates checkout form fields.
+ * Returns { valid: true } or { valid: false, message: string }
+ */
+function validateCheckoutForm(fullName, email, street, city, postal) {
+  if (!fullName || fullName.length < 2)
+    return { valid: false, message: 'Please enter your full name.' };
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+    return { valid: false, message: 'Please enter a valid email address.' };
+  if (!street || street.length < 5)
+    return { valid: false, message: 'Please enter a valid street address.' };
+  if (!city || city.length < 2)
+    return { valid: false, message: 'Please enter your city.' };
+  if (!postal || !/^\d{6}$/.test(postal))
+    return { valid: false, message: 'Please enter a valid 6-digit PIN code.' };
+  return { valid: true };
+}
+
+/**
+ * Handles checkout form submission and creates a real COD order.
+ */
+export async function handleCheckoutSubmit() {
+  const btn = document.getElementById('pay-now-btn');
+  if (btn) { btn.textContent = 'Placing order…'; btn.disabled = true; }
+
+  const fullName = document.querySelector('#page-checkout input[autocomplete="name"]')?.value?.trim()
+                || document.querySelector('#page-checkout .form-section input[type="text"]')?.value?.trim();
+  const email    = document.querySelector('#page-checkout input[type="email"]')?.value?.trim();
+  const street   = document.querySelectorAll('#page-checkout .form-section input[type="text"]')[1]?.value?.trim();
+  const city     = document.querySelector('#page-checkout .form-row-2 input:first-child')?.value?.trim();
+  const postal   = document.querySelector('#page-checkout .form-row-2 input:last-child')?.value?.trim();
+  const country  = document.querySelector('#page-checkout select')?.value;
+  const shipping = document.querySelector('input[name="shipping"]:checked')?.value || 'standard';
+
+  // Validate form
+  const formCheck = validateCheckoutForm(fullName, email, street, city, postal);
+  if (!formCheck.valid) {
+    if (btn) { btn.textContent = 'Pay Now'; btn.disabled = false; }
+    alert(formCheck.message);
+    return;
+  }
+
+  // Validate cart is not empty
+  if (cart.items.length === 0) {
+    if (btn) { btn.textContent = 'Pay Now'; btn.disabled = false; }
+    alert('Your cart is empty.');
+    return;
+  }
+
+  const shippingAddress = { fullName, email, street, city, postal, country, shippingMethod: shipping };
+  const { orderId, orderNumber, total, error } = await createOrder(shippingAddress, 'cod');
+
+  if (error) {
+    if (btn) { btn.textContent = 'Pay Now'; btn.disabled = false; }
+    alert('Could not place order: ' + error);
+    return;
+  }
+
+  const { success, error: confirmError, order } = await confirmOrder(orderId, 'COD');
+  if (!success) {
+    if (btn) { btn.textContent = 'Pay Now'; btn.disabled = false; }
+    alert('Order placed but confirmation failed: ' + confirmError);
+    return;
+  }
+
+  // Send order confirmation email (non-blocking)
+  sendOrderEmail({
+    type:            'order_confirmation',
+    to:              shippingAddress.email,
+    orderNumber,
+    items:           order?.items ? JSON.parse(order.items) : [],
+    total,
+    shippingAddress,
+  }).catch(() => {});
+
+  sessionStorage.setItem('modart_last_order', JSON.stringify({ orderNumber, total, items: cart.items }));
+  if (btn) { btn.textContent = 'Pay Now'; btn.disabled = false; }
+  window.goTo && window.goTo('confirmation');
+}
+
+/**
+ * Renders the confirmation page with the real order number from sessionStorage.
+ */
+export function renderConfirmationPage() {
+  const badge  = document.getElementById('confirmation-order-badge');
+  const stored = sessionStorage.getItem('modart_last_order');
+  if (!badge || !stored) return;
+  try {
+    const { orderNumber, total, items } = JSON.parse(stored);
+    const fmt = window.formatPrice ? window.formatPrice(total) : '₹' + total;
+    // Use textContent to avoid XSS
+    badge.textContent = `${orderNumber} · ${items?.length||0} item${(items?.length||0)!==1?'s':''} · ${fmt}`;
+  } catch (e) { /* keep static fallback */ }
+}
+
+if (typeof window !== 'undefined') {
+  window.createOrder            = createOrder;
+  window.confirmOrder           = confirmOrder;
+  window.fetchUserOrders        = fetchUserOrders;
+  window.updateOrderStatus      = updateOrderStatus;
+  window.renderOrdersPage       = renderOrdersPage;
+  window.handleCheckoutSubmit   = handleCheckoutSubmit;
+  window.renderConfirmationPage = renderConfirmationPage;
+}

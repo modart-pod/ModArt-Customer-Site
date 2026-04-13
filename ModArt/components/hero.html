@@ -1,0 +1,27 @@
+<!-- ================================================================
+     HERO COMPONENT
+     ================================================================ -->
+<section class="home-hero">
+  <img class="home-hero-img" src="https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=1800&q=85" alt="ModArt campaign" loading="eager"/>
+  <div class="home-hero-overlay" aria-hidden="true"></div>
+  <div class="home-hero-content">
+    <div class="hero-badge"><span class="material-symbols-outlined icon">local_fire_department</span> Drop 02 — Live Now</div>
+    <h1 class="hero-title">The<br>Custom<br>Garment<br>Studio</h1>
+    <p class="hero-sub">Design your own limited drop. Wear art that means something. Built for creators, worn by culture.</p>
+    <div class="hero-actions">
+      <button class="btn-red btn-red-pill" onclick="goTo('customize')">Create Your Drop <span class="material-symbols-outlined icon" style="font-size:16px">arrow_forward</span></button>
+      <button class="btn-outline" style="color:rgba(255,255,255,.8);border-color:rgba(255,255,255,.22)" onclick="goTo('shop')">Browse Collection</button>
+    </div>
+    <div class="live-orders-ticker">
+      <strong id="live-count">27</strong> orders in the last 3 hours · Only <strong id="drop-stock">12</strong> left in this batch
+    </div>
+    <div class="hero-countdown" aria-label="Drop timer">
+      <span class="hero-cd-label">Drop Closes</span>
+      <div class="hero-cd-timer">
+        <span class="hero-cd-unit" id="h-h">02</span><span class="hero-cd-colon">:</span>
+        <span class="hero-cd-unit" id="h-m">45</span><span class="hero-cd-colon">:</span>
+        <span class="hero-cd-unit hero-cd-unit-sec" id="h-s">18</span>
+      </div>
+    </div>
+  </div>
+</section>

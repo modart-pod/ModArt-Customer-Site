@@ -1,0 +1,28 @@
+<!-- ================================================================
+     CUSTOMIZER CANVAS COMPONENT
+     Interactive design canvas with drag-and-drop layers
+     ================================================================ -->
+
+<!-- CENTRE: Canvas -->
+<div class="customizer-canvas-col" id="canvas-col">
+  <div class="canvas-wrap" id="canvas-wrap">
+    <img class="canvas-product" id="canvas-product-img" src="https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=700&q=85" alt="Product canvas" loading="eager" draggable="false"/>
+    
+    <!-- Print zones -->
+    <div class="print-zone front-zone" id="zone-front" aria-label="Front print zone">
+      <span class="print-zone-label">Front Print Area</span>
+    </div>
+    <div class="print-zone back-zone" id="zone-back" aria-label="Back print zone">
+      <span class="print-zone-label">Back Print Area</span>
+    </div>
+    <div class="print-zone sleeve-zone" id="zone-sleeve" aria-label="Sleeve print zone">
+      <span class="print-zone-label">Sleeve</span>
+    </div>
+    
+    <!-- Design layers are injected here via JS -->
+  </div>
+  
+  <div style="margin-top:14px;text-align:center">
+    <div style="font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--g3)" aria-live="polite" id="canvas-tip">Upload or generate your artwork to begin</div>
+  </div>
+</div>

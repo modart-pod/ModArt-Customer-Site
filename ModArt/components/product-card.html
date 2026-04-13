@@ -1,0 +1,93 @@
+<!-- 
+  Product Card Component
+  
+  Reusable product display card with all variants and interactive elements.
+  Used by rendering.js to dynamically generate product grids.
+  
+  Template Variables (replaced by rendering.js):
+  - {{id}}: Product identifier
+  - {{name}}: Product name
+  - {{series}}: Product series/collection
+  - {{price}}: Price in dollars
+  - {{img}}: Image URL
+  - {{stock}}: Stock quantity
+  - {{badge}}: Badge text (optional)
+  - {{sold}}: Boolean - product is sold out
+  - {{low}}: Boolean - low stock (≤5 items)
+  - {{wish}}: Boolean - in wishlist
+  
+  Variants:
+  - Badge types: default (red), .badge-sold (black), .badge-low (red with opacity)
+  - Stock states: sold out, low stock, in stock
+  - Wishlist states: wishlisted, not wishlisted
+-->
+
+<div class="product-card" onclick="window.goTo && window.goTo('product')" role="article" aria-label="{{name}}">
+  <div class="product-card-img">
+    <img src="{{img}}" alt="{{name}}" loading="lazy"/>
+    
+    <!-- Badge (conditional) -->
+    <!-- Rendered when product has badge property -->
+    <div class="product-card-badge{{badgeClass}}">{{badge}}</div>
+    
+    <!-- Overlay with interactive buttons -->
+    <div class="product-card-overlay">
+      <button class="card-quick-cta" onclick="event.stopPropagation();window.goTo && window.goTo('customize')">Customize</button>
+      <button class="wishlist-icon-btn{{wishClass}}" aria-label="Wishlist {{name}}" onclick="event.stopPropagation();window.toggleWishlist && window.toggleWishlist('{{id}}',this)">
+        <span class="material-symbols-outlined icon">{{wishIcon}}</span>
+      </button>
+    </div>
+  </div>
+  
+  <!-- Product Information -->
+  <div class="product-card-series">{{series}}</div>
+  <div class="product-card-name">{{name}}</div>
+  
+  <!-- Footer with price and scarcity -->
+  <div class="product-card-footer">
+    <div class="product-card-price">{{priceDisplay}}</div>
+    {{scarcityDisplay}}
+  </div>
+</div>
+
+<!-- 
+  CSS Classes Reference:
+  
+  .product-card - Main container with hover effects
+  .product-card-img - Image container with aspect ratio 3:4
+  .product-card-overlay - Hover overlay with buttons (opacity 0 → 1)
+  .product-card-badge - Top-left badge (red background)
+    .badge-sold - Black background for sold out items
+    .badge-low - Red with opacity for low stock items
+  .product-card-series - Small uppercase series text
+  .product-card-name - Bold uppercase product name
+  .product-card-footer - Flex container for price and scarcity
+  .product-card-price - Price display with strikethrough for sold items
+  .product-card-scarcity - Red text for "Only X Left" message
+  .card-quick-cta - Customize button with glass effect
+  .wishlist-icon-btn - Heart icon button
+    .wishlisted - Red color when in wishlist
+  
+  JavaScript Integration:
+  
+  This template is used by renderProducts() in rendering.js:
+  1. Template variables are replaced with actual product data
+  2. Conditional elements (badge, scarcity) are added based on stock
+  3. Event handlers are attached for navigation and wishlist actions
+  4. Accessibility attributes are populated with product information
+  
+  Example Usage in rendering.js:
+  
+  const productHTML = template
+    .replace('{{id}}', product.id)
+    .replace('{{name}}', product.name)
+    .replace('{{series}}', product.series)
+    .replace('{{price}}', product.price)
+    .replace('{{img}}', product.img)
+    .replace('{{badge}}', product.badge || '')
+    .replace('{{badgeClass}}', getBadgeClass(product))
+    .replace('{{wishClass}}', wishlist.has(product.id) ? ' wishlisted' : '')
+    .replace('{{wishIcon}}', wishlist.has(product.id) ? 'favorite' : 'favorite_border')
+    .replace('{{priceDisplay}}', getPriceDisplay(product))
+    .replace('{{scarcityDisplay}}', getScarcityDisplay(product));
+-->
