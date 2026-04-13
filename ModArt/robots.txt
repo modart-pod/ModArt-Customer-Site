@@ -2,5 +2,5 @@ User-agent: *
 Allow: /
 Disallow: /admin.html
 Disallow: /admin
-Disallow: /*.json$
-Sitemap: https://modart-site.netlify.app/sitemap.xml
+Disallow: /api/
+Sitemap: https://mod-art-customer-site.vercel.app/sitemap.xml

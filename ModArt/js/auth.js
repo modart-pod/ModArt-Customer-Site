@@ -60,7 +60,7 @@ export async function loginWithGoogle() {
   if (!supabase) { showAuthError('google-error', 'Auth service unavailable'); return; }
   const { error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
-    options: { redirectTo: window.location.origin }
+    options: { redirectTo: 'https://mod-art-customer-site.vercel.app' }
   });
   if (error) showAuthError('google-error', error.message);
 }
