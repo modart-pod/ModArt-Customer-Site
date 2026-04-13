@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin.html
 Disallow: /admin
 Disallow: /api/
-Sitemap: https://mod-art-customer-site.vercel.app/sitemap.xml
+Sitemap: https://modart-print-on-demand.vercel.app/sitemap.xml
