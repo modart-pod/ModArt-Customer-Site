@@ -60,7 +60,7 @@ export async function loginWithGoogle() {
   if (!supabase) { showAuthError('google-error', 'Auth service unavailable'); return; }
   const { error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
-    options: { redirectTo: 'https://modart-print-on-demand.vercel.app' }
+    options: { redirectTo: window.location.origin }
   });
   if (error) showAuthError('google-error', error.message);
 }
