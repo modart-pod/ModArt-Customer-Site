@@ -252,14 +252,17 @@ export async function handleCheckoutSubmit() {
   const btn = document.getElementById('pay-now-btn');
   if (btn) { btn.textContent = 'Placing order…'; btn.disabled = true; }
 
-  const fullName = document.querySelector('#page-checkout input[autocomplete="name"]')?.value?.trim()
-                || document.querySelector('#page-checkout .form-section input[type="text"]')?.value?.trim();
-  const email    = document.querySelector('#page-checkout input[type="email"]')?.value?.trim();
-  const street   = document.querySelectorAll('#page-checkout .form-section input[type="text"]')[1]?.value?.trim();
-  const city     = document.querySelector('#page-checkout .form-row-2 input:first-child')?.value?.trim();
-  const postal   = document.querySelector('#page-checkout .form-row-2 input:last-child')?.value?.trim();
-  const country  = document.querySelector('#page-checkout select')?.value;
-  const shipping = document.querySelector('input[name="shipping"]:checked')?.value || 'standard';
+  // Use stable selectors matching the actual checkout form HTML structure
+  const allTextInputs = document.querySelectorAll('#page-checkout .form-section input[type="text"]');
+  const formRowInputs = document.querySelectorAll('#page-checkout .form-row-2 input[type="text"]');
+
+  const fullName = document.querySelector('#page-checkout input[autocomplete="name"]')?.value?.trim();
+  const email    = document.querySelector('#page-checkout input[autocomplete="email"], #page-checkout input[type="email"]')?.value?.trim();
+  const street   = allTextInputs[1]?.value?.trim(); // 0=name, 1=street
+  const city     = formRowInputs[0]?.value?.trim(); // first in form-row-2
+  const postal   = formRowInputs[1]?.value?.trim(); // second in form-row-2
+  const country  = document.querySelector('#page-checkout select')?.value || 'India';
+  const shipping = document.querySelector('#page-checkout input[name="shipping"]:checked')?.value || 'standard';
 
   // Validate form
   const formCheck = validateCheckoutForm(fullName, email, street, city, postal);
