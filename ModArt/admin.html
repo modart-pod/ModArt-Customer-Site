@@ -2576,6 +2576,12 @@ function showPage(id) {
   }
   // close sidebar on mobile after navigation
   if (window.innerWidth <= 900) closeSidebar();
+  // Load live data for pages that need it
+  if (id === 'orders')    loadAdminOrders();
+  if (id === 'products')  loadAdminProducts();
+  if (id === 'inventory') loadAdminInventory();
+  if (id === 'customers') loadAdminCustomers();
+  if (id === 'dashboard') loadDashboardKPIs();
 }
 // ====================================================
 // SIDEBAR TOGGLE  unified state
@@ -3465,16 +3471,6 @@ async function loadAdminCustomers() {
 }
 // ====================================================
 // WRAP showPage TO TRIGGER LIVE LOADS
-// ====================================================
-const _origShowPage = showPage;
-function showPage(id) {
-  _origShowPage(id);
-  if (id === 'orders')    loadAdminOrders();
-  if (id === 'products')  loadAdminProducts();
-  if (id === 'inventory') loadAdminInventory();
-  if (id === 'customers') loadAdminCustomers();
-  if (id === 'dashboard') loadDashboardKPIs();
-}
 // ====================================================
 // DASHBOARD KPIs  live from Supabase
 // ====================================================
