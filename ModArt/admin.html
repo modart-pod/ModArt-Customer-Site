@@ -927,12 +927,10 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
         </div>
       </div>
       <div class="card">
-        <div class="card-hdr"><div class="card-title" style="color:var(--red)">âš  Low Stock</div><button class="card-action" onclick="showPage('inventory')">Manage</button></div>
-        <div class="alert-item"><div class="alert-swatch" style="background:#1A1A1A;">ðŸ‘•</div><div class="alert-info"><div class="alert-name">Hoodie  Black XL</div><div class="alert-meta">HDY-BLK-XL</div></div><div style="text-align:right"><div class="alert-stock">4</div><div class="alert-unit">Left</div></div></div>
-        <div class="alert-item"><div class="alert-swatch" style="background:#D72638;">ðŸ‘•</div><div class="alert-info"><div class="alert-name">Acid Wash Tee  Red M</div><div class="alert-meta">TEE-RED-M</div></div><div style="text-align:right"><div class="alert-stock">7</div><div class="alert-unit">Left</div></div></div>
-        <div class="alert-item"><div class="alert-swatch">ðŸŽ¨</div><div class="alert-info"><div class="alert-name">Sticker Sheet Vol.4</div><div class="alert-meta">STK-V4-FULL</div></div><div style="text-align:right"><div class="alert-stock">3</div><div class="alert-unit">Left</div></div></div>
-      </div>
-    </div>
+      <div class="card">
+        <div class="card-hdr"><div class="card-title" style="color:var(--red)">&#9888; Low Stock</div><button class="card-action" onclick="showPage('inventory')">Manage</button></div>
+        <div id="low-stock-list"><div style="padding:16px;text-align:center;color:var(--g3);font-size:12px"><span class="material-symbols-outlined" style="font-size:18px;vertical-align:middle;animation:spin 1s linear infinite">autorenew</span> Loading</div></div>
+
     <div class="grid-2">
       <div class="card">
         <div class="card-hdr"><div class="card-title">Top Products</div></div>
@@ -1473,18 +1471,15 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
       <button class="btn-red" onclick="openModal('coupon-modal')"><span class="material-symbols-outlined" style="font-size:15px">add</span>Create Coupon</button>
     </div>
     <div class="grid-2">
-      <div style="display:flex;flex-direction:column;gap:11px">
-        <div class="coupon-card"><div><div class="coupon-code">MODART20</div><div class="coupon-meta">Sitewide  Min $50  Expires Jul 31</div></div><div style="margin-left:auto;text-align:right"><div class="coupon-discount">20% OFF</div><div class="coupon-uses">842 / 1000 used</div></div><span class="pill active"><span class="pill-dot"></span>Active</span></div>
-        <div class="coupon-card"><div><div class="coupon-code">DROP08VIP</div><div class="coupon-meta">Drop #08 only  No minimum  Expires Jun 29</div></div><div style="margin-left:auto;text-align:right"><div class="coupon-discount">$15 OFF</div><div class="coupon-uses">188 / 200 used</div></div><span class="pill live"><span class="pill-dot"></span>Live</span></div>
-        <div class="coupon-card" style="opacity:.55"><div><div class="coupon-code">LAUNCH10</div><div class="coupon-meta">First order  Expired May 1</div></div><div style="margin-left:auto;text-align:right"><div class="coupon-discount">10% OFF</div><div class="coupon-uses">1,204 used</div></div><span class="pill ended"><span class="pill-dot"></span>Expired</span></div>
+      <div id="coupons-list" style="display:flex;flex-direction:column;gap:11px">
+        <div style="text-align:center;padding:24px;color:var(--g3)"><span class="material-symbols-outlined" style="font-size:20px;vertical-align:middle;animation:spin 1s linear infinite">autorenew</span> Loading coupons</div>
       </div>
       <div class="card">
         <div class="card-hdr"><div class="card-title">Quick Create Coupon</div></div>
-        <div class="form-group"><label class="form-label">Coupon Code</label><input class="form-input" type="text" placeholder="SUMMER25" style="font-family:monospace;font-weight:700;letter-spacing:.12em;text-transform:uppercase"/></div>
-        <div class="form-grid"><div class="form-group"><label class="form-label">Type</label><select class="form-input"><option>Percentage</option><option>Fixed Amount</option><option>Free Shipping</option></select></div><div class="form-group"><label class="form-label">Value</label><input class="form-input" type="number" placeholder="20"/></div></div>
-        <div class="form-grid"><div class="form-group"><label class="form-label">Min Order ($)</label><input class="form-input" type="number" placeholder="50"/></div><div class="form-group"><label class="form-label">Usage Limit</label><input class="form-input" type="number" placeholder="1000"/></div></div>
-        <div class="form-group"><label class="form-label">Expiry Date</label><input class="form-input" type="date"/></div>
-        <button class="btn-red" style="width:100%" onclick="showToast('Coupon created successfully','order')">Create Coupon</button>
+        <div class="form-group"><label class="form-label">Coupon Code</label><input id="coupon-code-input" class="form-input" type="text" placeholder="SUMMER25" style="font-family:monospace;font-weight:700;letter-spacing:.12em;text-transform:uppercase"/></div>
+        <div class="form-grid"><div class="form-group"><label class="form-label">Discount %</label><input id="coupon-discount-input" class="form-input" type="number" placeholder="20" min="1" max="100"/></div><div class="form-group"><label class="form-label">Usage Limit</label><input id="coupon-maxuses-input" class="form-input" type="number" placeholder="1000"/></div></div>
+        <div class="form-group"><label class="form-label">Expiry Date</label><input id="coupon-expiry-input" class="form-input" type="date"/></div>
+        <button class="btn-red" style="width:100%" onclick="createCoupon()">Create Coupon</button>
       </div>
   </div><!-- /coupons -->
   </div><!-- /coupons -->
@@ -2162,8 +2157,9 @@ Sitemap: https://modart.co/sitemap.xml</textarea>
     <div style="margin-bottom:18px">
       <div class="form-label" style="margin-bottom:10px">Tracking Number</div>
       <div class="flex gap-8">
-        <input class="form-input" type="text" placeholder="Enter tracking number" style="flex:1"/>
-        <button class="btn-red btn-sm">Save</button>
+        <input class="form-input" id="tracking-input" type="text" placeholder="Enter tracking number" style="flex:1"/>
+        <input class="form-input" id="courier-input" type="text" placeholder="Courier (e.g. DHL)" style="flex:1;margin-left:8px"/>
+        <button class="btn-red btn-sm" onclick="saveTrackingNumber()">Save</button>
       </div>
     </div>
     <div class="divider"></div>
@@ -2577,11 +2573,13 @@ function showPage(id) {
   // close sidebar on mobile after navigation
   if (window.innerWidth <= 900) closeSidebar();
   // Load live data for pages that need it
-  if (id === 'orders')    loadAdminOrders();
+  if (id === 'orders')    { loadAdminOrders(); loadOrderStatusCounts(); }
   if (id === 'products')  loadAdminProducts();
   if (id === 'inventory') loadAdminInventory();
   if (id === 'customers') loadAdminCustomers();
-  if (id === 'dashboard') loadDashboardKPIs();
+  if (id === 'dashboard') { loadDashboardKPIs(); loadLowStock(); }
+  if (id === 'coupons')   loadAdminCoupons();
+  if (id === 'analytics') loadAnalytics();
 }
 // ====================================================
 // SIDEBAR TOGGLE  unified state
@@ -3528,6 +3526,191 @@ async function loadDashboardKPIs() {
 // INIT
 // ====================================================
 showPage('dashboard');
+// ====================================================
+// 1. TRACKING NUMBER SAVE
+// ====================================================
+async function saveTrackingNumber() {
+  const drawer  = document.getElementById('order-drawer');
+  const orderId = drawer?.dataset?.orderId;
+  const tracking = document.getElementById('tracking-input')?.value?.trim();
+  const courier  = document.getElementById('courier-input')?.value?.trim();
+  if (!orderId) { showToast('No order selected', 'refund'); return; }
+  if (!tracking) { showToast('Enter a tracking number first', 'refund'); return; }
+  const sb = getSB(); if (!sb) return;
+  try {
+    const { error } = await sb.from('orders')
+      .update({ tracking_number: tracking, courier: courier || null, status: 'dispatched', updated_at: new Date().toISOString() })
+      .eq('id', orderId);
+    if (error) throw error;
+    showToast('Tracking saved — order marked as Dispatched', 'order');
+    // Refresh orders table if visible
+    if (document.getElementById('page-orders').classList.contains('active')) loadAdminOrders();
+  } catch (e) {
+    showToast('Save failed: ' + e.message, 'refund');
+  }
+}
+// ====================================================
+// 2. COUPONS — load from Supabase + create
+// ====================================================
+async function loadAdminCoupons() {
+  const sb = getSB(); if (!sb) return;
+  const list = document.getElementById('coupons-list');
+  if (!list) return;
+  list.innerHTML = '<div style="padding:16px;text-align:center;color:var(--g3);font-size:12px"><span class="material-symbols-outlined" style="font-size:18px;vertical-align:middle;animation:spin 1s linear infinite">autorenew</span> Loading</div>';
+  try {
+    const { data, error } = await sb.from('coupons').select('*').order('created_at', { ascending: false });
+    if (error) throw error;
+    if (!data || !data.length) {
+      list.innerHTML = '<div style="padding:24px;text-align:center;color:var(--g3);font-size:12px">No coupons yet. Create one on the right.</div>';
+      return;
+    }
+    list.innerHTML = data.map(c => {
+      const expired  = c.expires_at && new Date(c.expires_at) < new Date();
+      const maxed    = c.max_uses && c.used_count >= c.max_uses;
+      const inactive = !c.is_active || expired || maxed;
+      const pillCls  = inactive ? 'ended' : 'active';
+      const pillLbl  = expired ? 'Expired' : maxed ? 'Maxed' : c.is_active ? 'Active' : 'Inactive';
+      const expStr   = c.expires_at ? 'Expires ' + new Date(c.expires_at).toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'}) : 'No expiry';
+      const usesStr  = c.max_uses ? c.used_count + ' / ' + c.max_uses + ' used' : c.used_count + ' used';
+      return '<div class="coupon-card" style="' + (inactive ? 'opacity:.55' : '') + '">'
+        + '<div><div class="coupon-code">' + esc(c.code) + '</div>'
+        + '<div class="coupon-meta">' + esc(expStr) + '</div></div>'
+        + '<div style="margin-left:auto;text-align:right">'
+        + '<div class="coupon-discount">' + esc(String(c.discount_percent)) + '% OFF</div>'
+        + '<div class="coupon-uses">' + esc(usesStr) + '</div></div>'
+        + '<span class="pill ' + pillCls + '"><span class="pill-dot"></span>' + pillLbl + '</span>'
+        + '<button class="btn-ghost" style="color:var(--red);margin-left:8px" onclick="toggleCoupon(\'' + esc(c.id) + '\',' + (!c.is_active) + ')">'
+        + (c.is_active ? 'Disable' : 'Enable') + '</button>'
+        + '</div>';
+    }).join('');
+  } catch (e) {
+    list.innerHTML = '<div style="padding:16px;color:var(--red);font-size:12px">Error: ' + esc(e.message) + '</div>';
+  }
+}
+async function createCoupon() {
+  const code     = document.getElementById('coupon-code-input')?.value?.trim().toUpperCase();
+  const discount = parseInt(document.getElementById('coupon-discount-input')?.value);
+  const maxUses  = parseInt(document.getElementById('coupon-maxuses-input')?.value) || null;
+  const expiry   = document.getElementById('coupon-expiry-input')?.value || null;
+  if (!code)              { showToast('Enter a coupon code', 'refund'); return; }
+  if (!discount || discount < 1 || discount > 100) { showToast('Enter a valid discount % (1-100)', 'refund'); return; }
+  const sb = getSB(); if (!sb) return;
+  try {
+    const { error } = await sb.from('coupons').insert({
+      code,
+      discount_percent: discount,
+      is_active: true,
+      max_uses: maxUses,
+      expires_at: expiry ? new Date(expiry).toISOString() : null,
+    });
+    if (error) throw error;
+    document.getElementById('coupon-code-input').value     = '';
+    document.getElementById('coupon-discount-input').value = '';
+    document.getElementById('coupon-maxuses-input').value  = '';
+    document.getElementById('coupon-expiry-input').value   = '';
+    showToast('Coupon ' + code + ' created', 'order');
+    loadAdminCoupons();
+  } catch (e) {
+    showToast('Failed: ' + e.message, 'refund');
+  }
+}
+async function toggleCoupon(id, newState) {
+  const sb = getSB(); if (!sb) return;
+  try {
+    const { error } = await sb.from('coupons').update({ is_active: newState }).eq('id', id);
+    if (error) throw error;
+    showToast('Coupon ' + (newState ? 'enabled' : 'disabled'), 'order');
+    loadAdminCoupons();
+  } catch (e) {
+    showToast('Failed: ' + e.message, 'refund');
+  }
+}
+// ====================================================
+// 3. ORDER STATUS COUNTS (Orders page stat cards)
+// ====================================================
+async function loadOrderStatusCounts() {
+  const sb = getSB(); if (!sb) return;
+  try {
+    const { data, error } = await sb.from('orders').select('status');
+    if (error) throw error;
+    const counts = { pending:0, confirmed:0, processing:0, packed:0, dispatched:0, delivered:0, cancelled:0 };
+    (data || []).forEach(o => { const s = o.status?.toLowerCase(); if (s in counts) counts[s]++; });
+    const shipped = counts.dispatched;
+    const processing = counts.confirmed + counts.processing + counts.packed;
+    // Update the 5 stat cards on orders page by their label
+    document.querySelectorAll('#page-orders .stat-card').forEach(card => {
+      const lbl = card.querySelector('.stat-label')?.textContent?.trim();
+      const val = card.querySelector('div[style*="font-size:20px"]');
+      if (!val) return;
+      if (lbl === 'Pending')   val.textContent = counts.pending;
+      if (lbl === 'Processing') val.textContent = processing;
+      if (lbl === 'Shipped')   val.textContent = shipped;
+      if (lbl === 'Delivered') val.textContent = counts.delivered;
+      if (lbl === 'Cancelled') val.textContent = counts.cancelled;
+    });
+  } catch (e) { console.warn('Order counts failed:', e.message); }
+}
+// ====================================================
+// 4. LOW STOCK — real data on dashboard
+// ====================================================
+async function loadLowStock() {
+  const sb = getSB(); if (!sb) return;
+  const list = document.getElementById('low-stock-list');
+  if (!list) return;
+  try {
+    const { data, error } = await sb
+      .from('inventory')
+      .select('product_id, size, stock, reorder_at, products(name)')
+      .lte('stock', 10)
+      .gt('stock', 0)
+      .order('stock', { ascending: true })
+      .limit(5);
+    if (error) throw error;
+    if (!data || !data.length) {
+      list.innerHTML = '<div style="padding:16px;text-align:center;color:var(--green);font-size:12px;font-weight:700">All stock levels OK</div>';
+      return;
+    }
+    list.innerHTML = data.map(row => {
+      const name  = row.products?.name || row.product_id;
+      const color = row.stock <= 3 ? 'var(--red)' : 'var(--amber)';
+      return '<div class="alert-item">'
+        + '<div class="alert-swatch">👕</div>'
+        + '<div class="alert-info"><div class="alert-name">' + esc(name) + ' — ' + esc(row.size) + '</div>'
+        + '<div class="alert-meta">' + esc(row.product_id) + '</div></div>'
+        + '<div style="text-align:right"><div class="alert-stock" style="color:' + color + '">' + esc(String(row.stock)) + '</div>'
+        + '<div class="alert-unit">Left</div></div>'
+        + '</div>';
+    }).join('');
+  } catch (e) { console.warn('Low stock load failed:', e.message); }
+}
+// ====================================================
+// 5. ANALYTICS — real revenue data
+// ====================================================
+async function loadAnalytics() {
+  const sb = getSB(); if (!sb) return;
+  try {
+    const since = new Date(Date.now() - 365 * 86400000).toISOString();
+    const { data, error } = await sb.from('orders')
+      .select('total_inr, status, created_at')
+      .gte('created_at', since)
+      .neq('status', 'cancelled');
+    if (error) throw error;
+    const orders = data || [];
+    const gross  = orders.reduce((s, o) => s + (o.total_inr || 0), 0);
+    const count  = orders.length;
+    const avg    = count ? Math.round(gross / count) : 0;
+    const fmt    = n => n >= 100000 ? '₹' + (n/100000).toFixed(1) + 'L' : '₹' + n.toLocaleString('en-IN');
+    // Update analytics stat cards by label
+    document.querySelectorAll('#page-analytics .stat-card').forEach(card => {
+      const lbl = card.querySelector('.stat-label')?.textContent?.trim();
+      const val = card.querySelector('.stat-value');
+      if (!val) return;
+      if (lbl === 'Gross Revenue')   val.textContent = fmt(gross);
+      if (lbl === 'Total Orders')    val.textContent = count.toLocaleString('en-IN');
+      if (lbl === 'Avg Order Value') val.textContent = fmt(avg);
+    });
+  } catch (e) { console.warn('Analytics load failed:', e.message); }
+}
 </script>
 </div><!-- /admin-dashboard-wrap -->
 </body>
