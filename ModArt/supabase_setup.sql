@@ -1,4 +1,4 @@
--- ================================================================
+﻿-- ================================================================
 -- ModArt Complete Supabase Setup
 -- Paste this entire file into Supabase SQL Editor and click Run
 -- ================================================================
@@ -54,6 +54,9 @@ CREATE TABLE IF NOT EXISTS orders (
   created_at       TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at       TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+-- Add discount_inr if upgrading an existing database
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS discount_inr INT NOT NULL DEFAULT 0;
 
 CREATE TABLE IF NOT EXISTS carts (
   id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -145,8 +148,6 @@ END;
 $$;
 
 -- ── 6. AUTO updated_at TRIGGER ───────────────────────────────────
--- Automatically keeps updated_at in sync on every row update.
--- Prevents stale timestamps when JS forgets to set updated_at.
 
 CREATE OR REPLACE FUNCTION set_updated_at()
 RETURNS TRIGGER
@@ -180,8 +181,6 @@ CREATE TRIGGER trg_carts_updated_at
   FOR EACH ROW EXECUTE FUNCTION set_updated_at();
 
 -- ── 7. ADMIN ROLE HELPER ─────────────────────────────────────────
--- Returns TRUE when the calling JWT belongs to the admin email.
--- Used in RLS policies so the admin can bypass user-scoped rules.
 
 CREATE OR REPLACE FUNCTION is_admin()
 RETURNS BOOLEAN
@@ -204,139 +203,55 @@ ALTER TABLE carts     ENABLE ROW LEVEL SECURITY;
 ALTER TABLE coupons   ENABLE ROW LEVEL SECURITY;
 ALTER TABLE waitlist  ENABLE ROW LEVEL SECURITY;
 
--- Drop all existing policies cleanly before recreating
-DROP POLICY IF EXISTS "products_read"           ON products;
-DROP POLICY IF EXISTS "products_admin_all"       ON products;
-DROP POLICY IF EXISTS "inventory_read"           ON inventory;
-DROP POLICY IF EXISTS "inventory_admin_all"      ON inventory;
-DROP POLICY IF EXISTS "orders_user_read"         ON orders;
-DROP POLICY IF EXISTS "orders_user_insert"       ON orders;
-DROP POLICY IF EXISTS "orders_user_update"       ON orders;
-DROP POLICY IF EXISTS "orders_guest_insert"      ON orders;
-DROP POLICY IF EXISTS "orders_admin_all"         ON orders;
-DROP POLICY IF EXISTS "carts_user_all"           ON carts;
-DROP POLICY IF EXISTS "carts_admin_read"         ON carts;
-DROP POLICY IF EXISTS "coupons_read"             ON coupons;
-DROP POLICY IF EXISTS "coupons_admin_all"        ON coupons;
-DROP POLICY IF EXISTS "waitlist_insert"          ON waitlist;
-DROP POLICY IF EXISTS "waitlist_admin_all"       ON waitlist;
+DROP POLICY IF EXISTS "products_read"      ON products;
+DROP POLICY IF EXISTS "products_admin_all" ON products;
+DROP POLICY IF EXISTS "inventory_read"     ON inventory;
+DROP POLICY IF EXISTS "inventory_admin_all" ON inventory;
+DROP POLICY IF EXISTS "orders_user_read"   ON orders;
+DROP POLICY IF EXISTS "orders_user_insert" ON orders;
+DROP POLICY IF EXISTS "orders_user_update" ON orders;
+DROP POLICY IF EXISTS "orders_guest_insert" ON orders;
+DROP POLICY IF EXISTS "orders_admin_all"   ON orders;
+DROP POLICY IF EXISTS "carts_user_all"     ON carts;
+DROP POLICY IF EXISTS "carts_admin_read"   ON carts;
+DROP POLICY IF EXISTS "coupons_read"       ON coupons;
+DROP POLICY IF EXISTS "coupons_admin_all"  ON coupons;
+DROP POLICY IF EXISTS "waitlist_insert"    ON waitlist;
+DROP POLICY IF EXISTS "waitlist_admin_all" ON waitlist;
 
--- ── PRODUCTS ─────────────────────────────────────────────────────
--- Public: read active products only
-CREATE POLICY "products_read"
-  ON products FOR SELECT
-  USING (is_active = TRUE OR is_admin());
-
--- Admin: full CRUD
-CREATE POLICY "products_admin_all"
-  ON products FOR ALL
-  USING (is_admin())
-  WITH CHECK (is_admin());
-
--- ── INVENTORY ────────────────────────────────────────────────────
--- Public: read all inventory (needed for stock display)
-CREATE POLICY "inventory_read"
-  ON inventory FOR SELECT
-  USING (TRUE);
-
--- Admin: full CRUD (update stock, add sizes)
-CREATE POLICY "inventory_admin_all"
-  ON inventory FOR ALL
-  USING (is_admin())
-  WITH CHECK (is_admin());
-
--- ── ORDERS ───────────────────────────────────────────────────────
--- Logged-in users: read their own orders
-CREATE POLICY "orders_user_read"
-  ON orders FOR SELECT
-  USING (auth.uid() = user_id OR is_admin());
-
--- Logged-in users: insert their own orders
-CREATE POLICY "orders_user_insert"
-  ON orders FOR INSERT
-  WITH CHECK (auth.uid() = user_id);
-
--- Guest checkout: insert orders with no user_id
-CREATE POLICY "orders_guest_insert"
-  ON orders FOR INSERT
-  WITH CHECK (user_id IS NULL);
-
--- Logged-in users: update their own orders (e.g. cancel)
-CREATE POLICY "orders_user_update"
-  ON orders FOR UPDATE
-  USING (auth.uid() = user_id);
-
--- Admin: full access to all orders (read, update status, tracking, etc.)
-CREATE POLICY "orders_admin_all"
-  ON orders FOR ALL
-  USING (is_admin())
-  WITH CHECK (is_admin());
-
--- ── CARTS ────────────────────────────────────────────────────────
--- Users: full access to their own cart
-CREATE POLICY "carts_user_all"
-  ON carts FOR ALL
-  USING (auth.uid() = user_id)
-  WITH CHECK (auth.uid() = user_id);
-
--- Admin: read all carts (for analytics)
-CREATE POLICY "carts_admin_read"
-  ON carts FOR SELECT
-  USING (is_admin());
-
--- ── COUPONS ──────────────────────────────────────────────────────
--- Public: read active coupons (needed for validate-coupon fallback)
-CREATE POLICY "coupons_read"
-  ON coupons FOR SELECT
-  USING (is_active = TRUE OR is_admin());
-
--- Admin: full CRUD (create, deactivate, edit coupons)
-CREATE POLICY "coupons_admin_all"
-  ON coupons FOR ALL
-  USING (is_admin())
-  WITH CHECK (is_admin());
-
--- ── WAITLIST ─────────────────────────────────────────────────────
--- Anyone: join the waitlist
-CREATE POLICY "waitlist_insert"
-  ON waitlist FOR INSERT
-  WITH CHECK (TRUE);
-
--- Admin: read and manage all waitlist entries
-CREATE POLICY "waitlist_admin_all"
-  ON waitlist FOR ALL
-  USING (is_admin())
-  WITH CHECK (is_admin());
+CREATE POLICY "products_read"      ON products  FOR SELECT USING (is_active = TRUE OR is_admin());
+CREATE POLICY "products_admin_all" ON products  FOR ALL    USING (is_admin()) WITH CHECK (is_admin());
+CREATE POLICY "inventory_read"     ON inventory FOR SELECT USING (TRUE);
+CREATE POLICY "inventory_admin_all" ON inventory FOR ALL   USING (is_admin()) WITH CHECK (is_admin());
+CREATE POLICY "orders_user_read"   ON orders    FOR SELECT USING (auth.uid() = user_id OR is_admin());
+CREATE POLICY "orders_user_insert" ON orders    FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "orders_guest_insert" ON orders   FOR INSERT WITH CHECK (user_id IS NULL);
+CREATE POLICY "orders_user_update" ON orders    FOR UPDATE USING (auth.uid() = user_id);
+CREATE POLICY "orders_admin_all"   ON orders    FOR ALL    USING (is_admin()) WITH CHECK (is_admin());
+CREATE POLICY "carts_user_all"     ON carts     FOR ALL    USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "carts_admin_read"   ON carts     FOR SELECT USING (is_admin());
+CREATE POLICY "coupons_read"       ON coupons   FOR SELECT USING (is_active = TRUE OR is_admin());
+CREATE POLICY "coupons_admin_all"  ON coupons   FOR ALL    USING (is_admin()) WITH CHECK (is_admin());
+CREATE POLICY "waitlist_insert"    ON waitlist  FOR INSERT WITH CHECK (TRUE);
+CREATE POLICY "waitlist_admin_all" ON waitlist  FOR ALL    USING (is_admin()) WITH CHECK (is_admin());
 
 -- ── 9. ANALYTICS HELPER RPCs ─────────────────────────────────────
--- Used by admin dashboard to get revenue and order stats efficiently.
 
--- Returns total revenue and order count for a given time window.
 CREATE OR REPLACE FUNCTION get_revenue_stats(since_ts TIMESTAMPTZ)
-RETURNS TABLE(
-  total_revenue BIGINT,
-  order_count   BIGINT,
-  avg_order     NUMERIC
-)
-LANGUAGE sql
-STABLE
-SECURITY DEFINER
+RETURNS TABLE(total_revenue BIGINT, order_count BIGINT, avg_order NUMERIC)
+LANGUAGE sql STABLE SECURITY DEFINER
 AS $$
   SELECT
-    COALESCE(SUM(total_inr), 0)::BIGINT                          AS total_revenue,
-    COUNT(*)::BIGINT                                              AS order_count,
-    COALESCE(ROUND(AVG(total_inr), 0), 0)                        AS avg_order
+    COALESCE(SUM(total_inr), 0)::BIGINT AS total_revenue,
+    COUNT(*)::BIGINT                     AS order_count,
+    COALESCE(ROUND(AVG(total_inr), 0), 0) AS avg_order
   FROM orders
-  WHERE created_at >= since_ts
-    AND status NOT IN ('cancelled');
+  WHERE created_at >= since_ts AND status NOT IN ('cancelled');
 $$;
 
--- Returns order counts grouped by status.
 CREATE OR REPLACE FUNCTION get_order_status_counts()
 RETURNS TABLE(status TEXT, cnt BIGINT)
-LANGUAGE sql
-STABLE
-SECURITY DEFINER
+LANGUAGE sql STABLE SECURITY DEFINER
 AS $$
   SELECT status, COUNT(*)::BIGINT AS cnt
   FROM orders
@@ -344,12 +259,10 @@ AS $$
 $$;
 
 -- ── 10. INCREMENT COUPON USAGE RPC ───────────────────────────────
--- Called after a coupon is successfully applied at checkout.
 
 CREATE OR REPLACE FUNCTION increment_coupon_usage(p_code TEXT)
 RETURNS VOID
-LANGUAGE plpgsql
-SECURITY DEFINER
+LANGUAGE plpgsql SECURITY DEFINER
 AS $$
 BEGIN
   UPDATE coupons
