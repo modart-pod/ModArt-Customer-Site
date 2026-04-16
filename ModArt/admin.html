@@ -1255,10 +1255,10 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
       <div class="flex gap-8"><button class="btn-outline">Import CSV</button><button class="btn-red">Add Stock</button></div>
     </div>
     <div class="stats-grid mb-6" style="grid-template-columns:repeat(4,1fr)">
-      <div class="stat-card" style="padding:14px"><div class="stat-icon dark" style="width:28px;height:28px"><span class="material-symbols-outlined" style="font-size:14px">inventory_2</span></div><div style="font-size:20px;font-weight:800;margin-top:8px">1,842</div><div class="stat-label">Total SKUs</div></div>
-      <div class="stat-card amber" style="padding:14px"><div class="stat-icon amber" style="width:28px;height:28px"><span class="material-symbols-outlined" style="font-size:14px">warning</span></div><div style="font-size:20px;font-weight:800;color:var(--amber);margin-top:8px">12</div><div class="stat-label">Low Stock</div></div>
-      <div class="stat-card red" style="padding:14px"><div class="stat-icon red" style="width:28px;height:28px"><span class="material-symbols-outlined" style="font-size:14px">do_not_disturb</span></div><div style="font-size:20px;font-weight:800;color:var(--red);margin-top:8px">3</div><div class="stat-label">Out of Stock</div></div>
-      <div class="stat-card green" style="padding:14px"><div class="stat-icon green" style="width:28px;height:28px"><span class="material-symbols-outlined" style="font-size:14px">speed</span></div><div style="font-size:20px;font-weight:800;margin-top:8px">8.4Ã—</div><div class="stat-label">Avg Turnover</div></div>
+      <div class="stat-card" style="padding:14px"><div class="stat-icon dark" style="width:28px;height:28px"><span class="material-symbols-outlined" style="font-size:14px">inventory_2</span></div><div id="inv-total-skus" style="font-size:20px;font-weight:800;margin-top:8px">—</div><div class="stat-label">Total SKUs</div></div>
+      <div class="stat-card amber" style="padding:14px"><div class="stat-icon amber" style="width:28px;height:28px"><span class="material-symbols-outlined" style="font-size:14px">warning</span></div><div id="inv-low-count" style="font-size:20px;font-weight:800;color:var(--amber);margin-top:8px">—</div><div class="stat-label">Low Stock</div></div>
+      <div class="stat-card red" style="padding:14px"><div class="stat-icon red" style="width:28px;height:28px"><span class="material-symbols-outlined" style="font-size:14px">do_not_disturb</span></div><div id="inv-out-count" style="font-size:20px;font-weight:800;color:var(--red);margin-top:8px">—</div><div class="stat-label">Out of Stock</div></div>
+      <div class="stat-card green" style="padding:14px"><div class="stat-icon green" style="width:28px;height:28px"><span class="material-symbols-outlined" style="font-size:14px">check_circle</span></div><div id="inv-ok-count" style="font-size:20px;font-weight:800;margin-top:8px">—</div><div class="stat-label">In Stock</div></div>
     </div>
     <div class="card" style="padding:0">
       <div style="padding:16px 18px;border-bottom:1px solid var(--border)"><div class="card-title">Stock Levels</div></div>
@@ -1299,19 +1299,19 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
           <div class="creator-card-top"><div class="creator-avatar" style="background:linear-gradient(135deg,#F59E0B,#D97706)">NP</div><div><div class="creator-handle">@nova_prints</div><div class="creator-since">Requested Jun 28, 2025</div></div></div>
           <div class="creator-stats"><div><div class="creator-stat-val">2.4k</div><div class="creator-stat-label">Followers</div></div><div><div class="creator-stat-val">8</div><div class="creator-stat-label">Designs</div></div><div><div class="creator-stat-val"></div><div class="creator-stat-label">Revenue</div></div></div>
           <div style="font-size:11px;font-weight:500;color:var(--g2);padding:10px;background:var(--bg);border-radius:var(--r-md)">"Textile artist specializing in screen print and risograph. Portfolio: novastudio.co"</div>
-          <div class="creator-actions"><button class="btn-success" style="flex:1" onclick="confirmAction('Approve @nova_prints?','This creator will gain access to submit custom designs and limited drop collabs.','Approve Creator',function(){showToast('Creator @nova_prints approved','order')},'success')"><span class="material-symbols-outlined" style="font-size:14px">check</span>Approve</button><button class="btn-danger" style="flex:1" onclick="confirmAction('Reject @nova_prints?','This will deny their creator application. They can reapply in 30 days.','Reject',function(){showToast('Application rejected','refund')})">Reject</button></div>
+          <div class="creator-actions"><button class="btn-success" style="flex:1" onclick="approveCreator('@nova_prints',this)"><span class="material-symbols-outlined" style="font-size:14px">check</span>Approve</button><button class="btn-danger" style="flex:1" onclick="rejectCreator('@nova_prints',this)">Reject</button></div>
         </div>
         <div class="creator-card" style="border-color:rgba(245,158,11,.3)">
           <div class="creator-card-top"><div class="creator-avatar" style="background:linear-gradient(135deg,#3B82F6,#1D4ED8)">RC</div><div><div class="creator-handle">@rael.co</div><div class="creator-since">Requested Jun 27, 2025</div></div></div>
           <div class="creator-stats"><div><div class="creator-stat-val">18.1k</div><div class="creator-stat-label">Followers</div></div><div><div class="creator-stat-val">24</div><div class="creator-stat-label">Designs</div></div><div><div class="creator-stat-val"></div><div class="creator-stat-label">Revenue</div></div></div>
           <div style="font-size:11px;font-weight:500;color:var(--g2);padding:10px;background:var(--bg);border-radius:var(--r-md)">"Graphic designer  brutalist posters and streetwear graphics. rael.co/work"</div>
-          <div class="creator-actions"><button class="btn-success" style="flex:1" onclick="confirmAction('Approve @rael.co?','This creator will gain full design submission access.','Approve Creator',function(){showToast('@rael.co approved','order')},'success')"><span class="material-symbols-outlined" style="font-size:14px">check</span>Approve</button><button class="btn-danger" style="flex:1" onclick="confirmAction('Reject @rael.co?','Their application will be declined.','Reject',function(){showToast('Rejected','refund')})">Reject</button></div>
+          <div class="creator-actions"><button class="btn-success" style="flex:1" onclick="approveCreator('@rael.co',this)"><span class="material-symbols-outlined" style="font-size:14px">check</span>Approve</button><button class="btn-danger" style="flex:1" onclick="rejectCreator('@rael.co',this)">Reject</button></div>
         </div>
         <div class="creator-card" style="border-color:rgba(245,158,11,.3)">
           <div class="creator-card-top"><div class="creator-avatar" style="background:linear-gradient(135deg,#8B5CF6,#7C3AED)">CL</div><div><div class="creator-handle">@chrome.lab</div><div class="creator-since">Requested Jun 25, 2025</div></div></div>
           <div class="creator-stats"><div><div class="creator-stat-val">5.8k</div><div class="creator-stat-label">Followers</div></div><div><div class="creator-stat-val">12</div><div class="creator-stat-label">Designs</div></div><div><div class="creator-stat-val"></div><div class="creator-stat-label">Revenue</div></div></div>
           <div style="font-size:11px;font-weight:500;color:var(--g2);padding:10px;background:var(--bg);border-radius:var(--r-md)">"Metallic foil and holographic print specialist. chromelab.studio"</div>
-          <div class="creator-actions"><button class="btn-success" style="flex:1" onclick="confirmAction('Approve @chrome.lab?','Grant creator access to design submissions.','Approve Creator',function(){showToast('@chrome.lab approved','order')},'success')"><span class="material-symbols-outlined" style="font-size:14px">check</span>Approve</button><button class="btn-danger" style="flex:1" onclick="confirmAction('Reject?','Decline this application.','Reject',function(){showToast('Rejected','refund')})">Reject</button></div>
+          <div class="creator-actions"><button class="btn-success" style="flex:1" onclick="approveCreator('@chrome.lab',this)"><span class="material-symbols-outlined" style="font-size:14px">check</span>Approve</button><button class="btn-danger" style="flex:1" onclick="rejectCreator('@chrome.lab',this)">Reject</button></div>
         </div>
       </div>
     </div>
@@ -1370,7 +1370,7 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
           <thead><tr><th>Request ID</th><th>Creator</th><th>Description</th><th>Product</th><th>Submitted</th><th>Status</th><th>Actions</th></tr></thead>
           <tbody>
             <tr><td class="td-mono">#CR-088</td><td class="td-bold">@nova_prints</td><td>Abstract mesh overlay, 3-color screen print</td><td><span class="tag">Hoodie</span></td><td class="text-muted text-sm">Jun 28</td><td><span class="pill pending-review"><span class="pill-dot"></span>Review</span></td><td><div class="flex gap-8"><button class="btn-success btn-sm" onclick="confirmAction('Approve Design #CR-088?','The creator will be notified and production can begin.','Approve Design',function(){showToast('Design #CR-088 approved','order')},'success')">Approve</button><button class="btn-danger btn-sm" onclick="confirmAction('Reject Design #CR-088?','Creator will receive a rejection notice with feedback.','Reject Design',function(){showToast('Design rejected','refund')})">Reject</button></div></td></tr>
-            <tr><td class="td-mono">#CR-087</td><td class="td-bold">@rael.co</td><td>Minimalist serif wordmark front-print</td><td><span class="tag">Tee</span></td><td class="text-muted text-sm">Jun 27</td><td><span class="pill pending-review"><span class="pill-dot"></span>Review</span></td><td><div class="flex gap-8"><button class="btn-success btn-sm" onclick="confirmAction('Approve Design #CR-087?','Production will be scheduled.','Approve Design',function(){showToast('Design #CR-087 approved','order')},'success')">Approve</button><button class="btn-danger btn-sm" onclick="confirmAction('Reject?','','Reject',function(){showToast('Rejected','refund')})">Reject</button></div></td></tr>
+            <tr><td class="td-mono">#CR-087</td><td class="td-bold">@rael.co</td><td>Minimalist serif wordmark front-print</td><td><span class="tag">Tee</span></td><td class="text-muted text-sm">Jun 27</td><td><span class="pill pending-review"><span class="pill-dot"></span>Review</span></td><td><div class="flex gap-8"><button class="btn-success btn-sm" onclick="confirmAction('Approve Design #CR-087?','Production will be scheduled.','Approve Design',function(){showToast('Design #CR-087 approved','order')},'success')">Approve</button><button class="btn-danger btn-sm" onclick="rejectCreator('@chrome.lab',this)">Reject</button></div></td></tr>
             <tr><td class="td-mono">#CR-086</td><td class="td-bold">@alicia.m</td><td>Full-back embroidery botanical</td><td><span class="tag">Hoodie</span></td><td class="text-muted text-sm">Jun 25</td><td><span class="pill approved"><span class="pill-dot"></span>Approved</span></td><td><button class="btn-ghost">View</button></td></tr>
             <tr><td class="td-mono">#CR-085</td><td class="td-bold">@chrome.lab</td><td>Metallic foil transfer logo</td><td><span class="tag">Tote</span></td><td class="text-muted text-sm">Jun 22</td><td><span class="pill rejected"><span class="pill-dot"></span>Rejected</span></td><td><button class="btn-ghost">View</button></td></tr>
           </tbody>
@@ -1486,7 +1486,33 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
   <!-- ============================================================
        CREATOR PAYOUTS
        ============================================================ -->
-  <div class="page" id="page-payouts">
+    <!-- ============================================================
+       RETURNS & REFUNDS
+       ============================================================ -->
+  <div class="page" id="page-returns">
+    <div class="page-hdr">
+      <div><div class="eyebrow eyebrow-red" style="margin-bottom:6px">Commerce</div><h1 class="page-title">Returns & Refunds</h1></div>
+      <button class="btn-red" onclick="exportCSV('returns')"><span class="material-symbols-outlined" style="font-size:15px">download</span>Export</button>
+    </div>
+    <div class="stats-grid mb-6" style="grid-template-columns:repeat(4,1fr)">
+      <div class="stat-card red" style="padding:14px"><div class="stat-icon red" style="width:28px;height:28px"><span class="material-symbols-outlined" style="font-size:14px">assignment_return</span></div><div id="ret-total" style="font-size:20px;font-weight:800;margin-top:8px">—</div><div class="stat-label">Total Returns</div></div>
+      <div class="stat-card amber" style="padding:14px"><div class="stat-icon amber" style="width:28px;height:28px"><span class="material-symbols-outlined" style="font-size:14px">pending</span></div><div id="ret-pending" style="font-size:20px;font-weight:800;margin-top:8px">—</div><div class="stat-label">Pending</div></div>
+      <div class="stat-card green" style="padding:14px"><div class="stat-icon green" style="width:28px;height:28px"><span class="material-symbols-outlined" style="font-size:14px">check_circle</span></div><div id="ret-refunded" style="font-size:20px;font-weight:800;margin-top:8px">—</div><div class="stat-label">Refunded</div></div>
+      <div class="stat-card" style="padding:14px"><div class="stat-icon dark" style="width:28px;height:28px"><span class="material-symbols-outlined" style="font-size:14px">currency_rupee</span></div><div id="ret-value" style="font-size:20px;font-weight:800;margin-top:8px">—</div><div class="stat-label">Total Value</div></div>
+    </div>
+    <div class="card" style="padding:0">
+      <div style="padding:16px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+        <div class="card-title">Cancelled Orders <span id="ret-count-badge" style="color:var(--g3);font-weight:600"></span></div>
+        <div class="filter-search" style="max-width:240px"><span class="icon material-symbols-outlined">search</span><input type="text" placeholder="Search by order or customer" oninput="filterTable('returns-table',this.value)"/></div>
+      </div>
+      <div class="table-wrap">
+        <table id="returns-table">
+          <thead><tr><th>Order ID</th><th>Customer</th><th>Items</th><th>Total</th><th>Cancelled Date</th><th>Actions</th></tr></thead>
+          <tbody><tr><td colspan="6" style="text-align:center;padding:32px;color:var(--g3)"><span class="material-symbols-outlined" style="font-size:20px;vertical-align:middle;animation:spin 1s linear infinite">autorenew</span> Loading</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div><!-- /returns -->  <div class="page" id="page-payouts">
     <div class="page-hdr">
       <div><div class="eyebrow eyebrow-red" style="margin-bottom:6px">Finance</div><h1 class="page-title">Creator Payouts</h1></div>
       <div style="display:flex;gap:8px;">
@@ -2575,11 +2601,12 @@ function showPage(id) {
   // Load live data for pages that need it
   if (id === 'orders')    { loadAdminOrders(); loadOrderStatusCounts(); }
   if (id === 'products')  loadAdminProducts();
-  if (id === 'inventory') loadAdminInventory();
+  if (id === 'inventory') { loadAdminInventory(); loadInventoryStats(); }
   if (id === 'customers') loadAdminCustomers();
   if (id === 'dashboard') { loadDashboardKPIs(); loadLowStock(); }
   if (id === 'coupons')   loadAdminCoupons();
   if (id === 'analytics') loadAnalytics();
+  if (id === 'returns')   loadAdminReturns();
 }
 // ====================================================
 // SIDEBAR TOGGLE  unified state
@@ -3523,9 +3550,123 @@ async function loadDashboardKPIs() {
   } catch (e) { console.warn('Dashboard KPI load failed:', e.message); }
 }
 // ====================================================
-// INIT
+// INVENTORY STAT CARDS — real counts
 // ====================================================
-showPage('dashboard');
+async function loadInventoryStats() {
+  const sb = getSB(); if (!sb) return;
+  try {
+    const { data, error } = await sb.from('inventory').select('stock, reorder_at');
+    if (error) throw error;
+    const rows = data || [];
+    const total   = rows.length;
+    const outOf   = rows.filter(r => r.stock === 0).length;
+    const low     = rows.filter(r => r.stock > 0 && r.stock <= (r.reorder_at || 10)).length;
+    const ok      = rows.filter(r => r.stock > (r.reorder_at || 10)).length;
+    const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+    set('inv-total-skus', total);
+    set('inv-low-count',  low);
+    set('inv-out-count',  outOf);
+    set('inv-ok-count',   ok);
+    // Update returns badge in sidebar
+    const rb = document.getElementById('returns-badge');
+    if (rb) rb.textContent = outOf;
+  } catch (e) { console.warn('Inventory stats failed:', e.message); }
+}
+// ====================================================
+// RETURNS PAGE — load cancelled orders
+// ====================================================
+async function loadAdminReturns() {
+  const sb = getSB(); if (!sb) return;
+  const tbody = document.querySelector('#returns-table tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--g3)"><span class="material-symbols-outlined" style="font-size:20px;vertical-align:middle;animation:spin 1s linear infinite">autorenew</span> Loading</td></tr>';
+  try {
+    const { data, error } = await sb.from('orders')
+      .select('*').eq('status', 'cancelled')
+      .order('updated_at', { ascending: false });
+    if (error) throw error;
+    const orders = data || [];
+    // Update stat cards
+    const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+    set('ret-total',   orders.length);
+    set('ret-pending', orders.length);
+    set('ret-refunded', 0);
+    const totalVal = orders.reduce((s, o) => s + (o.total_inr || 0), 0);
+    set('ret-value', '₹' + totalVal.toLocaleString('en-IN'));
+    const badge = document.getElementById('ret-count-badge');
+    if (badge) badge.textContent = '(' + orders.length + ')';
+    if (!orders.length) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--g3)">No cancelled orders</td></tr>';
+      return;
+    }
+    tbody.innerHTML = orders.map(o => {
+      const addr  = (() => { try { return JSON.parse(o.shipping_address || '{}'); } catch(e) { return {}; } })();
+      const items = (() => { try { return JSON.parse(o.items || '[]'); } catch(e) { return []; } })();
+      const name  = addr.fullName || o.guest_email || 'Guest';
+      const total = '₹' + (o.total_inr || 0).toLocaleString('en-IN');
+      const date  = new Date(o.updated_at).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
+      const summary = items.slice(0,2).map(i => (i.name || i.productId) + ' ×' + i.qty).join(', ');
+      return '<tr>'
+        + '<td class="td-mono">' + esc(o.order_number) + '</td>'
+        + '<td><div class="td-bold">' + esc(name) + '</div><div class="text-xs text-muted">' + esc(o.guest_email || '') + '</div></td>'
+        + '<td>' + esc(summary) + '</td>'
+        + '<td class="td-bold">' + esc(total) + '</td>'
+        + '<td class="text-muted text-sm">' + esc(date) + '</td>'
+        + '<td><button class="btn-success btn-sm" onclick="refundOrder(\'' + esc(o.id) + '\',\'' + esc(o.order_number) + '\')">Refund</button></td>'
+        + '</tr>';
+    }).join('');
+  } catch (e) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--red)">Error: ' + esc(e.message) + '</td></tr>';
+  }
+}
+async function refundOrder(orderId, orderNumber) {
+  confirmAction(
+    'Process refund for ' + orderNumber + '?',
+    'This will mark the order as refunded. Notify the customer manually.',
+    'Confirm Refund',
+    async function() {
+      const sb = getSB(); if (!sb) return;
+      try {
+        await sb.from('orders').update({ status: 'refunded', updated_at: new Date().toISOString() }).eq('id', orderId);
+        showToast('Refund processed for ' + orderNumber, 'order');
+        loadAdminReturns();
+      } catch (e) { showToast('Failed: ' + e.message, 'refund'); }
+    },
+    'success'
+  );
+}
+// ====================================================
+// CREATOR APPROVE / REJECT — saves to waitlist table
+// ====================================================
+async function approveCreator(handle, cardEl) {
+  const sb = getSB(); if (!sb) return;
+  try {
+    // Store approval in waitlist table with drop_id = 'creator'
+    await sb.from('waitlist').upsert(
+      { email: handle + '@creator.modart', drop_id: 'creator', notified: true },
+      { onConflict: 'email,drop_id' }
+    );
+    showToast(handle + ' approved as creator', 'order');
+    if (cardEl) cardEl.closest('.creator-card')?.remove();
+    // Update pending count
+    const grid = document.querySelector('#page-creators .grid-3');
+    const remaining = grid?.querySelectorAll('.creator-card').length || 0;
+    const hdr = document.querySelector('#page-creators .card-hdr .card-title');
+    if (hdr && hdr.textContent.includes('Pending')) hdr.textContent = '⏳ Pending Approval (' + remaining + ')';
+  } catch (e) { showToast('Failed: ' + e.message, 'refund'); }
+}
+async function rejectCreator(handle, cardEl) {
+  confirmAction(
+    'Reject ' + handle + '?',
+    'Their application will be declined. They can reapply in 30 days.',
+    'Reject',
+    async function() {
+      showToast(handle + ' application rejected', 'refund');
+      if (cardEl) cardEl.closest('.creator-card')?.remove();
+    },
+    'danger'
+  );
+}
 // ====================================================
 // 1. TRACKING NUMBER SAVE
 // ====================================================

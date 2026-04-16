@@ -48,21 +48,52 @@ function closeModal() {
 }
 
 /**
- * Handles waitlist signup
+ * Handles waitlist signup — saves email to Supabase waitlist table
  */
-function joinList() {
+async function joinList() {
+  const emailInput = document.getElementById('modal-waitlist-email');
+  const email = emailInput?.value?.trim();
+  const modal = getModal();
+  const btn = modal?.querySelector('.modal-cta');
+
+  // Basic email validation
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (emailInput) {
+      emailInput.style.borderColor = 'var(--red)';
+      emailInput.placeholder = 'Enter a valid email';
+    }
+    return;
+  }
+  if (emailInput) emailInput.style.borderColor = 'var(--border)';
+
+  if (btn) { btn.textContent = 'Joining…'; btn.disabled = true; }
+
+  try {
+    // Save to Supabase waitlist table
+    const { supabase } = await import('./auth.js');
+    if (supabase) {
+      await supabase.from('waitlist').upsert(
+        { email, drop_id: 'general' },
+        { onConflict: 'email,drop_id' }
+      );
+    }
+  } catch (e) {
+    // Silent fail — don't block the UX
+    console.warn('Waitlist save failed:', e.message);
+  }
+
+  // Update counter UI
   joinCount = Math.max(290, joinCount - 1);
   const spotsEl     = document.getElementById('modal-spots');
   const spotsLeftEl = document.getElementById('spots-left');
   if (spotsEl)     spotsEl.textContent     = joinCount;
   if (spotsLeftEl) spotsLeftEl.textContent = joinCount;
 
-  const modal = getModal();
-  const btn = modal?.querySelector('.modal-cta');
   if (btn) {
     btn.textContent = "You're In! ✓";
     btn.style.background = '#2E7D32';
   }
+  if (emailInput) emailInput.value = '';
   setTimeout(closeModal, 1800);
 }
 

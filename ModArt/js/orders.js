@@ -58,8 +58,10 @@ export async function createOrder(shippingAddress, paymentMethod = 'cod') {
     }));
 
     const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0);
-    const shipping = subtotal >= 2499 ? 0 : 149;
-    const total    = subtotal + shipping;
+    const discPct  = (window.getDiscountPercent && window.getDiscountPercent()) || 0;
+    const discount = discPct ? Math.round(subtotal * discPct / 100) : 0;
+    const shipping = (subtotal - discount) >= 2499 ? 0 : 149;
+    const total    = subtotal - discount + shipping;
     const orderNum = 'MA-' + Date.now().toString().slice(-8);
 
     const payload = {
@@ -69,6 +71,7 @@ export async function createOrder(shippingAddress, paymentMethod = 'cod') {
       items:            JSON.stringify(items),
       shipping_address: JSON.stringify(shippingAddress),
       subtotal_inr:     subtotal,
+      discount_inr:     discount,
       shipping_inr:     shipping,
       total_inr:        total,
       status:           'pending',

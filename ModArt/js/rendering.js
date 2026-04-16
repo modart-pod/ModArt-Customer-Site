@@ -11,7 +11,7 @@
  * - toggleWishlist: Handles wishlist toggle interactions
  */
 
-import { PRODUCTS, cart, wishlist, toggleWishlistItem, discountApplied, setDiscountApplied } from './state.js';
+import { PRODUCTS, cart, wishlist, toggleWishlistItem, discountApplied, discountPercent, setDiscountApplied } from './state.js';
 import { formatPrice } from './currency.js';
 
 /** Sanitize string for safe innerHTML insertion */
@@ -199,7 +199,8 @@ export function renderBag() {
   // Update totals
   const sub = cart.subtotal;
   const discEl = document.getElementById('discount-row');
-  const disc = discountApplied ? sub * 0.1 : 0;
+  const pct  = discountApplied ? (discountPercent || 10) : 0;
+  const disc = discountApplied ? Math.round(sub * pct / 100) : 0;
   
   if (discEl) discEl.style.display = disc > 0 ? 'flex' : 'none';
   
@@ -284,23 +285,27 @@ export async function applyDiscount() {
     });
     const data = await res.json();
     if (res.ok && data.valid) {
-      setDiscountApplied(true);
+      setDiscountApplied(true, data.discount || 10, code);
       renderBag();
       if (input) input.style.borderColor = 'var(--green)';
+      // Show discount label
+      const discLbl = document.getElementById('discount-code-label');
+      if (discLbl) discLbl.textContent = code + ' (−' + (data.discount || 10) + '%)';
       return;
     }
-  } catch {
-    // Function not deployed yet — fall through to client-side check
-  }
-
-  // Client-side fallback (remove once validate-coupon function is deployed)
-  if (code === 'MODART10') {
-    setDiscountApplied(true);
-    renderBag();
-    if (input) input.style.borderColor = 'var(--green)';
-  } else {
+    // Invalid code
     if (input) input.style.borderColor = 'var(--red)';
-    if (errEl) { errEl.textContent = 'Invalid discount code.'; errEl.style.display = 'block'; }
+    if (errEl) { errEl.textContent = data.message || 'Invalid discount code.'; errEl.style.display = 'block'; }
+  } catch {
+    // Fallback
+    if (code === 'MODART10') {
+      setDiscountApplied(true, 10, code);
+      renderBag();
+      if (input) input.style.borderColor = 'var(--green)';
+    } else {
+      if (input) input.style.borderColor = 'var(--red)';
+      if (errEl) { errEl.textContent = 'Invalid discount code.'; errEl.style.display = 'block'; }
+    }
   }
 }
 

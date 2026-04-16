@@ -16,8 +16,7 @@ import { initCartPersistence, markAuthReady } from './cart-persist.js';
 import { initProducts } from './products.js';
 import './orders.js';
 import './auth-handlers.js';
-import './account.js';
-import { initCarousel } from './utils.js';
+import './account.js';import { initCarousel } from './utils.js';
 import './modals.js';
 
 /* ================================================================
@@ -119,6 +118,8 @@ async function initApplication() {
   // 4. Auth — must complete before cart sync
   await initAuth();
   markAuthReady(); // signal cart-persist that auth is resolved
+  // Load user-specific wishlist after auth
+  if (window.loadWishlistFromSupabase) await window.loadWishlistFromSupabase();
 
   // 5. Cart — load local first, then merge with cloud
   await initCartPersistence();

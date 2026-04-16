@@ -36,6 +36,10 @@ export function toggleWishlistItem(id) {
   if (wishlist.has(id)) wishlist.delete(id);
   else wishlist.add(id);
   saveWishlist();
+  // Sync to Supabase for logged-in users
+  if (typeof window !== 'undefined' && window.syncWishlistToSupabase) {
+    window.syncWishlistToSupabase();
+  }
 }
 
 /* ================================================================
@@ -94,9 +98,18 @@ export const cart = {
    DISCOUNT STATE
    ================================================================ */
 export let discountApplied = false;
+export let discountPercent = 0;
+export let discountCode    = '';
 
-export function setDiscountApplied(value) {
+export function setDiscountApplied(value, percent = 10, code = '') {
   discountApplied = value;
+  discountPercent = value ? percent : 0;
+  discountCode    = value ? code : '';
+}
+
+if (typeof window !== 'undefined') {
+  window.getDiscountPercent = () => discountPercent;
+  window.getDiscountCode    = () => discountCode;
 }
 
 /* ================================================================

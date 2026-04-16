@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS orders (
   items            TEXT NOT NULL DEFAULT '[]',
   shipping_address TEXT NOT NULL DEFAULT '{}',
   subtotal_inr     INT NOT NULL DEFAULT 0,
+  discount_inr     INT NOT NULL DEFAULT 0,
   shipping_inr     INT NOT NULL DEFAULT 0,
   total_inr        INT NOT NULL DEFAULT 0,
   status           TEXT NOT NULL DEFAULT 'pending',

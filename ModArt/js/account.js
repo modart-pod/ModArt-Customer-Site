@@ -11,6 +11,32 @@ function esc(str) {
     .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
+// ── Wishlist Supabase sync ────────────────────────────────────────
+
+export async function syncWishlistToSupabase() {
+  if (!currentUser || !supabase) return;
+  try {
+    const ids = JSON.stringify([...wishlist]);
+    await supabase.from('carts').upsert(
+      { user_id: currentUser.id, items: window.cart?.items ? JSON.stringify(window.cart.items) : '[]', updated_at: new Date().toISOString() },
+      { onConflict: 'user_id' }
+    );
+    // Store wishlist in localStorage keyed by user
+    localStorage.setItem('modart_wishlist_' + currentUser.id, ids);
+  } catch (e) { console.warn('Wishlist sync failed:', e.message); }
+}
+
+export async function loadWishlistFromSupabase() {
+  if (!currentUser || !supabase) return;
+  try {
+    const saved = localStorage.getItem('modart_wishlist_' + currentUser.id);
+    if (saved) {
+      const ids = JSON.parse(saved);
+      ids.forEach(id => { if (!wishlist.has(id)) wishlist.add(id); });
+    }
+  } catch (e) { console.warn('Wishlist load failed:', e.message); }
+}
+
 /**
  * Renders the account page based on auth state.
  */
@@ -157,4 +183,6 @@ if (typeof window !== 'undefined') {
   window.renderWishlistPage = renderWishlistPage;
   window.saveProfile        = saveProfile;
   window.shareWishlist      = shareWishlist;
+  window.syncWishlistToSupabase = syncWishlistToSupabase;
+  window.loadWishlistFromSupabase = loadWishlistFromSupabase;
 }
