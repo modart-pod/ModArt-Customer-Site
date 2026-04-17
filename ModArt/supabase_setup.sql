@@ -226,7 +226,7 @@ CREATE POLICY "inventory_admin_all" ON inventory FOR ALL   USING (is_admin()) WI
 CREATE POLICY "orders_user_read"   ON orders    FOR SELECT USING (auth.uid() = user_id OR is_admin());
 CREATE POLICY "orders_user_insert" ON orders    FOR INSERT WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "orders_guest_insert" ON orders   FOR INSERT WITH CHECK (user_id IS NULL);
-CREATE POLICY "orders_user_update" ON orders    FOR UPDATE USING (auth.uid() = user_id);
+CREATE POLICY "orders_user_update" ON orders    FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id AND status = 'cancelled');
 CREATE POLICY "orders_admin_all"   ON orders    FOR ALL    USING (is_admin()) WITH CHECK (is_admin());
 CREATE POLICY "carts_user_all"     ON carts     FOR ALL    USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "carts_admin_read"   ON carts     FOR SELECT USING (is_admin());

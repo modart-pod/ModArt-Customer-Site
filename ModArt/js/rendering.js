@@ -198,11 +198,16 @@ export function renderBag() {
   
   // Update totals
   const sub = cart.subtotal;
-  const discEl = document.getElementById('discount-row');
+  // discount-row-display shows the applied discount line in the summary
+  const discEl = document.getElementById('discount-row-display');
   const pct  = discountApplied ? (discountPercent || 10) : 0;
   const disc = discountApplied ? Math.round(sub * pct / 100) : 0;
-  
-  if (discEl) discEl.style.display = disc > 0 ? 'flex' : 'none';
+
+  if (discEl) discEl.style.display = disc > 0 ? '' : 'none';
+
+  // Update discount label to show real percent
+  const discLabelEl = discEl?.querySelector('span:first-child');
+  if (discLabelEl && disc > 0) discLabelEl.textContent = `Discount (${pct}%)`;
   
   const discVal = document.getElementById('discount-val');
   if (discVal) discVal.textContent = `−${formatPrice(disc)}`;
@@ -393,19 +398,19 @@ export function renderRelatedProducts(excludeId) {
     const wish = wishlist.has(p.id);
     const sold = p.stock === 0;
     const low  = p.stock > 0 && p.stock <= 5;
-    return `<div class="product-card" data-product-id="${p.id}" data-product-price="${p.price}" data-product-stock="${p.stock}" data-product-name="${p.name}" onclick="window.openProduct&&window.openProduct('${p.id}')" role="article" aria-label="${p.name}">
+    return `<div class="product-card" data-product-id="${esc(p.id)}" data-product-price="${p.price}" data-product-stock="${p.stock}" data-product-name="${esc(p.name)}" onclick="window.openProduct&&window.openProduct('${esc(p.id)}')" role="article" aria-label="${esc(p.name)}">
       <div class="product-card-img">
-        <img src="${p.img}" alt="${p.name}" loading="lazy"/>
-        ${p.badge ? `<div class="product-card-badge${sold?' badge-sold':low?' badge-low':''}">${p.badge}</div>` : ''}
+        <img src="${esc(p.img)}" alt="${esc(p.name)}" loading="lazy"/>
+        ${p.badge ? `<div class="product-card-badge${sold?' badge-sold':low?' badge-low':''}">${esc(p.badge)}</div>` : ''}
         <div class="product-card-overlay">
           <button class="card-quick-cta" onclick="event.stopPropagation();window.goTo&&window.goTo('customize')">Customize</button>
-          <button class="wishlist-icon-btn${wish?' wishlisted':''}" aria-label="Wishlist ${p.name}" onclick="event.stopPropagation();window.toggleWishlist&&window.toggleWishlist('${p.id}',this)">
+          <button class="wishlist-icon-btn${wish?' wishlisted':''}" aria-label="Wishlist ${esc(p.name)}" onclick="event.stopPropagation();window.toggleWishlist&&window.toggleWishlist('${esc(p.id)}',this)">
             <span class="material-symbols-outlined icon">${wish?'favorite':'favorite_border'}</span>
           </button>
         </div>
       </div>
-      <div class="product-card-series">${p.series}</div>
-      <div class="product-card-name">${p.name}</div>
+      <div class="product-card-series">${esc(p.series)}</div>
+      <div class="product-card-name">${esc(p.name)}</div>
       <div class="product-card-footer">
         <div class="product-card-price">${sold?`<s style="color:var(--g3)">${formatPrice(p.price)}</s>`:formatPrice(p.price)}</div>
         ${low&&!sold?`<div class="product-card-scarcity">Only ${p.stock} Left</div>`:''}

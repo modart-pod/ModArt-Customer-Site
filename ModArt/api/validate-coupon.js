@@ -23,6 +23,12 @@ export default async function handler(req, res) {
         const c = data[0];
         if (c.expires_at && new Date(c.expires_at) < new Date()) return res.status(200).json({ valid: false, message: 'Code expired.' });
         if (c.max_uses && c.used_count >= c.max_uses) return res.status(200).json({ valid: false, message: 'Code usage limit reached.' });
+        // Increment usage count
+        await fetch(`${SUPABASE_URL}/rest/v1/rpc/increment_coupon_usage`, {
+          method: 'POST',
+          headers: { 'apikey': SUPABASE_SERVICE, 'Authorization': `Bearer ${SUPABASE_SERVICE}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ p_code: code }),
+        }).catch(() => {});
         return res.status(200).json({ valid: true, discount: c.discount_percent || 10 });
       }
       return res.status(200).json({ valid: false, message: 'Invalid code.' });

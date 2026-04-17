@@ -39,7 +39,8 @@ function clamp(a, v, b) {
 }
 
 function getCanvasWrap() {
-  return document.getElementById('canvas-wrap');
+  // index.html uses id="design-canvas" as the layer container
+  return document.getElementById('design-canvas') || document.getElementById('canvas-wrap');
 }
 
 // ================================================================
@@ -114,6 +115,7 @@ function rebuildLayerDOM() {
 
 function selectLayer(id) {
   cust.selectedLayer = id;
+  window._selectedLayerId = id; // expose for inline onclick handlers
   
   // Update visual selection
   document.querySelectorAll('.design-layer').forEach(el => 
@@ -432,14 +434,15 @@ function loadArtworkToCanvas(src) {
   updateLayersPanel();
   updateCost();
   setQuality(85);
-  
-  document.getElementById('canvas-tip').textContent = 'Drag to reposition · Use sliders to transform';
+  const tip = document.getElementById('canvas-tip');
+  if (tip) tip.textContent = 'Drag to reposition · Use sliders to transform';
 }
 function addTextLayer() {
   snapShot();
-  
-  document.getElementById('text-tool-panel').style.display = 'block';
-  document.getElementById('transform-section').style.display = 'block';
+  const ttp = document.getElementById('text-tool-panel');
+  const ts  = document.getElementById('transform-section');
+  if (ttp) ttp.style.display = 'block';
+  if (ts)  ts.style.display  = 'block';
   
   const wrap = getCanvasWrap();
   if (!wrap) return;
@@ -557,8 +560,8 @@ function selectZone(btn, zone) {
 function selectColour(sw, _colour, img) {
   document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('sel'));
   sw.classList.add('sel');
-  
-  const el = document.getElementById('canvas-product-img');
+  // index.html uses id="cust-product-img"
+  const el = document.getElementById('cust-product-img') || document.getElementById('canvas-product-img');
   if (el && img) el.src = img;
 }
 
@@ -576,7 +579,7 @@ function changeCustProduct(val) {
     cargo:  'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=700&q=85',
   };
 
-  const el = document.getElementById('canvas-product-img');
+  const el = document.getElementById('cust-product-img') || document.getElementById('canvas-product-img');
   if (el) el.src = imgs[val] || imgs.hoodie;
 
   const name = document.getElementById('cust-product-name');

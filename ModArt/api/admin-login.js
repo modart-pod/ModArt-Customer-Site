@@ -2,8 +2,10 @@ const SUPABASE_URL     = process.env.SUPABASE_URL     || 'https://ddodctzzsrlgyh
 const SUPABASE_SERVICE = process.env.SUPABASE_SERVICE_KEY;
 const ADMIN_EMAILS     = ['modart.pod@gmail.com'];
 
+const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || 'https://modart-print-on-demand.vercel.app';
+
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGIN);
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 

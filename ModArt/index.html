@@ -574,7 +574,7 @@
           <div style="margin-bottom:16px"><div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g2);margin-bottom:6px">Scale</div><input type="range" id="scale-slider" min="20" max="200" value="100" style="width:100%;accent-color:var(--red)"/></div>
           <div style="margin-bottom:16px"><div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g2);margin-bottom:6px">Rotation</div><input type="range" id="rot-slider" min="-180" max="180" value="0" style="width:100%;accent-color:var(--red)"/></div>
           <button class="btn-outline" style="width:100%;margin-bottom:8px" onclick="centerLayer()">Center</button>
-          <button class="btn-outline" style="width:100%;margin-bottom:8px" onclick="deleteLayer()">Delete Layer</button>
+          <button class="btn-outline" style="width:100%;margin-bottom:8px" onclick="deleteLayer(window._selectedLayerId)">Delete Layer</button>
         </div>
       </div>
     </div>
