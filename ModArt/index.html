@@ -570,9 +570,9 @@
         </div>
         <div class="customizer-layers-col" style="width:clamp(180px,20vw,220px);border-left:1px solid var(--border);padding:16px;overflow-y:auto;background:var(--bg)">
           <div style="font-size:9px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--g3);margin-bottom:12px">Layer Properties</div>
-          <div style="margin-bottom:12px"><div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g2);margin-bottom:6px">Opacity</div><input type="range" id="opacity-slider" min="0" max="100" value="100" style="width:100%;accent-color:var(--red)"/></div>
-          <div style="margin-bottom:16px"><div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g2);margin-bottom:6px">Scale</div><input type="range" id="scale-slider" min="20" max="200" value="100" style="width:100%;accent-color:var(--red)"/></div>
-          <div style="margin-bottom:16px"><div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g2);margin-bottom:6px">Rotation</div><input type="range" id="rot-slider" min="-180" max="180" value="0" style="width:100%;accent-color:var(--red)"/></div>
+          <div style="margin-bottom:12px"><div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g2);margin-bottom:6px;display:flex;justify-content:space-between">Opacity<span id="opacity-val" style="color:var(--g3)">100%</span></div><input type="range" id="opacity-slider" min="0" max="100" value="100" style="width:100%;accent-color:var(--red)"/></div>
+          <div style="margin-bottom:16px"><div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g2);margin-bottom:6px;display:flex;justify-content:space-between">Scale<span id="scale-val" style="color:var(--g3)">100%</span></div><input type="range" id="scale-slider" min="20" max="200" value="100" style="width:100%;accent-color:var(--red)"/></div>
+          <div style="margin-bottom:16px"><div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g2);margin-bottom:6px;display:flex;justify-content:space-between">Rotation<span id="rot-val" style="color:var(--g3)">0°</span></div><input type="range" id="rot-slider" min="-180" max="180" value="0" style="width:100%;accent-color:var(--red)"/></div>
           <button class="btn-outline" style="width:100%;margin-bottom:8px" onclick="centerLayer()">Center</button>
           <button class="btn-outline" style="width:100%;margin-bottom:8px" onclick="deleteLayer(window._selectedLayerId)">Delete Layer</button>
         </div>
@@ -997,7 +997,7 @@
         <div id="admin-login-error" style="display:none;background:rgba(215,38,56,.08);border:1px solid rgba(215,38,56,.25);color:var(--red);font-size:12px;font-weight:600;padding:10px 14px;border-radius:var(--r-sm);margin-bottom:16px"></div>
         <div class="form-group"><label class="form-label">Email</label><input id="admin-email" class="form-input" type="email" placeholder="admin@modart.co"/></div>
         <div class="form-group"><label class="form-label">Password</label><input id="admin-password" class="form-input" type="password" placeholder="••••••••"/></div>
-        <button class="btn-red btn-red-full btn-red-pill" style="padding:16px;margin-top:8px" onclick="adminLogin()">Access Dashboard</button>
+        <button class="btn-red btn-red-full btn-red-pill" style="padding:16px;margin-top:8px" onclick="window.location.href='/admin'">Access Dashboard</button>
       </div>
     </div>
     <div id="admin-dashboard" style="display:none;padding:32px;min-height:100vh">
