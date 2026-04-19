@@ -3535,7 +3535,7 @@ async function deleteProduct(productId, btnEl) {
     async function() {
       const sb = getSB(); if (!sb) return;
       try {
-        const { error } = await sb.from('products').update({ is_active: false, updated_at: new Date().toISOString() }).eq('id', productId);
+        const { error } = await sb.from('products').update({ is_active: false }).eq('id', productId);
         if (error) throw error;
         const row = btnEl?.closest('tr');
         if (row) row.remove();
