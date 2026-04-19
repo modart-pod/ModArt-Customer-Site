@@ -3453,7 +3453,7 @@ async function loadAdminProducts() {
         + '<td>' + esc(p.badge || '—') + '</td>'
         + '<td>' + status + '</td>'
         + '<td class="text-muted text-sm">' + esc(date) + '</td>'
-        + '<td><div style="display:flex;gap:6px"><button class="btn-ghost" onclick="openProductModal(window._editProducts[' + JSON.stringify(p.id) + '])">Edit</button><button class="btn-danger btn-sm" onclick="deleteProduct(' + JSON.stringify(p.id) + ',this)">Delete</button></div></td>'
+        + '<td><div style="display:flex;gap:6px"><button class="btn-ghost" data-pid="' + esc(p.id) + '" onclick="openProductModal(window._editProducts[this.dataset.pid])">Edit</button><button class="btn-danger btn-sm" data-pid="' + esc(p.id) + '" onclick="deleteProduct(this.dataset.pid,this)">Delete</button></div></td>'
         + '</tr>';
     }).join('');
   } catch (e) {
