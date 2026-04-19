@@ -292,7 +292,7 @@ body.dark .topbar{background:rgba(17,17,17,.96);}
 .signout-btn:hover{background:rgba(215,38,56,.15);color:var(--red);}
 .signout-btn .icon{font-size:16px;}
 @keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
-.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px;}.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;}
 .grid-main-side{display:grid;grid-template-columns:1fr 320px;gap:18px;}
 .grid-main-side-sm{display:grid;grid-template-columns:1fr 260px;gap:18px;}
 .mb-6{margin-bottom:22px;}
@@ -856,8 +856,8 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
       </div>
     </div>
     <div class="stats-grid mb-6">
-      <div class="stat-card red"><div class="stat-header"><div class="stat-icon red"><span class="material-symbols-outlined">payments</span></div><span class="stat-change up" id="ds-rev-chg">+18.4%</span></div><div><div class="stat-value" id="ds-rev">$84,320</div><div class="stat-label" style="margin-top:4px">Total Revenue</div></div></div>
-      <div class="stat-card green"><div class="stat-header"><div class="stat-icon green"><span class="material-symbols-outlined">package_2</span></div><span class="stat-change up" id="ds-ord-chg">+12.1%</span></div><div><div class="stat-value" id="ds-ord">1,284</div><div class="stat-label" style="margin-top:4px">Total Orders</div></div></div>
+      <div class="stat-card red"><div class="stat-header"><div class="stat-icon red"><span class="material-symbols-outlined">payments</span></div><span class="stat-change up" id="ds-rev-chg">+18.4%</span></div><div><div class="stat-value" id="ds-rev">₹84,320</div><div class="stat-label" style="margin-top:4px">Total Revenue</div></div></div>
+      <div class="stat-card green"><div class="stat-header"><div class="stat-icon green"><span class="material-symbols-outlined">package_2</span></div><span class="stat-change up" id="ds-ord-chg">+12.1%</span></div><div><div class="stat-value" id="ds-ord">—</div><div class="stat-label" style="margin-top:4px">Total Orders</div></div></div>
       <div class="stat-card amber"><div class="stat-header"><div class="stat-icon amber"><span class="material-symbols-outlined">group</span></div><span class="stat-change up">+9.7%</span></div><div><div class="stat-value">3,841</div><div class="stat-label" style="margin-top:4px">Active Customers</div></div></div>
       <div class="stat-card dark"><div class="stat-header"><div class="stat-icon dark"><span class="material-symbols-outlined">bolt</span></div><span class="stat-change up">+5.2%</span></div><div><div class="stat-value">3</div><div class="stat-label" style="margin-top:4px">Active Drops</div></div></div>
       <div class="stat-card red"><div class="stat-header"><div class="stat-icon red"><span class="material-symbols-outlined">point_of_sale</span></div><span class="stat-change up">+6.3%</span></div><div><div class="stat-value">$65.60</div><div class="stat-label" style="margin-top:4px">Avg Order Value</div></div></div>
@@ -960,12 +960,12 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
       </div>
     </div>
     <div class="stats-grid mb-6">
-      <div class="stat-card red"><div class="stat-header"><div class="stat-icon red"><span class="material-symbols-outlined">attach_money</span></div><span class="stat-change up">+22%</span></div><div><div class="stat-value">$84,320</div><div class="stat-label" style="margin-top:4px">Gross Revenue</div></div></div>
-      <div class="stat-card green"><div class="stat-header"><div class="stat-icon green"><span class="material-symbols-outlined">trending_up</span></div><span class="stat-change up">+14%</span></div><div><div class="stat-value">$38,641</div><div class="stat-label" style="margin-top:4px">Net Profit</div></div></div>
-      <div class="stat-card amber"><div class="stat-header"><div class="stat-icon amber"><span class="material-symbols-outlined">factory</span></div><span class="stat-change down">+3%</span></div><div><div class="stat-value">$31,204</div><div class="stat-label" style="margin-top:4px">Production Costs</div></div></div>
+      <div class="stat-card red"><div class="stat-header"><div class="stat-icon red"><span class="material-symbols-outlined">attach_money</span></div><span class="stat-change up">+22%</span></div><div><div class="stat-value" id="an-gross">₹—</div><div class="stat-label" style="margin-top:4px">Gross Revenue</div></div></div>
+      <div class="stat-card green"><div class="stat-header"><div class="stat-icon green"><span class="material-symbols-outlined">trending_up</span></div><span class="stat-change up">+14%</span></div><div><div class="stat-value" id="an-profit">₹—</div><div class="stat-label" style="margin-top:4px">Net Profit</div></div></div>
+      <div class="stat-card amber"><div class="stat-header"><div class="stat-icon amber"><span class="material-symbols-outlined">factory</span></div><span class="stat-change down">+3%</span></div><div><div class="stat-value" id="an-costs">₹—</div><div class="stat-label" style="margin-top:4px">Production Costs</div></div></div>
       <div class="stat-card"><div class="stat-header"><div class="stat-icon dark"><span class="material-symbols-outlined">percent</span></div><span class="stat-change up">+2.1pt</span></div><div><div class="stat-value">45.8%</div><div class="stat-label" style="margin-top:4px">Net Margin</div></div></div>
       <div class="stat-card"><div class="stat-header"><div class="stat-icon red"><span class="material-symbols-outlined">assignment_return</span></div><span class="stat-change up">-0.4%</span></div><div><div class="stat-value">2.3%</div><div class="stat-label" style="margin-top:4px">Refund Rate</div></div></div>
-      <div class="stat-card"><div class="stat-header"><div class="stat-icon green"><span class="material-symbols-outlined">loyalty</span></div><span class="stat-change up">+$8</span></div><div><div class="stat-value">$184</div><div class="stat-label" style="margin-top:4px">Customer LTV</div></div></div>
+      <div class="stat-card"><div class="stat-header"><div class="stat-icon green"><span class="material-symbols-outlined">loyalty</span></div><span class="stat-change up">+$8</span></div><div><div class="stat-value" id="an-ltv">₹—</div><div class="stat-label" style="margin-top:4px">Customer LTV</div></div></div>
     </div>
     <!-- P&L TABLE + MARGIN TREND -->
     <div class="grid-2 mb-6">
@@ -1159,7 +1159,7 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
       <div class="pagination">
         <div class="pag-info"><span id="orders-pag-info">Loading</span></div>
         <div class="pag-controls">
-          <button class="pag-btn" disabled>?</button>
+          <button class="pag-btn" disabled>&#8249;</button>
           <button class="pag-btn active">1</button>
           <button class="pag-btn">2</button>
           <button class="pag-btn">3</button>
@@ -1195,7 +1195,7 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
       <div class="pagination">
         <div class="pag-info">Showing 15 of 48 products</div>
         <div class="pag-controls">
-          <button class="pag-btn" disabled>?</button>
+          <button class="pag-btn" disabled>&#8249;</button>
           <button class="pag-btn active">1</button><button class="pag-btn">2</button><button class="pag-btn">3</button>
           <button class="pag-btn"></button>
         </div>
@@ -1270,7 +1270,7 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
       </div>
       <div class="pagination">
         <div class="pag-info">Showing 15 of 1,842 SKUs</div>
-        <div class="pag-controls"><button class="pag-btn" disabled>?</button><button class="pag-btn active">1</button><button class="pag-btn">2</button><button class="pag-btn"></button></div>
+        <div class="pag-controls"><button class="pag-btn" disabled>&#8249;</button><button class="pag-btn active">1</button><button class="pag-btn">2</button><button class="pag-btn"></button></div>
       </div>
     </div>
   </div><!-- /inventory -->
@@ -1328,7 +1328,7 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
           </tbody>
         </table>
       </div>
-      <div class="pagination"><div class="pag-info">Showing 12 of 278 active creators</div><div class="pag-controls"><button class="pag-btn" disabled>?</button><button class="pag-btn active">1</button><button class="pag-btn">2</button><button class="pag-btn"></button></div></div>
+      <div class="pagination"><div class="pag-info">Showing 12 of 278 active creators</div><div class="pag-controls"><button class="pag-btn" disabled>&#8249;</button><button class="pag-btn active">1</button><button class="pag-btn">2</button><button class="pag-btn"></button></div></div>
     </div>
   </div>
   </div><!-- /creators -->
@@ -1351,7 +1351,7 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
           <tbody><tr><td colspan="8" style="text-align:center;padding:32px;color:var(--g3)"><span class="material-symbols-outlined" style="font-size:20px;vertical-align:middle;animation:spin 1s linear infinite">autorenew</span> Loading customers</td></tr></tbody>
         </table>
       </div>
-      <div class="pagination"><div class="pag-info">Loading customers</div><div class="pag-controls"><button class="pag-btn" disabled>?</button><button class="pag-btn active">1</button><button class="pag-btn">2</button><button class="pag-btn"></button></div></div>
+      <div class="pagination"><div class="pag-info">Loading customers</div><div class="pag-controls"><button class="pag-btn" disabled>&#8249;</button><button class="pag-btn active">1</button><button class="pag-btn">2</button><button class="pag-btn"></button></div></div>
     </div>
   </div><!-- /customers -->
   <!-- ============================================================
@@ -1376,7 +1376,7 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
           </tbody>
         </table>
       </div>
-      <div class="pagination"><div class="pag-info">Showing 14 of 7 requests</div><div class="pag-controls"><button class="pag-btn" disabled>?</button><button class="pag-btn active">1</button><button class="pag-btn"></button></div></div>
+      <div class="pagination"><div class="pag-info">Showing 14 of 7 requests</div><div class="pag-controls"><button class="pag-btn" disabled>&#8249;</button><button class="pag-btn active">1</button><button class="pag-btn"></button></div></div>
     </div>
   </div>
   </div><!-- /designs -->
@@ -1555,7 +1555,7 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
           <tr><td><div style="display:flex;align-items:center;gap:10px;"><div class="user-avatar" style="background:linear-gradient(135deg,#F59E0B,#D97706);">AP</div><div><div class="td-bold">@ash.p</div><div class="text-xs text-muted">ash@email.com</div></div></div></td><td class="td-bold">15%</td><td class="td-bold">4</td><td class="td-bold">$240</td><td class="td-bold">$36</td><td class="text-muted">$0</td><td class="td-bold text-muted">$36</td><td><span class="pill ended"><span class="pill-dot"></span>On Hold</span></td><td><span class="text-xs text-muted" style="font-style:italic;">Below $50 min</span></td></tr>
         </tbody></table>
       </div>
-      <div class="pagination"><div class="pag-info">Showing 14 of 284 creators</div><div class="pag-controls"><button class="pag-btn" disabled>?</button><button class="pag-btn active">1</button><button class="pag-btn">2</button><button class="pag-btn"></button></div></div>
+      <div class="pagination"><div class="pag-info">Showing 14 of 284 creators</div><div class="pag-controls"><button class="pag-btn" disabled>&#8249;</button><button class="pag-btn active">1</button><button class="pag-btn">2</button><button class="pag-btn"></button></div></div>
     </div>
   <!-- EDIT CREATOR RATE MODAL -->
   <div class="modal-backdrop" id="creator-rate-modal">
@@ -1797,7 +1797,7 @@ Sitemap: https://modart.co/sitemap.xml</textarea>
         </tbody></table>
 </div>
       </div>
-      <div class="pagination"><div class="pag-info">Showing 13 of 6 bundles</div><div class="pag-controls"><button class="pag-btn" disabled>?</button><button class="pag-btn active">1</button><button class="pag-btn">2</button><button class="pag-btn"></button></div></div>
+      <div class="pagination"><div class="pag-info">Showing 13 of 6 bundles</div><div class="pag-controls"><button class="pag-btn" disabled>&#8249;</button><button class="pag-btn active">1</button><button class="pag-btn">2</button><button class="pag-btn"></button></div></div>
     </div>
     <div class="card">
       <div class="card-hdr"><div class="card-title">Upsell Rules</div><button class="btn-ghost" onclick="showToast('Add upsell rule coming soon','order')">+ Add Rule</button></div>
@@ -1921,7 +1921,7 @@ Sitemap: https://modart.co/sitemap.xml</textarea>
         </tbody></table>
 </div>
       </div>
-      <div class="pagination"><div class="pag-info">Showing 13 of 9,840 subscribers</div><div class="pag-controls"><button class="pag-btn" disabled>?</button><button class="pag-btn active">1</button><button class="pag-btn">2</button><button class="pag-btn"></button></div></div>
+      <div class="pagination"><div class="pag-info">Showing 13 of 9,840 subscribers</div><div class="pag-controls"><button class="pag-btn" disabled>&#8249;</button><button class="pag-btn active">1</button><button class="pag-btn">2</button><button class="pag-btn"></button></div></div>
     </div>
   </div><!-- /waitlist -->
   <!-- BLAST EMAIL MODAL -->
@@ -1966,7 +1966,7 @@ Sitemap: https://modart.co/sitemap.xml</textarea>
         </tbody></table>
 </div>
       </div>
-      <div class="pagination"><div class="pag-info">Showing 18 of 1,284 entries</div><div class="pag-controls"><button class="pag-btn" disabled>?</button><button class="pag-btn active">1</button><button class="pag-btn">2</button><button class="pag-btn">3</button><span style="padding:0 4px;color:var(--g3);font-size:11px;"></span><button class="pag-btn">161</button><button class="pag-btn"></button></div></div>
+      <div class="pagination"><div class="pag-info">Showing 18 of 1,284 entries</div><div class="pag-controls"><button class="pag-btn" disabled>&#8249;</button><button class="pag-btn active">1</button><button class="pag-btn">2</button><button class="pag-btn">3</button><span style="padding:0 4px;color:var(--g3);font-size:11px;"></span><button class="pag-btn">161</button><button class="pag-btn"></button></div></div>
   </div><!-- /audit -->
   <!-- ============================================================
        EMAIL TEMPLATES
@@ -2054,7 +2054,7 @@ Sitemap: https://modart.co/sitemap.xml</textarea>
         </tbody></table>
 </div>
       </div>
-      <div class="pagination"><div class="pag-info">Showing 16 of 12 templates</div><div class="pag-controls"><button class="pag-btn" disabled>?</button><button class="pag-btn active">1</button><button class="pag-btn">2</button><button class="pag-btn"></button></div></div>
+      <div class="pagination"><div class="pag-info">Showing 16 of 12 templates</div><div class="pag-controls"><button class="pag-btn" disabled>&#8249;</button><button class="pag-btn active">1</button><button class="pag-btn">2</button><button class="pag-btn"></button></div></div>
     </div>
     <!-- Inline preview panels -->
     <div id="tpl-order-confirm" style="display:none;" class="card mt-6">

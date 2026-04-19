@@ -3305,3 +3305,23 @@
   flex-wrap: wrap;
   margin-top: 32px;
 }
+
+/* =================================================================
+   UTILITY GRID CLASSES
+   ================================================================= */
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 18px;
+}
+
+@media (max-width: 599px) {
+  .grid-2 { grid-template-columns: 1fr; }
+  .grid-3 { grid-template-columns: 1fr; }
+}
