@@ -927,10 +927,10 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
         </div>
       </div>
       <div class="card">
-      <div class="card">
         <div class="card-hdr"><div class="card-title" style="color:var(--red)">&#9888; Low Stock</div><button class="card-action" onclick="showPage('inventory')">Manage</button></div>
         <div id="low-stock-list"><div style="padding:16px;text-align:center;color:var(--g3);font-size:12px"><span class="material-symbols-outlined" style="font-size:18px;vertical-align:middle;animation:spin 1s linear infinite">autorenew</span> Loading</div></div>
-
+      </div>
+    </div>
     <div class="grid-2">
       <div class="card">
         <div class="card-hdr"><div class="card-title">Top Products</div></div>
@@ -987,6 +987,7 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
           <tr style="background:rgba(34,197,94,.05)"><td><strong>Net Profit</strong></td><td style="color:var(--green);font-weight:800;font-size:16px;" id="pl-net">$38,641</td></tr>
           <tr><td style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g3)">Net Margin</td><td style="color:var(--green);font-weight:700;" id="pl-margin">45.8%</td></tr>
         </table>
+      </div>
       <div class="card">
         <div class="card-hdr"><div class="card-title">Profit Margin Trend</div><div class="text-xs text-muted">Monthly %</div></div>
         <svg viewBox="0 0 500 150" style="width:100%;height:150px;display:block;">
@@ -1123,7 +1124,6 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
         <div class="geo-legend-item"><div class="geo-circle" style="width:6px;height:6px;background:var(--purple)"></div>Australia  $4.2k (5%)</div>
       </div>
     </div>
-  </div>
   </div><!-- /analytics -->
   <!-- ============================================================
        ORDERS
@@ -1481,7 +1481,7 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
         <div class="form-group"><label class="form-label">Expiry Date</label><input id="coupon-expiry-input" class="form-input" type="date"/></div>
         <button class="btn-red" style="width:100%" onclick="createCoupon()">Create Coupon</button>
       </div>
-  </div><!-- /coupons -->
+    </div>
   </div><!-- /coupons -->
   <!-- ============================================================
        CREATOR PAYOUTS
@@ -1512,7 +1512,11 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
         </table>
       </div>
     </div>
-  </div><!-- /returns -->  <div class="page" id="page-payouts">
+  </div><!-- /returns -->
+  <!-- ============================================================
+       CREATOR PAYOUTS
+       ============================================================ -->
+  <div class="page" id="page-payouts">
     <div class="page-hdr">
       <div><div class="eyebrow eyebrow-red" style="margin-bottom:6px">Finance</div><h1 class="page-title">Creator Payouts</h1></div>
       <div style="display:flex;gap:8px;">
@@ -1566,6 +1570,7 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
       <div class="modal-footer"><button class="btn-ghost" onclick="closeModal('creator-rate-modal')">Cancel</button><button class="btn-red" onclick="closeModal('creator-rate-modal');showToast('Commission rate updated','order')">Save</button></div>
     </div>
   </div>
+  </div><!-- /payouts -->
   <!-- ============================================================
        PAYMENT GATEWAY CONFIGURATION
        ============================================================ -->
