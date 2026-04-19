@@ -2482,6 +2482,7 @@ function handleAdminLogin() {
     var session = JSON.stringify({ email: u.email, name: u.name, role: u.role, initials: u.initials });
     if (document.getElementById('remember-me').checked) {
       localStorage.setItem('ma_admin_auth', session);
+      localStorage.setItem('ma_admin_explicit', '1');
       if (r.data.access_token) {
         localStorage.setItem('ma_admin_token', r.data.access_token);
         var sb = getSB();
@@ -2489,6 +2490,7 @@ function handleAdminLogin() {
       }
     } else {
       sessionStorage.setItem('ma_admin_auth', session);
+      sessionStorage.setItem('ma_admin_explicit', '1');
       if (r.data.access_token) {
         sessionStorage.setItem('ma_admin_token', r.data.access_token);
         var sb = getSB();
@@ -2537,8 +2539,10 @@ function adminSignOut() {
   const sb = getSB(); if (sb) sb.auth.signOut().catch(() => {});
   localStorage.removeItem('ma_admin_auth');
   localStorage.removeItem('ma_admin_token');
+  localStorage.removeItem('ma_admin_explicit');
   sessionStorage.removeItem('ma_admin_auth');
   sessionStorage.removeItem('ma_admin_token');
+  sessionStorage.removeItem('ma_admin_explicit');
   const screen = document.getElementById('admin-login-screen');
   const wrap   = document.getElementById('admin-dashboard-wrap');
   wrap.style.display   = 'none';
@@ -2591,16 +2595,30 @@ document.addEventListener('keydown', e => {
 (function checkAutoLogin() {
   const sb = getSB();
   if (!sb) return;
+  // Only auto-skip login if user explicitly logged in through the admin panel
+  const adminExplicit = localStorage.getItem('ma_admin_explicit') || sessionStorage.getItem('ma_admin_explicit');
+  const stored = localStorage.getItem('ma_admin_auth') || sessionStorage.getItem('ma_admin_auth');
+  const storedToken = localStorage.getItem('ma_admin_token') || sessionStorage.getItem('ma_admin_token');
+  if (!adminExplicit || !stored || !storedToken) {
+    // No explicit admin login — always show login screen
+    return;
+  }
+  // Verify the Supabase session is still valid
   sb.auth.getSession().then(({ data: { session } }) => {
-    if (!session?.user) return;
+    if (!session?.user) {
+      // Session expired — clear everything and show login
+      localStorage.removeItem('ma_admin_auth');
+      localStorage.removeItem('ma_admin_token');
+      localStorage.removeItem('ma_admin_explicit');
+      sessionStorage.removeItem('ma_admin_auth');
+      sessionStorage.removeItem('ma_admin_token');
+      sessionStorage.removeItem('ma_admin_explicit');
+      return;
+    }
     const userEmail = session.user.email || '';
     if (!ADMIN_ALLOWED_EMAILS.includes(userEmail)) { sb.auth.signOut(); return; }
-    const existing = localStorage.getItem('ma_admin_auth') || sessionStorage.getItem('ma_admin_auth');
-    if (!existing) {
-      const name     = session.user.user_metadata?.full_name || userEmail.split('@')[0];
-      const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) || 'MA';
-      sessionStorage.setItem('ma_admin_auth', JSON.stringify({ email: userEmail, name, role: 'Super Admin', initials }));
-    }
+    // Restore Supabase session for RLS queries
+    sb.auth.setSession({ access_token: storedToken, refresh_token: storedToken }).catch(() => {});
     revealDashboard();
   });
 })();
