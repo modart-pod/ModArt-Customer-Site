@@ -1185,19 +1185,19 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
       <select class="filter-select"><option>All Stock</option><option>In Stock</option><option>Low Stock</option><option>Out of Stock</option></select>
     </div>
     <div class="card" style="padding:0">
-      <div style="padding:16px 18px;border-bottom:1px solid var(--border)"><div class="card-title">Product Catalog <span style="color:var(--g3);font-weight:600">(48)</span></div></div>
+      <div style="padding:16px 18px;border-bottom:1px solid var(--border)"><div class="card-title">Product Catalog <span id="products-count-badge" style="color:var(--g3);font-weight:600"></span></div></div>
       <div class="table-wrap">
         <table id="products-table">
-          <thead><tr><th>Product</th><th>SKU</th><th>Category</th><th>Price</th><th>Cost</th><th>Stock</th><th>Sales (30d)</th><th>Status</th><th>Actions</th></tr></thead>
-          <tbody><tr><td colspan="9" style="text-align:center;padding:32px;color:var(--g3)"><span class="material-symbols-outlined" style="font-size:20px;vertical-align:middle;animation:spin 1s linear infinite">autorenew</span> Loading products</td></tr></tbody>
+          <thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Badge</th><th>Status</th><th>Added</th><th>Actions</th></tr></thead>
+          <tbody><tr><td colspan="7" style="text-align:center;padding:32px;color:var(--g3)"><span class="material-symbols-outlined" style="font-size:20px;vertical-align:middle;animation:spin 1s linear infinite">autorenew</span> Loading products</td></tr></tbody>
         </table>
       </div>
       <div class="pagination">
-        <div class="pag-info">Showing 15 of 48 products</div>
+        <div class="pag-info" id="products-pag-info">Loading</div>
         <div class="pag-controls">
           <button class="pag-btn" disabled>&#8249;</button>
-          <button class="pag-btn active">1</button><button class="pag-btn">2</button><button class="pag-btn">3</button>
-          <button class="pag-btn"></button>
+          <button class="pag-btn active">1</button>
+          <button class="pag-btn">&#8250;</button>
         </div>
       </div>
     </div>
@@ -3429,30 +3429,35 @@ async function loadAdminProducts() {
   try {
     const { data, error } = await sb.from('products').select('*').order('created_at', { ascending: false });
     if (error) throw error;
+    // Update count badge and pagination
+    const countBadge = document.getElementById('products-count-badge');
+    const pagInfo    = document.getElementById('products-pag-info');
+    if (countBadge) countBadge.textContent = '(' + (data ? data.length : 0) + ')';
+    if (pagInfo)    pagInfo.textContent    = 'Showing ' + (data ? data.length : 0) + ' products';
     if (!data || !data.length) {
       tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--g3)">No products yet. <button class="btn-ghost" onclick="openProductModal(null)">Add one</button></td></tr>';
       return;
     }
     tbody.innerHTML = data.map(p => {
       const imgUrl = (p.images && p.images[0]) ? p.images[0] : '';
-      const img = imgUrl ? '<img src="' + esc(imgUrl) + '" width="36" height="36" style="object-fit:cover;border-radius:4px;background:#eee" onerror="this.remove()">' : '<div style="width:36px;height:36px;border-radius:4px;background:#eee"></div>';
-      const price = '₹' + (p.price_inr || 0).toLocaleString('en-IN');
+      const img = imgUrl ? '<img src="' + esc(imgUrl) + '" width="40" height="40" style="object-fit:cover;border-radius:4px;background:#eee;flex-shrink:0" onerror="this.remove()">' : '<div style="width:40px;height:40px;border-radius:4px;background:var(--bg-d);flex-shrink:0;display:flex;align-items:center;justify-content:center"><span class="material-symbols-outlined" style="font-size:18px;color:var(--g3)">checkroom</span></div>';
+      const price  = '₹' + (p.price_inr || 0).toLocaleString('en-IN');
       const status = p.is_active ? '<span class="pill live"><span class="pill-dot"></span>Active</span>' : '<span class="pill ended"><span class="pill-dot"></span>Inactive</span>';
-      const date = new Date(p.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
-      // Store product data for edit button (avoids atob/btoa encoding issues)
+      const date   = new Date(p.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+      // Store product data for edit button
       window._editProducts[p.id] = { id: p.id, name: p.name, category: p.series || '', desc: p.description || '', price: p.price_inr || 0, cost: 0, sizes: '', colors: '', stock: 0, threshold: 5, sku: p.id };
       return '<tr>'
         + '<td><div style="display:flex;align-items:center;gap:10px">' + img + '<div><div class="td-bold">' + esc(p.name) + '</div><div class="text-xs text-muted">' + esc(p.id) + '</div></div></div></td>'
-        + '<td>' + esc(p.series || '') + '</td>'
+        + '<td>' + esc(p.series || '—') + '</td>'
         + '<td class="td-bold">' + esc(price) + '</td>'
-        + '<td>' + esc(p.badge || '') + '</td>'
+        + '<td>' + esc(p.badge || '—') + '</td>'
         + '<td>' + status + '</td>'
         + '<td class="text-muted text-sm">' + esc(date) + '</td>'
         + '<td><div style="display:flex;gap:6px"><button class="btn-ghost" onclick="openProductModal(window._editProducts[' + JSON.stringify(p.id) + '])">Edit</button><button class="btn-danger btn-sm" onclick="deleteProduct(' + JSON.stringify(p.id) + ',this)">Delete</button></div></td>'
         + '</tr>';
     }).join('');
   } catch (e) {
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--red)">Error: ' + e.message + '</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--red)">Error: ' + esc(e.message) + '</td></tr>';
   }
 }
 async function loadAdminInventory() {
