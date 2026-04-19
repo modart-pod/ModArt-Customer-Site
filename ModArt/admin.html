@@ -2942,6 +2942,7 @@ async function submitProductModal() {
     series:      document.getElementById('pm-category').value,
     description: document.getElementById('pm-desc').value.trim(),
     price_inr:   parseFloat(document.getElementById('pm-price').value) || 0,
+    badge:       null,
     is_active:   true,
     updated_at:  new Date().toISOString(),
   };
@@ -2954,6 +2955,8 @@ async function submitProductModal() {
     if (isEdit && editId) {
       ({ error: err } = await sb.from('products').update(payload).eq('id', editId));
     } else {
+      // Generate a URL-safe ID from the product name
+      payload.id = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '-' + Date.now().toString().slice(-4);
       payload.created_at = new Date().toISOString();
       ({ error: err } = await sb.from('products').insert(payload));
     }
@@ -3421,6 +3424,7 @@ async function loadAdminProducts() {
   const tbody = document.querySelector('#page-products table tbody');
   if (!tbody) return;
   tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--g3)"><span class="material-symbols-outlined" style="font-size:20px;vertical-align:middle;animation:spin 1s linear infinite">autorenew</span> Loading</td></tr>';
+  window._editProducts = {}; // store product data for edit buttons
   try {
     const { data, error } = await sb.from('products').select('*').order('created_at', { ascending: false });
     if (error) throw error;
@@ -3434,7 +3438,8 @@ async function loadAdminProducts() {
       const price = '₹' + (p.price_inr || 0).toLocaleString('en-IN');
       const status = p.is_active ? '<span class="pill live"><span class="pill-dot"></span>Active</span>' : '<span class="pill ended"><span class="pill-dot"></span>Inactive</span>';
       const date = new Date(p.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
-      const editData = JSON.stringify({ id: p.id, name: p.name, category: p.series || '', desc: p.description || '', price: p.price_inr || 0, cost: 0, sizes: '', colors: '', stock: 0, threshold: 5, sku: p.id }).replace(/'/g, "\'");
+      // Store product data for edit button (avoids atob/btoa encoding issues)
+      window._editProducts[p.id] = { id: p.id, name: p.name, category: p.series || '', desc: p.description || '', price: p.price_inr || 0, cost: 0, sizes: '', colors: '', stock: 0, threshold: 5, sku: p.id };
       return '<tr>'
         + '<td><div style="display:flex;align-items:center;gap:10px">' + img + '<div><div class="td-bold">' + esc(p.name) + '</div><div class="text-xs text-muted">' + esc(p.id) + '</div></div></div></td>'
         + '<td>' + esc(p.series || '') + '</td>'
@@ -3442,7 +3447,7 @@ async function loadAdminProducts() {
         + '<td>' + esc(p.badge || '') + '</td>'
         + '<td>' + status + '</td>'
         + '<td class="text-muted text-sm">' + esc(date) + '</td>'
-        + '<td><div style="display:flex;gap:6px"><button class="btn-ghost" onclick="openProductModal(JSON.parse(atob(this.dataset.e)))" data-e="' + btoa(unescape(encodeURIComponent(editData))) + '">Edit</button><button class="btn-danger btn-sm" onclick="deleteProduct(' + JSON.stringify(p.id) + ',this)">Delete</button></div></td>'
+        + '<td><div style="display:flex;gap:6px"><button class="btn-ghost" onclick="openProductModal(window._editProducts[' + JSON.stringify(p.id) + '])">Edit</button><button class="btn-danger btn-sm" onclick="deleteProduct(' + JSON.stringify(p.id) + ',this)">Delete</button></div></td>'
         + '</tr>';
     }).join('');
   } catch (e) {
