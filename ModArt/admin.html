@@ -1177,7 +1177,7 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
   <div class="page" id="page-products">
     <div class="page-hdr">
       <div><div class="eyebrow eyebrow-red" style="margin-bottom:6px">Commerce</div><h1 class="page-title">Products</h1></div>
-      <button class="btn-red" onclick="openProductModal()"><span class="material-symbols-outlined" style="font-size:15px">add</span>New Product</button>
+      <button class="btn-red" onclick="openProductModal(null)"><span class="material-symbols-outlined" style="font-size:15px">add</span>New Product</button>
     </div>
     <div class="filter-bar">
       <div class="filter-search" style="max-width:260px"><span class="icon material-symbols-outlined">search</span><input type="text" placeholder="Search products" oninput="filterTable('products-table',this.value)"/></div>
@@ -2299,8 +2299,8 @@ Sitemap: https://modart.co/sitemap.xml</textarea>
       </div>
       <div class="form-group"><label class="form-label">Description</label><textarea id="pm-desc" class="form-input" rows="3" placeholder="Product description"></textarea></div>
       <div class="form-grid">
-        <div class="form-group"><label class="form-label">Retail Price ($)</label><input id="pm-price" class="form-input" type="number" placeholder="59"/></div>
-        <div class="form-group"><label class="form-label">Production Cost ($)</label><input id="pm-cost" class="form-input" type="number" placeholder="18"/></div>
+        <div class="form-group"><label class="form-label">Retail Price (₹)</label><input id="pm-price" class="form-input" type="number" placeholder="999"/></div>
+        <div class="form-group"><label class="form-label">Production Cost (₹)</label><input id="pm-cost" class="form-input" type="number" placeholder="200"/></div>
       </div>
       <div class="form-grid">
         <div class="form-group"><label class="form-label">Available Sizes</label><input id="pm-sizes" class="form-input" type="text" placeholder="XS, S, M, L, XL, XXL"/></div>
@@ -2915,19 +2915,21 @@ let _confirmOpen = false;
 function openModal(id) { document.getElementById(id).classList.add('show'); }
 function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 function openProductModal(data) {
-  const isEdit = !!data;
-  document.getElementById('pm-name').value      = isEdit ? data.name      : '';
-  document.getElementById('pm-category').value  = isEdit ? data.category  : 'Apparel';
-  document.getElementById('pm-desc').value      = isEdit ? (data.desc||'') : '';
-  document.getElementById('pm-price').value     = isEdit ? data.price     : '';
-  document.getElementById('pm-cost').value      = isEdit ? data.cost      : '';
-  document.getElementById('pm-sizes').value     = isEdit ? (data.sizes||'') : '';
-  document.getElementById('pm-colors').value    = isEdit ? (data.colors||'') : '';
-  document.getElementById('pm-stock').value     = isEdit ? data.stock     : '';
-  document.getElementById('pm-threshold').value = isEdit ? data.threshold : '';
-  document.getElementById('pm-sku').value       = isEdit ? data.sku       : '';
+  const isEdit = data !== null && data !== undefined && !!data;
+  document.getElementById('pm-name').value      = isEdit ? (data.name      || '') : '';
+  document.getElementById('pm-category').value  = isEdit ? (data.category  || 'Apparel') : 'Apparel';
+  document.getElementById('pm-desc').value      = isEdit ? (data.desc      || '') : '';
+  document.getElementById('pm-price').value     = isEdit ? (data.price     || '') : '';
+  document.getElementById('pm-cost').value      = isEdit ? (data.cost      || '') : '';
+  document.getElementById('pm-sizes').value     = isEdit ? (data.sizes     || '') : '';
+  document.getElementById('pm-colors').value    = isEdit ? (data.colors    || '') : '';
+  document.getElementById('pm-stock').value     = isEdit ? (data.stock     || '') : '';
+  document.getElementById('pm-threshold').value = isEdit ? (data.threshold || '') : '';
+  document.getElementById('pm-sku').value       = isEdit ? (data.sku       || '') : '';
   const btn = document.getElementById('pm-submit-btn');
+  const title = document.querySelector('#product-modal .modal-title');
   btn.textContent = isEdit ? 'Save Changes' : 'Create Product';
+  if (title) title.textContent = isEdit ? 'Edit Product' : 'New Product';
   btn.dataset.editId = isEdit ? (data.id || '') : '';
   openModal('product-modal');
 }
