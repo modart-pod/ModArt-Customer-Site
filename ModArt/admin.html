@@ -2571,8 +2571,8 @@ const pages = {
 function showPage(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  const p = document.getElementById('page-' + id);
-  if (p) p.classList.add('active');
+  const pageEl = document.getElementById('page-' + id);
+  if (pageEl) pageEl.classList.add('active');
   document.querySelectorAll('.nav-item').forEach(btn => {
     if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes("'" + id + "'")) btn.classList.add('active');
   });
@@ -3518,7 +3518,7 @@ async function loadDashboardKPIs() {
     var total = orders.reduce(function(s,o){ return s + (o.total_inr||0); }, 0);
     var count = orders.length;
     var avg   = count ? Math.round(total / count) : 0;
-    function fmt(n) { return n >= 100000 ? '?' + (n/100000).toFixed(1) + 'L' : '?' + n.toLocaleString('en-IN'); }
+    function fmt(n) { return n >= 100000 ? '₹' + (n/100000).toFixed(1) + 'L' : '₹' + n.toLocaleString('en-IN'); }
     var dsRev = document.getElementById('ds-rev');
     var dsOrd = document.getElementById('ds-ord');
     if (dsRev) dsRev.textContent = fmt(total);
