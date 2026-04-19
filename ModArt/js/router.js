@@ -1,8 +1,8 @@
 /**
- * Router Module - Hash-based Navigation System
+ * Router Module - History API (clean URL) Navigation
+ * URLs: /shop, /customize, /bag etc. — no # prefix
  */
 
-// Page mapping - maps route names to DOM element IDs
 const PAGES = {
   home:             'page-home',
   shop:             'page-shop',
@@ -26,32 +26,29 @@ const PAGES = {
   admin:            'page-admin'
 };
 
-/**
- * Navigate to a page. Always calls showPage() directly so navigation
- * works even when the hash value doesn't change.
- */
+/** Resolve pathname to a page name */
+function pathToPage(pathname) {
+  const clean = pathname.replace(/^\//, '').split('?')[0].split('#')[0] || 'home';
+  return PAGES[clean] ? clean : 'home';
+}
+
+/** Navigate to a page using pushState */
 export function goTo(pageName) {
   const page = pageName || 'home';
-  // Update hash without relying on hashchange to drive rendering
-  if (location.hash !== '#' + page) {
-    location.hash = page;
-  } else {
-    // Hash already matches — showPage won't fire via hashchange, call directly
-    showPage(page);
+  const path = page === 'home' ? '/' : '/' + page;
+  if (window.location.pathname !== path) {
+    history.pushState({ page }, '', path);
   }
+  showPage(page);
   updateMeta(page);
 }
 
-/**
- * Display the specified page and hide all others.
- */
+/** Display the specified page and hide all others */
 export function showPage(pageName) {
   if (!PAGES[pageName]) pageName = 'home';
 
-  // Hide all pages
   document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
 
-  // Show target
   const target = document.getElementById(PAGES[pageName]);
   if (target) {
     target.classList.add('active');
@@ -62,66 +59,50 @@ export function showPage(pageName) {
   triggerPageRender(pageName);
 }
 
-/**
- * Trigger page-specific rendering functions.
- */
 function triggerPageRender(pageName) {
   switch (pageName) {
     case 'home':
     case 'shop':
       window.renderProducts && window.renderProducts(pageName);
       break;
-
     case 'product':
       window.renderProductDetail && window.renderProductDetail();
       window.renderRelatedProducts && window.renderRelatedProducts();
-      // Use the currently selected product ID, not just index 0
       if (window._currentProductId) {
         window.renderSizeOptions && window.renderSizeOptions(window._currentProductId);
       } else if (window._PRODUCTS?.[0]) {
         window.renderSizeOptions && window.renderSizeOptions(window._PRODUCTS[0].id);
       }
       break;
-
     case 'bag':
       window.renderBag && window.renderBag();
       break;
-
     case 'account':
       window.renderAccountPage && window.renderAccountPage();
       break;
-
     case 'wishlist':
       window.renderWishlistPage && window.renderWishlistPage();
       break;
-
     case 'orders':
       window.renderOrdersPage && window.renderOrdersPage();
       break;
-
     case 'confirmation':
       window.renderConfirmationPage && window.renderConfirmationPage();
       break;
   }
 }
 
-/**
- * Update nav active states and mobile nav visibility.
- */
 function updateNavState(pageName) {
-  // Desktop nav
   document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
   const desktopMap = { home:'nl-home', shop:'nl-shop', customize:'nl-customize', community:'nl-community' };
   const dlEl = desktopMap[pageName] && document.getElementById(desktopMap[pageName]);
   if (dlEl) dlEl.classList.add('active');
 
-  // Mobile bottom nav
   document.querySelectorAll('.mob-nav-item').forEach(i => i.classList.remove('active'));
   const mobileMap = { home:'mob-nav-home', shop:'mob-nav-shop', customize:'mob-nav-customize', bag:'mob-nav-bag', community:'mob-nav-community' };
   const mlEl = mobileMap[pageName] && document.getElementById(mobileMap[pageName]);
   if (mlEl) mlEl.classList.add('active');
 
-  // Hide mobile chrome on admin/customize
   const mobileHdr = document.getElementById('mobile-hdr');
   const mobileNav = document.getElementById('mobile-bottom-nav');
   const hideChrome = pageName === 'admin' || pageName === 'customize';
@@ -130,22 +111,33 @@ function updateNavState(pageName) {
 }
 
 export function getCurrentPage() {
-  return location.hash.slice(1) || 'home';
+  return pathToPage(window.location.pathname);
 }
 
-/**
- * Initialize the router. Call once after DOM is ready.
- */
 export function initRouter() {
-  // hashchange drives navigation from browser back/forward and direct URL changes
-  window.addEventListener('hashchange', () => {
-    const page = location.hash.slice(1) || 'home';
+  // Handle browser back/forward
+  window.addEventListener('popstate', (e) => {
+    const page = e.state?.page || pathToPage(window.location.pathname);
     showPage(page);
     updateMeta(page);
   });
 
-  // Show the initial page
-  const initial = location.hash.slice(1) || 'home';
+  // Handle legacy hash URLs (redirect to clean URL)
+  if (window.location.hash && window.location.hash.length > 1) {
+    const hashPage = window.location.hash.slice(1);
+    if (PAGES[hashPage]) {
+      const path = hashPage === 'home' ? '/' : '/' + hashPage;
+      history.replaceState({ page: hashPage }, '', path);
+      showPage(hashPage);
+      updateMeta(hashPage);
+      initNavScroll();
+      return;
+    }
+  }
+
+  // Show initial page from URL path
+  const initial = pathToPage(window.location.pathname);
+  history.replaceState({ page: initial }, '', window.location.pathname);
   showPage(initial);
   updateMeta(initial);
 
@@ -161,32 +153,28 @@ export function initRouter() {
   initNavScroll();
 }
 
-/**
- * Transparent nav on home hero, opaque elsewhere.
- * Dark-mode aware. Observes theme attribute changes.
- */
 function initNavScroll() {
   const nav = document.querySelector('.desktop-nav');
   if (!nav) return;
 
   function update() {
-    const onHome = !location.hash || location.hash === '#' || location.hash === '#home';
+    const onHome = window.location.pathname === '/' || window.location.pathname === '/home';
     const transparent = onHome && window.scrollY < 80;
     const dark = document.documentElement.getAttribute('data-theme') === 'dark';
 
     if (transparent) {
-      nav.style.background        = 'rgba(0,0,0,0)';
-      nav.style.borderBottomColor = 'rgba(255,255,255,0)';
-      nav.style.backdropFilter    = 'blur(0px)';
+      nav.style.background           = 'rgba(0,0,0,0)';
+      nav.style.borderBottomColor    = 'rgba(255,255,255,0)';
+      nav.style.backdropFilter       = 'blur(0px)';
       nav.style.webkitBackdropFilter = 'blur(0px)';
       nav.querySelectorAll('.nav-link, .nav-logo').forEach(l => l.style.color = 'rgba(255,255,255,0.82)');
       nav.querySelectorAll('.nav-icon-btn').forEach(i => i.style.color = 'rgba(255,255,255,0.82)');
       const logo = nav.querySelector('.nav-logo-img');
       if (logo) logo.style.filter = 'brightness(0) invert(1)';
     } else {
-      nav.style.background        = dark ? 'rgba(13,13,26,0.95)' : 'rgba(247,245,241,0.97)';
-      nav.style.borderBottomColor = dark ? 'rgba(124,58,237,0.22)' : 'rgba(226,223,216,1)';
-      nav.style.backdropFilter    = 'blur(16px)';
+      nav.style.background           = dark ? 'rgba(13,13,26,0.95)' : 'rgba(247,245,241,0.97)';
+      nav.style.borderBottomColor    = dark ? 'rgba(124,58,237,0.22)' : 'rgba(226,223,216,1)';
+      nav.style.backdropFilter       = 'blur(16px)';
       nav.style.webkitBackdropFilter = 'blur(16px)';
       nav.querySelectorAll('.nav-link, .nav-logo').forEach(l => l.style.color = '');
       nav.querySelectorAll('.nav-icon-btn').forEach(i => i.style.color = '');
@@ -196,12 +184,11 @@ function initNavScroll() {
   }
 
   window.addEventListener('scroll', update, { passive: true });
-  window.addEventListener('hashchange', () => setTimeout(update, 30));
+  window.addEventListener('popstate', () => setTimeout(update, 30));
   new MutationObserver(update).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
   update();
 }
 
-// Global exposure for inline onclick handlers
 if (typeof window !== 'undefined') {
   window.goTo = goTo;
   window.showPage = showPage;

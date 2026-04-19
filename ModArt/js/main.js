@@ -162,7 +162,7 @@ async function initApplication() {
     .forEach(el => { el.classList.add('fade-in-section'); fadeObserver.observe(el); });
 
   // 12. Re-render current page now that data is loaded
-  const currentPage = window.getCurrentPage ? window.getCurrentPage() : (location.hash.slice(1) || 'home');
+  const currentPage = window.getCurrentPage ? window.getCurrentPage() : 'home';
   if (currentPage === 'home' || currentPage === 'shop') {
     renderProducts(currentPage);
     if (currentPage === 'home') window._rebuildCarouselDots && window._rebuildCarouselDots();
