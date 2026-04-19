@@ -2946,7 +2946,6 @@ async function submitProductModal() {
     price_inr:   parseFloat(document.getElementById('pm-price').value) || 0,
     badge:       null,
     is_active:   true,
-    updated_at:  new Date().toISOString(),
   };
   btn.disabled = true;
   btn.textContent = isEdit ? 'Saving' : 'Creating';
