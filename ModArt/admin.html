@@ -755,7 +755,7 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
   <div class="sidebar-section">
     <div class="sidebar-section-label">Commerce</div>
     <ul class="sidebar-nav">
-      <li><button class="nav-item" onclick="showPage('orders')"><span class="icon material-symbols-outlined">package_2</span>Orders<span class="nav-badge">14</span></button></li>
+      <li><button class="nav-item" onclick="showPage('orders')"><span class="icon material-symbols-outlined">package_2</span>Orders<span class="nav-badge" id="badge-orders">14</span></button></li>
       <li><button class="nav-item" onclick="showPage('products')"><span class="icon material-symbols-outlined">checkroom</span>Products</button></li>
       <li><button class="nav-item" onclick="showPage('drops')"><span class="icon material-symbols-outlined">bolt</span>Drops<span class="nav-badge">2</span></button></li>
       <li><button class="nav-item" onclick="showPage('inventory')"><span class="icon material-symbols-outlined">inventory_2</span>Inventory</button></li>
@@ -765,7 +765,7 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
   <div class="sidebar-section">
     <div class="sidebar-section-label">Community</div>
     <ul class="sidebar-nav">
-      <li><button class="nav-item" onclick="showPage('creators')"><span class="icon material-symbols-outlined">brush</span>Creators<span class="nav-badge">3</span></button></li>
+      <li><button class="nav-item" onclick="showPage('creators')"><span class="icon material-symbols-outlined">brush</span>Creators<span class="nav-badge" id="badge-creators">3</span></button></li>
       <li><button class="nav-item" onclick="showPage('customers')"><span class="icon material-symbols-outlined">group</span>Customers</button></li>
       <li><button class="nav-item" onclick="showPage('designs')"><span class="icon material-symbols-outlined">palette</span>Design Requests<span class="nav-badge">7</span></button></li>
     </ul>
@@ -774,7 +774,7 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
     <div class="sidebar-section-label">System</div>
     <ul class="sidebar-nav">
       <li><button class="nav-item" onclick="showPage('content')"><span class="icon material-symbols-outlined">web</span>Content</button></li>
-      <li><button class="nav-item" onclick="showPage('notifications')"><span class="icon material-symbols-outlined">notifications</span>Notifications<span class="nav-badge">9</span></button></li>
+      <li><button class="nav-item" onclick="showPage('notifications')"><span class="icon material-symbols-outlined">notifications</span>Notifications<span class="nav-badge" id="badge-notifications">9</span></button></li>
       <li><button class="nav-item" onclick="showPage('returns')"><span class="icon material-symbols-outlined">assignment_return</span>Returns<span class="nav-badge" id="returns-badge">5</span></button></li>
       <li><button class="nav-item" onclick="showPage('pod')"><span class="icon material-symbols-outlined">print</span>POD Integration</button></li>
       <li><button class="nav-item" onclick="showPage('staff')"><span class="icon material-symbols-outlined">manage_accounts</span>Staff</button></li>
@@ -860,7 +860,7 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
       <div class="stat-card green"><div class="stat-header"><div class="stat-icon green"><span class="material-symbols-outlined">package_2</span></div><span class="stat-change up" id="ds-ord-chg">+12.1%</span></div><div><div class="stat-value" id="ds-ord">—</div><div class="stat-label" style="margin-top:4px">Total Orders</div></div></div>
       <div class="stat-card amber"><div class="stat-header"><div class="stat-icon amber"><span class="material-symbols-outlined">group</span></div><span class="stat-change up">+9.7%</span></div><div><div class="stat-value">3,841</div><div class="stat-label" style="margin-top:4px">Active Customers</div></div></div>
       <div class="stat-card dark"><div class="stat-header"><div class="stat-icon dark"><span class="material-symbols-outlined">bolt</span></div><span class="stat-change up">+5.2%</span></div><div><div class="stat-value">3</div><div class="stat-label" style="margin-top:4px">Active Drops</div></div></div>
-      <div class="stat-card red"><div class="stat-header"><div class="stat-icon red"><span class="material-symbols-outlined">point_of_sale</span></div><span class="stat-change up">+6.3%</span></div><div><div class="stat-value">$65.60</div><div class="stat-label" style="margin-top:4px">Avg Order Value</div></div></div>
+      <div class="stat-card red"><div class="stat-header"><div class="stat-icon red"><span class="material-symbols-outlined">point_of_sale</span></div><span class="stat-change up">+6.3%</span></div><div><div class="stat-value">65.60</div><div class="stat-label" style="margin-top:4px">Avg Order Value</div></div></div>
       <div class="stat-card green"><div class="stat-header"><div class="stat-icon green"><span class="material-symbols-outlined">repeat</span></div><span class="stat-change down">-1.2%</span></div><div><div class="stat-value">38.4%</div><div class="stat-label" style="margin-top:4px">Repeat Rate</div></div></div>
     </div>
     <div class="grid-main-side mb-6">
@@ -874,7 +874,7 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
         </div>
         <div style="display:flex;gap:6px;align-items:stretch;">
           <div style="display:flex;flex-direction:column;justify-content:space-between;font-size:9px;font-weight:600;color:var(--g3);padding:0 0 4px;min-width:28px;">
-            <span>$12k</span><span>$9k</span><span>$6k</span><span>$3k</span><span>$0</span>
+            <span>12k</span><span>9k</span><span>6k</span><span>3k</span><span>0</span>
           </div>
           <div style="flex:1;">
             <svg id="rev-chart" viewBox="0 0 580 150" preserveAspectRatio="none" style="width:100%;height:150px;display:block;">
@@ -934,17 +934,17 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
     <div class="grid-2">
       <div class="card">
         <div class="card-hdr"><div class="card-title">Top Products</div></div>
-        <div class="sparkline-row"><div class="sparkline-info"><div class="sparkline-name">Oversized Hoodie  Black</div><div class="sparkline-val">342 units  $20,178</div></div><div class="sparkline-bar-wrap"><div class="sparkline-bar" style="width:92%"></div></div><div class="sparkline-pct">92%</div></div>
-        <div class="sparkline-row"><div class="sparkline-info"><div class="sparkline-name">Acid Wash Tee  Red</div><div class="sparkline-val">218 units  $10,462</div></div><div class="sparkline-bar-wrap"><div class="sparkline-bar" style="width:64%"></div></div><div class="sparkline-pct">64%</div></div>
-        <div class="sparkline-row"><div class="sparkline-info"><div class="sparkline-name">Sticker Sheet Vol.4</div><div class="sparkline-val">389 units  $7,002</div></div><div class="sparkline-bar-wrap"><div class="sparkline-bar" style="width:55%;background:var(--amber)"></div></div><div class="sparkline-pct">55%</div></div>
-        <div class="sparkline-row"><div class="sparkline-info"><div class="sparkline-name">Polaroid Print Pack</div><div class="sparkline-val">155 units  $8,060</div></div><div class="sparkline-bar-wrap"><div class="sparkline-bar" style="width:42%;background:var(--black);opacity:.5"></div></div><div class="sparkline-pct">42%</div></div>
-        <div class="sparkline-row"><div class="sparkline-info"><div class="sparkline-name">Canvas Tote  Natural</div><div class="sparkline-val">102 units  $3,060</div></div><div class="sparkline-bar-wrap"><div class="sparkline-bar" style="width:28%;background:var(--green)"></div></div><div class="sparkline-pct">28%</div></div>
+        <div class="sparkline-row"><div class="sparkline-info"><div class="sparkline-name">Oversized Hoodie  Black</div><div class="sparkline-val">342 units  20,178</div></div><div class="sparkline-bar-wrap"><div class="sparkline-bar" style="width:92%"></div></div><div class="sparkline-pct">92%</div></div>
+        <div class="sparkline-row"><div class="sparkline-info"><div class="sparkline-name">Acid Wash Tee  Red</div><div class="sparkline-val">218 units  10,462</div></div><div class="sparkline-bar-wrap"><div class="sparkline-bar" style="width:64%"></div></div><div class="sparkline-pct">64%</div></div>
+        <div class="sparkline-row"><div class="sparkline-info"><div class="sparkline-name">Sticker Sheet Vol.4</div><div class="sparkline-val">389 units  7,002</div></div><div class="sparkline-bar-wrap"><div class="sparkline-bar" style="width:55%;background:var(--amber)"></div></div><div class="sparkline-pct">55%</div></div>
+        <div class="sparkline-row"><div class="sparkline-info"><div class="sparkline-name">Polaroid Print Pack</div><div class="sparkline-val">155 units  8,060</div></div><div class="sparkline-bar-wrap"><div class="sparkline-bar" style="width:42%;background:var(--black);opacity:.5"></div></div><div class="sparkline-pct">42%</div></div>
+        <div class="sparkline-row"><div class="sparkline-info"><div class="sparkline-name">Canvas Tote  Natural</div><div class="sparkline-val">102 units  3,060</div></div><div class="sparkline-bar-wrap"><div class="sparkline-bar" style="width:28%;background:var(--green)"></div></div><div class="sparkline-pct">28%</div></div>
       </div>
       <div class="card">
         <div class="card-hdr"><div class="card-title">Drop Performance</div><button class="card-action" onclick="showPage('drops')">View All <span class="material-symbols-outlined" style="font-size:13px">arrow_forward</span></button></div>
-        <div style="margin-bottom:16px"><div class="flex-center gap-8" style="justify-content:space-between;margin-bottom:6px"><div><div style="font-size:13px;font-weight:700">Void Edition #08</div><div class="text-xs text-muted">88/120  $8,272</div></div><span class="pill live"><span class="pill-dot"></span>Live</span></div><div class="progress-wrap"><div class="progress-bar" style="width:73%"></div></div><div class="text-xs text-muted" style="margin-top:4px">73% sold  18h left</div></div>
+        <div style="margin-bottom:16px"><div class="flex-center gap-8" style="justify-content:space-between;margin-bottom:6px"><div><div style="font-size:13px;font-weight:700">Void Edition #08</div><div class="text-xs text-muted">88/120  8,272</div></div><span class="pill live"><span class="pill-dot"></span>Live</span></div><div class="progress-wrap"><div class="progress-bar" style="width:73%"></div></div><div class="text-xs text-muted" style="margin-top:4px">73% sold  18h left</div></div>
         <div class="divider" style="margin:0 0 14px"></div>
-        <div><div class="flex-center gap-8" style="justify-content:space-between;margin-bottom:6px"><div><div style="font-size:13px;font-weight:700">Chrome Core #07</div><div class="text-xs text-muted">50/50  $5,500  4hr 12min sellout</div></div><span class="pill ended"><span class="pill-dot"></span>Ended</span></div><div class="progress-wrap"><div class="progress-bar" style="width:100%;background:var(--black)"></div></div></div>
+        <div><div class="flex-center gap-8" style="justify-content:space-between;margin-bottom:6px"><div><div style="font-size:13px;font-weight:700">Chrome Core #07</div><div class="text-xs text-muted">50/50  5,500  4hr 12min sellout</div></div><span class="pill ended"><span class="pill-dot"></span>Ended</span></div><div class="progress-wrap"><div class="progress-bar" style="width:100%;background:var(--black)"></div></div></div>
       </div>
     </div>
   </div><!-- /dashboard -->
@@ -973,18 +973,18 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
         <div class="card-hdr"><div class="card-title">Profit & Loss Breakdown</div><select id="pl-month-select" class="filter-select" style="font-size:9px;padding:4px 8px;" onchange="updatePLMonth(this.value)"><option value="jun">Jun 2025</option><option value="may">May 2025</option><option value="apr">Apr 2025</option><option value="mar">Mar 2025</option></select></div>
         <table class="pl-table">
           <tr class="pl-section-row"><td colspan="2">Revenue</td></tr>
-          <tr class="pl-positive"><td>Apparel Sales</td><td id="pl-apparel">$50,592</td></tr>
-          <tr class="pl-positive"><td>Limited Drop Revenue</td><td id="pl-drop">$25,296</td></tr>
-          <tr class="pl-positive"><td>Accessories</td><td id="pl-accessories">$8,432</td></tr>
-          <tr class="pl-total pl-positive"><td><strong>Gross Revenue</strong></td><td><strong id="pl-gross">$84,320</strong></td></tr>
+          <tr class="pl-positive"><td>Apparel Sales</td><td id="pl-apparel">50,592</td></tr>
+          <tr class="pl-positive"><td>Limited Drop Revenue</td><td id="pl-drop">25,296</td></tr>
+          <tr class="pl-positive"><td>Accessories</td><td id="pl-accessories">8,432</td></tr>
+          <tr class="pl-total pl-positive"><td><strong>Gross Revenue</strong></td><td><strong id="pl-gross">84,320</strong></td></tr>
           <tr class="pl-section-row"><td colspan="2">Expenses</td></tr>
-          <tr class="pl-negative"><td>Production & Print Costs</td><td id="pl-production">-$31,204</td></tr>
-          <tr class="pl-negative"><td>Shipping & Fulfillment</td><td id="pl-shipping">-$6,418</td></tr>
-          <tr class="pl-negative"><td>Platform & Payment Fees</td><td id="pl-fees">-$2,530</td></tr>
-          <tr class="pl-negative"><td>Marketing</td><td id="pl-marketing">-$4,200</td></tr>
-          <tr class="pl-negative"><td>Refunds & Chargebacks</td><td id="pl-refunds">-$1,327</td></tr>
-          <tr class="pl-total"><td><strong>Total Expenses</strong></td><td style="color:var(--red)"><strong id="pl-expenses">-$45,679</strong></td></tr>
-          <tr style="background:rgba(34,197,94,.05)"><td><strong>Net Profit</strong></td><td style="color:var(--green);font-weight:800;font-size:16px;" id="pl-net">$38,641</td></tr>
+          <tr class="pl-negative"><td>Production & Print Costs</td><td id="pl-production">-31,204</td></tr>
+          <tr class="pl-negative"><td>Shipping & Fulfillment</td><td id="pl-shipping">-6,418</td></tr>
+          <tr class="pl-negative"><td>Platform & Payment Fees</td><td id="pl-fees">-2,530</td></tr>
+          <tr class="pl-negative"><td>Marketing</td><td id="pl-marketing">-4,200</td></tr>
+          <tr class="pl-negative"><td>Refunds & Chargebacks</td><td id="pl-refunds">-1,327</td></tr>
+          <tr class="pl-total"><td><strong>Total Expenses</strong></td><td style="color:var(--red)"><strong id="pl-expenses">-45,679</strong></td></tr>
+          <tr style="background:rgba(34,197,94,.05)"><td><strong>Net Profit</strong></td><td style="color:var(--green);font-weight:800;font-size:16px;" id="pl-net">38,641</td></tr>
           <tr><td style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g3)">Net Margin</td><td style="color:var(--green);font-weight:700;" id="pl-margin">45.8%</td></tr>
         </table>
       </div>
@@ -1081,19 +1081,19 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
           <circle class="geo-bubble" cx="145" cy="118" r="34" fill="rgba(215,38,56,.25)" stroke="rgba(215,38,56,.5)" stroke-width="1.5"/>
           <circle cx="145" cy="118" r="6" fill="#D72638"/>
           <text x="145" y="165" text-anchor="middle" font-size="9" fill="rgba(255,255,255,.7)" font-family="Space Grotesk" font-weight="700">NORTH AMERICA</text>
-          <text id="geo-na-val" x="145" y="177" text-anchor="middle" font-size="11" fill="#fff" font-family="Space Grotesk" font-weight="800">$38.2k</text>
+          <text id="geo-na-val" x="145" y="177" text-anchor="middle" font-size="11" fill="#fff" font-family="Space Grotesk" font-weight="800">38.2k</text>
           <text id="geo-na-sub" x="145" y="188" text-anchor="middle" font-size="8" fill="rgba(255,255,255,.4)" font-family="Space Grotesk">584 orders  45.3%</text>
           <!-- Europe (2nd largest) x=400, y=72 -->
           <circle class="geo-bubble" cx="400" cy="72" r="24" fill="rgba(215,38,56,.2)" stroke="rgba(215,38,56,.4)" stroke-width="1.5"/>
           <circle cx="400" cy="72" r="5" fill="#D72638"/>
           <text x="400" y="42" text-anchor="middle" font-size="9" fill="rgba(255,255,255,.7)" font-family="Space Grotesk" font-weight="700">EUROPE</text>
-          <text id="geo-eu-val" x="400" y="30" text-anchor="middle" font-size="11" fill="#fff" font-family="Space Grotesk" font-weight="800">$22.1k</text>
+          <text id="geo-eu-val" x="400" y="30" text-anchor="middle" font-size="11" fill="#fff" font-family="Space Grotesk" font-weight="800">22.1k</text>
           <text id="geo-eu-sub" x="400" y="19" text-anchor="middle" font-size="8" fill="rgba(255,255,255,.4)" font-family="Space Grotesk">312 orders  26.2%</text>
           <!-- Asia-Pacific x=580, y=120 -->
           <circle class="geo-bubble" cx="580" cy="120" r="18" fill="rgba(245,158,11,.2)" stroke="rgba(245,158,11,.4)" stroke-width="1.5"/>
           <circle cx="580" cy="120" r="4" fill="#F59E0B"/>
           <text x="620" y="105" text-anchor="start" font-size="9" fill="rgba(255,255,255,.7)" font-family="Space Grotesk" font-weight="700">ASIA</text>
-          <text id="geo-as-val" x="620" y="94" text-anchor="start" font-size="11" fill="#fff" font-family="Space Grotesk" font-weight="800">$14.8k</text>
+          <text id="geo-as-val" x="620" y="94" text-anchor="start" font-size="11" fill="#fff" font-family="Space Grotesk" font-weight="800">14.8k</text>
           <text id="geo-as-sub" x="620" y="83" text-anchor="start" font-size="8" fill="rgba(255,255,255,.4)" font-family="Space Grotesk">187 orders  17.6%</text>
           <!-- Middle East x=520, y=155 -->
           <circle class="geo-bubble" cx="510" cy="155" r="11" fill="rgba(59,130,246,.2)" stroke="rgba(59,130,246,.4)" stroke-width="1.2"/>
@@ -1101,11 +1101,11 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
           <!-- Australia x=690, y=270 -->
           <circle class="geo-bubble" cx="690" cy="268" r="9" fill="rgba(139,92,246,.2)" stroke="rgba(139,92,246,.4)" stroke-width="1.2"/>
           <circle cx="690" cy="268" r="3" fill="#8B5CF6"/>
-          <text x="690" y="296" text-anchor="middle" font-size="8" fill="rgba(255,255,255,.4)" font-family="Space Grotesk">$4.2k</text>
+          <text x="690" y="296" text-anchor="middle" font-size="8" fill="rgba(255,255,255,.4)" font-family="Space Grotesk">4.2k</text>
           <!-- South America x=165, y=275 -->
           <circle class="geo-bubble" cx="162" cy="270" r="9" fill="rgba(34,197,94,.2)" stroke="rgba(34,197,94,.4)" stroke-width="1.2"/>
           <circle cx="162" cy="270" r="3" fill="#22C55E"/>
-          <text x="162" y="295" text-anchor="middle" font-size="8" fill="rgba(255,255,255,.4)" font-family="Space Grotesk">$5.0k</text>
+          <text x="162" y="295" text-anchor="middle" font-size="8" fill="rgba(255,255,255,.4)" font-family="Space Grotesk">5.0k</text>
           <!-- Compass / Legend box -->
           <rect x="620" y="310" width="170" height="60" rx="6" fill="rgba(255,255,255,.05)" stroke="rgba(255,255,255,.08)" stroke-width=".8"/>
           <circle cx="636" cy="325" r="7" fill="rgba(215,38,56,.3)" stroke="rgba(215,38,56,.5)" stroke-width="1"/>
@@ -1117,11 +1117,11 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
         </svg>
       </div>
       <div class="geo-legend" style="margin-top:14px;">
-        <div class="geo-legend-item"><div class="geo-circle" style="width:14px;height:14px;background:var(--red);opacity:.7"></div>North America  $38.2k (45.3%)</div>
-        <div class="geo-legend-item"><div class="geo-circle" style="width:10px;height:10px;background:var(--red);opacity:.55"></div>Europe  $22.1k (26.2%)</div>
-        <div class="geo-legend-item"><div class="geo-circle" style="width:9px;height:9px;background:var(--amber)"></div>Asia-Pacific  $14.8k (17.6%)</div>
-        <div class="geo-legend-item"><div class="geo-circle" style="width:7px;height:7px;background:var(--green)"></div>S. America  $5.0k (5.9%)</div>
-        <div class="geo-legend-item"><div class="geo-circle" style="width:6px;height:6px;background:var(--purple)"></div>Australia  $4.2k (5%)</div>
+        <div class="geo-legend-item"><div class="geo-circle" style="width:14px;height:14px;background:var(--red);opacity:.7"></div>North America  38.2k (45.3%)</div>
+        <div class="geo-legend-item"><div class="geo-circle" style="width:10px;height:10px;background:var(--red);opacity:.55"></div>Europe  22.1k (26.2%)</div>
+        <div class="geo-legend-item"><div class="geo-circle" style="width:9px;height:9px;background:var(--amber)"></div>Asia-Pacific  14.8k (17.6%)</div>
+        <div class="geo-legend-item"><div class="geo-circle" style="width:7px;height:7px;background:var(--green)"></div>S. America  5.0k (5.9%)</div>
+        <div class="geo-legend-item"><div class="geo-circle" style="width:6px;height:6px;background:var(--purple)"></div>Australia  4.2k (5%)</div>
       </div>
     </div>
   </div><!-- /analytics -->
@@ -1218,7 +1218,7 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
         <div class="drop-card-body">
           <div class="drop-name">Void Edition</div><div class="drop-meta">Drop #08  Jun 28  29</div>
           <div style="margin-top:12px"><div class="flex-center" style="justify-content:space-between;margin-bottom:4px"><span class="text-xs text-muted">Sold</span><span style="font-size:11px;font-weight:700">88 / 120</span></div><div class="progress-wrap"><div class="progress-bar" style="width:73%"></div></div></div>
-          <div class="drop-stats"><div><div class="drop-stat-label">Revenue</div><div class="drop-stat-val">$8,272</div></div><div><div class="drop-stat-label">Left</div><div class="drop-stat-val" style="color:var(--amber)">32</div></div><div><div class="drop-stat-label">Notify</div><div class="drop-stat-val">4,120</div></div></div>
+          <div class="drop-stats"><div><div class="drop-stat-label">Revenue</div><div class="drop-stat-val">8,272</div></div><div><div class="drop-stat-label">Left</div><div class="drop-stat-val" style="color:var(--amber)">32</div></div><div><div class="drop-stat-label">Notify</div><div class="drop-stat-val">4,120</div></div></div>
           <div style="display:flex;gap:8px;margin-top:12px"><button class="btn-outline btn-sm" style="flex:1">Analytics</button><button class="btn-red btn-sm" style="flex:1">Manage</button></div>
         </div>
       </div>
@@ -1240,7 +1240,7 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
         <div class="drop-card-body">
           <div class="drop-name">Chrome Core</div><div class="drop-meta">Drop #07  Jun 14  Sold out in 4h 12m</div>
           <div style="margin-top:12px"><div class="progress-wrap"><div class="progress-bar" style="width:100%;background:var(--black)"></div></div></div>
-          <div class="drop-stats"><div><div class="drop-stat-label">Revenue</div><div class="drop-stat-val">$5,500</div></div><div><div class="drop-stat-label">Sellout</div><div class="drop-stat-val">4h 12m</div></div><div><div class="drop-stat-label">Waitlist</div><div class="drop-stat-val">1,203</div></div></div>
+          <div class="drop-stats"><div><div class="drop-stat-label">Revenue</div><div class="drop-stat-val">5,500</div></div><div><div class="drop-stat-label">Sellout</div><div class="drop-stat-val">4h 12m</div></div><div><div class="drop-stat-label">Waitlist</div><div class="drop-stat-val">1,203</div></div></div>
           <div style="margin-top:12px"><button class="btn-outline btn-sm" style="width:100%">View Report</button></div>
         </div>
       </div>
@@ -1323,7 +1323,7 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
 <table>
           <thead><tr><th>Creator</th><th>Followers</th><th>Designs</th><th>Revenue</th><th>Joined</th><th>Status</th><th>Actions</th></tr></thead>
           <tbody>
-            <tr><td><div class="creator-card-top" style="gap:10px"><div class="user-avatar" style="background:linear-gradient(135deg,#D72638,#B81F2E);">AM</div><div><div class="td-bold">@alicia.m</div><div class="text-xs text-muted">alicia@email.com</div></div></div></td><td class="td-bold">12.4k</td><td class="td-bold">18</td><td class="td-bold text-green">$4,820</td><td class="text-muted text-sm">Mar 2025</td><td><span class="pill active"><span class="pill-dot"></span>Active</span></td><td><div class="flex gap-8"><button class="btn-ghost">View</button><button class="btn-ghost" style="color:var(--red)" onclick="confirmAction('Suspend @alicia.m?','This will revoke design submission and drop access until restored.','Suspend',function(){showToast('@alicia.m suspended','refund')})">Suspend</button></div></td></tr>
+            <tr><td><div class="creator-card-top" style="gap:10px"><div class="user-avatar" style="background:linear-gradient(135deg,#D72638,#B81F2E);">AM</div><div><div class="td-bold">@alicia.m</div><div class="text-xs text-muted">alicia@email.com</div></div></div></td><td class="td-bold">12.4k</td><td class="td-bold">18</td><td class="td-bold text-green">4,820</td><td class="text-muted text-sm">Mar 2025</td><td><span class="pill active"><span class="pill-dot"></span>Active</span></td><td><div class="flex gap-8"><button class="btn-ghost">View</button><button class="btn-ghost" style="color:var(--red)" onclick="confirmAction('Suspend @alicia.m?','This will revoke design submission and drop access until restored.','Suspend',function(){showToast('@alicia.m suspended','refund')})">Suspend</button></div></td></tr>
             <tr><td><div class="creator-card-top" style="gap:10px"><div class="user-avatar" style="background:linear-gradient(135deg,#F59E0B,#D97706);">AP</div><div><div class="td-bold">@ash.p</div><div class="text-xs text-muted">ash@email.com</div></div></div></td><td class="td-bold">3.1k</td><td class="td-bold">4</td><td class="td-bold">$840</td><td class="text-muted text-sm">May 2025</td><td><span class="pill suspended"><span class="pill-dot"></span>Suspended</span></td><td><div class="flex gap-8"><button class="btn-ghost" style="color:var(--green)" onclick="confirmAction('Restore @ash.p?','Creator access will be fully reinstated.','Restore',function(){showToast('@ash.p restored','order')},'success')">Restore</button><button class="btn-ghost">View</button></div></td></tr>
           </tbody>
         </table>
@@ -1525,8 +1525,8 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
       </div>
     </div>
     <div class="stats-grid mb-6" style="grid-template-columns:repeat(4,1fr);">
-      <div class="stat-card red" style="padding:16px;"><div class="stat-icon red" style="width:28px;height:28px;"><span class="material-symbols-outlined" style="font-size:14px;">account_balance_wallet</span></div><div style="font-size:22px;font-weight:800;margin-top:8px;">$4,820</div><div class="stat-label">Pending Payouts</div></div>
-      <div class="stat-card green" style="padding:16px;"><div class="stat-icon green" style="width:28px;height:28px;"><span class="material-symbols-outlined" style="font-size:14px;">payments</span></div><div style="font-size:22px;font-weight:800;margin-top:8px;">$18,240</div><div class="stat-label">Paid Out MTD</div></div>
+      <div class="stat-card red" style="padding:16px;"><div class="stat-icon red" style="width:28px;height:28px;"><span class="material-symbols-outlined" style="font-size:14px;">account_balance_wallet</span></div><div style="font-size:22px;font-weight:800;margin-top:8px;">4,820</div><div class="stat-label">Pending Payouts</div></div>
+      <div class="stat-card green" style="padding:16px;"><div class="stat-icon green" style="width:28px;height:28px;"><span class="material-symbols-outlined" style="font-size:14px;">payments</span></div><div style="font-size:22px;font-weight:800;margin-top:8px;">18,240</div><div class="stat-label">Paid Out MTD</div></div>
       <div class="stat-card amber" style="padding:16px;"><div class="stat-icon amber" style="width:28px;height:28px;"><span class="material-symbols-outlined" style="font-size:14px;">brush</span></div><div style="font-size:22px;font-weight:800;margin-top:8px;">284</div><div class="stat-label">Active Creators</div></div>
       <div class="stat-card" style="padding:16px;"><div class="stat-icon dark" style="width:28px;height:28px;"><span class="material-symbols-outlined" style="font-size:14px;">percent</span></div><div style="font-size:22px;font-weight:800;margin-top:8px;">15%</div><div class="stat-label">Default Commission</div></div>
     </div>
@@ -1549,10 +1549,10 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
       <div class="table-wrap">
         <table id="payouts-table"><thead><tr><th>Creator</th><th>Commission Rate</th><th>Sales (MTD)</th><th>Gross Revenue</th><th>Earnings</th><th>Paid Out</th><th>Balance</th><th>Status</th><th>Actions</th></tr></thead>
         <tbody>
-          <tr><td><div style="display:flex;align-items:center;gap:10px;"><div class="user-avatar" style="background:linear-gradient(135deg,#D72638,#B81F2E);">AM</div><div><div class="td-bold">@alicia.m</div><div class="text-xs text-muted">alicia@email.com</div></div></div></td><td><div style="display:flex;align-items:center;gap:6px;"><span class="td-bold">18%</span><span class="tag tag-green" style="font-size:8px;">Custom</span></div></td><td class="td-bold">48</td><td class="td-bold">$3,200</td><td class="td-bold" style="color:var(--green);">$576</td><td class="text-muted">$0</td><td class="td-bold" style="color:var(--red);">$576</td><td><span class="pill pending"><span class="pill-dot"></span>Pending</span></td><td><div style="display:flex;gap:6px;"><button class="btn-success btn-sm" onclick="confirmAction('Pay @alicia.m $576?','This will initiate a transfer to their registered payment account.','Process Payment',function(){showToast('$576 transfer initiated to @alicia.m','order')},'success')">Pay Now</button><button class="btn-ghost" onclick="openModal('creator-rate-modal')">Edit Rate</button></div></td></tr>
-          <tr><td><div style="display:flex;align-items:center;gap:10px;"><div class="user-avatar" style="background:linear-gradient(135deg,#3B82F6,#1D4ED8);">NP</div><div><div class="td-bold">@nova_prints</div><div class="text-xs text-muted">nova@email.com</div></div></div></td><td class="td-bold">15%</td><td class="td-bold">28</td><td class="td-bold">$1,820</td><td class="td-bold" style="color:var(--green);">$273</td><td class="text-muted">$0</td><td class="td-bold" style="color:var(--red);">$273</td><td><span class="pill pending"><span class="pill-dot"></span>Pending</span></td><td><div style="display:flex;gap:6px;"><button class="btn-success btn-sm" onclick="confirmAction('Pay @nova_prints $273?','Transfer to their registered payment account.','Process Payment',function(){showToast('$273 transfer initiated','order')},'success')">Pay Now</button><button class="btn-ghost" onclick="openModal('creator-rate-modal')">Edit Rate</button></div></td></tr>
-          <tr><td><div style="display:flex;align-items:center;gap:10px;"><div class="user-avatar" style="background:linear-gradient(135deg,#8B5CF6,#7C3AED);">RC</div><div><div class="td-bold">@rael.co</div><div class="text-xs text-muted">rael@email.com</div></div></div></td><td class="td-bold">15%</td><td class="td-bold">62</td><td class="td-bold">$4,820</td><td class="td-bold" style="color:var(--green);">$723</td><td class="text-muted">$400</td><td class="td-bold" style="color:var(--amber);">$323</td><td><span class="pill pending"><span class="pill-dot"></span>Pending</span></td><td><div style="display:flex;gap:6px;"><button class="btn-success btn-sm" onclick="confirmAction('Pay @rael.co $323?','Transfer remaining balance to their account.','Process Payment',function(){showToast('$323 transfer initiated','order')},'success')">Pay Now</button><button class="btn-ghost" onclick="openModal('creator-rate-modal')">Edit Rate</button></div></td></tr>
-          <tr><td><div style="display:flex;align-items:center;gap:10px;"><div class="user-avatar" style="background:linear-gradient(135deg,#F59E0B,#D97706);">AP</div><div><div class="td-bold">@ash.p</div><div class="text-xs text-muted">ash@email.com</div></div></div></td><td class="td-bold">15%</td><td class="td-bold">4</td><td class="td-bold">$240</td><td class="td-bold">$36</td><td class="text-muted">$0</td><td class="td-bold text-muted">$36</td><td><span class="pill ended"><span class="pill-dot"></span>On Hold</span></td><td><span class="text-xs text-muted" style="font-style:italic;">Below $50 min</span></td></tr>
+          <tr><td><div style="display:flex;align-items:center;gap:10px;"><div class="user-avatar" style="background:linear-gradient(135deg,#D72638,#B81F2E);">AM</div><div><div class="td-bold">@alicia.m</div><div class="text-xs text-muted">alicia@email.com</div></div></div></td><td><div style="display:flex;align-items:center;gap:6px;"><span class="td-bold">18%</span><span class="tag tag-green" style="font-size:8px;">Custom</span></div></td><td class="td-bold">48</td><td class="td-bold">3,200</td><td class="td-bold" style="color:var(--green);"></td><td class="text-muted">0</td><td class="td-bold" style="color:var(--red);"></td><td><span class="pill pending"><span class="pill-dot"></span>Pending</span></td><td><div style="display:flex;gap:6px;"><button class="btn-success btn-sm" onclick="confirmAction('Pay @alicia.m ?','This will initiate a transfer to their registered payment account.','Process Payment',function(){showToast(' transfer initiated to @alicia.m','order')},'success')">Pay Now</button><button class="btn-ghost" onclick="openModal('creator-rate-modal')">Edit Rate</button></div></td></tr>
+          <tr><td><div style="display:flex;align-items:center;gap:10px;"><div class="user-avatar" style="background:linear-gradient(135deg,#3B82F6,#1D4ED8);">NP</div><div><div class="td-bold">@nova_prints</div><div class="text-xs text-muted">nova@email.com</div></div></div></td><td class="td-bold">15%</td><td class="td-bold">28</td><td class="td-bold">1,820</td><td class="td-bold" style="color:var(--green);">273</td><td class="text-muted">0</td><td class="td-bold" style="color:var(--red);">273</td><td><span class="pill pending"><span class="pill-dot"></span>Pending</span></td><td><div style="display:flex;gap:6px;"><button class="btn-success btn-sm" onclick="confirmAction('Pay @nova_prints 273?','Transfer to their registered payment account.','Process Payment',function(){showToast('273 transfer initiated','order')},'success')">Pay Now</button><button class="btn-ghost" onclick="openModal('creator-rate-modal')">Edit Rate</button></div></td></tr>
+          <tr><td><div style="display:flex;align-items:center;gap:10px;"><div class="user-avatar" style="background:linear-gradient(135deg,#8B5CF6,#7C3AED);">RC</div><div><div class="td-bold">@rael.co</div><div class="text-xs text-muted">rael@email.com</div></div></div></td><td class="td-bold">15%</td><td class="td-bold">62</td><td class="td-bold">4,820</td><td class="td-bold" style="color:var(--green);">723</td><td class="text-muted">400</td><td class="td-bold" style="color:var(--amber);">323</td><td><span class="pill pending"><span class="pill-dot"></span>Pending</span></td><td><div style="display:flex;gap:6px;"><button class="btn-success btn-sm" onclick="confirmAction('Pay @rael.co 323?','Transfer remaining balance to their account.','Process Payment',function(){showToast('323 transfer initiated','order')},'success')">Pay Now</button><button class="btn-ghost" onclick="openModal('creator-rate-modal')">Edit Rate</button></div></td></tr>
+          <tr><td><div style="display:flex;align-items:center;gap:10px;"><div class="user-avatar" style="background:linear-gradient(135deg,#F59E0B,#D97706);">AP</div><div><div class="td-bold">@ash.p</div><div class="text-xs text-muted">ash@email.com</div></div></div></td><td class="td-bold">15%</td><td class="td-bold">4</td><td class="td-bold">240</td><td class="td-bold">36</td><td class="text-muted">0</td><td class="td-bold text-muted">36</td><td><span class="pill ended"><span class="pill-dot"></span>On Hold</span></td><td><span class="text-xs text-muted" style="font-style:italic;">Below $50 min</span></td></tr>
         </tbody></table>
       </div>
       <div class="pagination"><div class="pag-info">Showing 14 of 284 creators</div><div class="pag-controls"><button class="pag-btn" disabled>&#8249;</button><button class="pag-btn active">1</button><button class="pag-btn">2</button><button class="pag-btn"></button></div></div>
@@ -1586,7 +1586,7 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
           <span class="pill live"><span class="pill-dot"></span>Live</span>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding-top:14px;border-top:1px solid var(--border);margin-bottom:14px;">
-          <div><div class="stat-label">Volume MTD</div><div style="font-size:16px;font-weight:800;margin-top:4px;">$61,840</div></div>
+          <div><div class="stat-label">Volume MTD</div><div style="font-size:16px;font-weight:800;margin-top:4px;">61,840</div></div>
           <div><div class="stat-label">Transactions</div><div style="font-size:16px;font-weight:800;margin-top:4px;">942</div></div>
           <div><div class="stat-label">Success Rate</div><div style="font-size:14px;font-weight:800;margin-top:4px;color:var(--green);">98.4%</div></div>
           <div><div class="stat-label">Next Payout</div><div style="font-size:13px;font-weight:700;margin-top:4px;">Jul 1</div></div>
@@ -1612,7 +1612,7 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
           <span class="pill live"><span class="pill-dot"></span>Live</span>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding-top:14px;border-top:1px solid var(--border);margin-bottom:14px;">
-          <div><div class="stat-label">Volume MTD</div><div style="font-size:16px;font-weight:800;margin-top:4px;">$8,204</div></div>
+          <div><div class="stat-label">Volume MTD</div><div style="font-size:16px;font-weight:800;margin-top:4px;">8,204</div></div>
           <div><div class="stat-label">Transactions</div><div style="font-size:16px;font-weight:800;margin-top:4px;">58</div></div>
           <div><div class="stat-label">Success Rate</div><div style="font-size:14px;font-weight:800;margin-top:4px;color:var(--amber);">91.2%</div></div>
           <div><div class="stat-label">Next Payout</div><div style="font-size:13px;font-weight:700;margin-top:4px;">Jul 3</div></div>
@@ -1627,9 +1627,9 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
           <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
 <table><thead><tr><th>Order</th><th>Customer</th><th>Amount</th><th>Gateway</th><th>Reason</th><th>Action</th></tr></thead>
           <tbody>
-            <tr><td class="td-mono">#MA-4811</td><td class="td-bold">Ash Patel</td><td class="td-bold">$60</td><td><span class="tag">Stripe</span></td><td class="text-xs text-muted">Card declined</td><td><button class="btn-ghost" onclick="showToast('Retry link sent to ash@email.com','order')">Retry</button></td></tr>
-            <tr><td class="td-mono">#MA-4808</td><td class="td-bold">Sam Osei</td><td class="td-bold">$118</td><td><span class="tag">PayPal</span></td><td class="text-xs text-muted">Insufficient funds</td><td><button class="btn-ghost" onclick="showToast('Retry link sent to sam@email.com','order')">Retry</button></td></tr>
-            <tr><td class="td-mono">#MA-4804</td><td class="td-bold">Nora Klein</td><td class="td-bold">$95</td><td><span class="tag">Stripe</span></td><td class="text-xs text-muted">3DS auth timeout</td><td><button class="btn-ghost" onclick="showToast('Retry link sent to nora@email.com','order')">Retry</button></td></tr>
+            <tr><td class="td-mono">#MA-4811</td><td class="td-bold">Ash Patel</td><td class="td-bold">60</td><td><span class="tag">Stripe</span></td><td class="text-xs text-muted">Card declined</td><td><button class="btn-ghost" onclick="showToast('Retry link sent to ash@email.com','order')">Retry</button></td></tr>
+            <tr><td class="td-mono">#MA-4808</td><td class="td-bold">Sam Osei</td><td class="td-bold">118</td><td><span class="tag">PayPal</span></td><td class="text-xs text-muted">Insufficient funds</td><td><button class="btn-ghost" onclick="showToast('Retry link sent to sam@email.com','order')">Retry</button></td></tr>
+            <tr><td class="td-mono">#MA-4804</td><td class="td-bold">Nora Klein</td><td class="td-bold">95</td><td><span class="tag">Stripe</span></td><td class="text-xs text-muted">3DS auth timeout</td><td><button class="btn-ghost" onclick="showToast('Retry link sent to nora@email.com','order')">Retry</button></td></tr>
           </tbody></table>
 </div>
         </div>
@@ -1647,9 +1647,9 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
     <div class="card">
       <div class="card-hdr"><div class="card-title">Payout Schedule</div><button class="card-action" onclick="showToast('Opening payout history','order')">View History</button></div>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;">
-        <div style="padding:14px;background:var(--bg);border-radius:var(--r-lg);border:1px solid var(--border);"><div class="stat-label" style="margin-bottom:6px;">Stripe  Next Payout</div><div style="font-size:18px;font-weight:800;">$14,820</div><div class="text-xs text-muted" style="margin-top:4px;">Scheduled: Jul 1, 2025</div><div class="text-xs text-muted">Rolling 2-day cycle</div></div>
+        <div style="padding:14px;background:var(--bg);border-radius:var(--r-lg);border:1px solid var(--border);"><div class="stat-label" style="margin-bottom:6px;">Stripe  Next Payout</div><div style="font-size:18px;font-weight:800;">14,820</div><div class="text-xs text-muted" style="margin-top:4px;">Scheduled: Jul 1, 2025</div><div class="text-xs text-muted">Rolling 2-day cycle</div></div>
         <div style="padding:14px;background:var(--bg);border-radius:var(--r-lg);border:1px solid var(--border);"><div class="stat-label" style="margin-bottom:6px;">Razorpay  Next Payout</div><div style="font-size:18px;font-weight:800;">â‚¹4,10,000</div><div class="text-xs text-muted" style="margin-top:4px;">Scheduled: Jun 30, 2025</div><div class="text-xs text-muted">T+2 settlement</div></div>
-        <div style="padding:14px;background:var(--bg);border-radius:var(--r-lg);border:1px solid var(--border);"><div class="stat-label" style="margin-bottom:6px;">PayPal  Next Payout</div><div style="font-size:18px;font-weight:800;">$2,140</div><div class="text-xs text-muted" style="margin-top:4px;">Scheduled: Jul 3, 2025</div><div class="text-xs text-muted">Manual withdrawal</div></div>
+        <div style="padding:14px;background:var(--bg);border-radius:var(--r-lg);border:1px solid var(--border);"><div class="stat-label" style="margin-bottom:6px;">PayPal  Next Payout</div><div style="font-size:18px;font-weight:800;">2,140</div><div class="text-xs text-muted" style="margin-top:4px;">Scheduled: Jul 3, 2025</div><div class="text-xs text-muted">Manual withdrawal</div></div>
       </div>
     </div>
   </div><!-- /payments -->
@@ -1781,7 +1781,7 @@ Sitemap: https://modart.co/sitemap.xml</textarea>
     </div>
     <div class="stats-grid mb-6" style="grid-template-columns:repeat(4,1fr);">
       <div class="stat-card green" style="padding:16px;"><div class="stat-icon green" style="width:28px;height:28px;"><span class="material-symbols-outlined" style="font-size:14px;">inventory</span></div><div style="font-size:22px;font-weight:800;margin-top:8px;">6</div><div class="stat-label">Active Bundles</div></div>
-      <div class="stat-card red" style="padding:16px;"><div class="stat-icon red" style="width:28px;height:28px;"><span class="material-symbols-outlined" style="font-size:14px;">payments</span></div><div style="font-size:22px;font-weight:800;margin-top:8px;">$8,420</div><div class="stat-label">Bundle Revenue MTD</div></div>
+      <div class="stat-card red" style="padding:16px;"><div class="stat-icon red" style="width:28px;height:28px;"><span class="material-symbols-outlined" style="font-size:14px;">payments</span></div><div style="font-size:22px;font-weight:800;margin-top:8px;">8,420</div><div class="stat-label">Bundle Revenue MTD</div></div>
       <div class="stat-card amber" style="padding:16px;"><div class="stat-icon amber" style="width:28px;height:28px;"><span class="material-symbols-outlined" style="font-size:14px;">trending_up</span></div><div style="font-size:22px;font-weight:800;margin-top:8px;">24.6%</div><div class="stat-label">Upsell Acceptance Rate</div></div>
       <div class="stat-card" style="padding:16px;"><div class="stat-icon dark" style="width:28px;height:28px;"><span class="material-symbols-outlined" style="font-size:14px;">point_of_sale</span></div><div style="font-size:22px;font-weight:800;margin-top:8px;">+$14.20</div><div class="stat-label">Avg AOV Lift</div></div>
     </div>
@@ -2150,7 +2150,75 @@ Sitemap: https://modart.co/sitemap.xml</textarea>
       </div>
     </div>
   </div><!-- /settings -->
-  </div><!-- /page-content -->
+  
+  <!-- ============================================================
+       POD INTEGRATION
+       ============================================================ -->
+  <div class="page" id="page-pod">
+    <div class="page-hdr">
+      <div><div class="eyebrow eyebrow-red" style="margin-bottom:6px">System</div><h1 class="page-title">POD Integration</h1></div>
+    </div>
+    <div class="grid-2 mb-6">
+      <div class="card">
+        <div class="card-hdr"><div class="card-title">Print Provider</div></div>
+        <div class="form-group"><label class="form-label">Provider</label><select class="form-input"><option>Printful</option><option>Printify</option><option>Custom In-House</option></select></div>
+        <div class="form-group"><label class="form-label">API Key</label><input class="form-input" type="password" placeholder="Enter provider API key"/></div>
+        <div class="form-group"><label class="form-label">Webhook URL</label><input class="form-input" type="text" value="https://modart-print-on-demand.vercel.app/api/pod-webhook" readonly style="opacity:.6"/></div>
+        <div class="toggle-row"><div><div class="toggle-label">Auto-fulfill Orders</div><div class="toggle-sub">Automatically send confirmed orders to print provider</div></div><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+        <button class="btn-red" style="margin-top:14px" onclick="showToast('POD settings saved','order')">Save Settings</button>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><div class="card-title">Fulfillment Status</div></div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--bg);border-radius:var(--r-md);"><div><div class="text-xs fw-7">API Connection</div></div><span class="pill active"><span class="pill-dot"></span>Connected</span></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--bg);border-radius:var(--r-md);"><div><div class="text-xs fw-7">Auto-fulfill</div></div><span class="pill active"><span class="pill-dot"></span>Enabled</span></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--bg);border-radius:var(--r-md);"><div><div class="text-xs fw-7">Webhook</div></div><span class="pill active"><span class="pill-dot"></span>Active</span></div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /pod -->
+  <!-- ============================================================
+       STAFF MANAGEMENT
+       ============================================================ -->
+  <div class="page" id="page-staff">
+    <div class="page-hdr">
+      <div><div class="eyebrow eyebrow-red" style="margin-bottom:6px">System</div><h1 class="page-title">Staff</h1></div>
+      <button class="btn-red" onclick="showToast('Invite sent','order')"><span class="material-symbols-outlined" style="font-size:15px">person_add</span>Invite Staff</button>
+    </div>
+    <div class="card" style="padding:0">
+      <div class="table-wrap">
+        <table><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody>
+          <tr><td class="td-bold">Praveen Kanna</td><td class="text-muted">modart.pod@gmail.com</td><td><span class="tag tag-red">Super Admin</span></td><td><span class="pill active"><span class="pill-dot"></span>Active</span></td><td><span class="text-xs text-muted">Owner</span></td></tr>
+        </tbody></table>
+      </div>
+    </div>
+  </div><!-- /staff -->
+  <!-- ============================================================
+       TAX CONFIGURATION
+       ============================================================ -->
+  <div class="page" id="page-tax">
+    <div class="page-hdr">
+      <div><div class="eyebrow eyebrow-red" style="margin-bottom:6px">System</div><h1 class="page-title">Tax Config</h1></div>
+      <button class="btn-red" onclick="showToast('Tax settings saved','order')">Save Changes</button>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-hdr"><div class="card-title">GST Settings (India)</div></div>
+        <div class="form-group"><label class="form-label">GSTIN</label><input class="form-input" type="text" placeholder="22AAAAA0000A1Z5"/></div>
+        <div class="form-group"><label class="form-label">GST Rate (%)</label><select class="form-input"><option>5%</option><option>12%</option><option selected>18%</option><option>28%</option></select></div>
+        <div class="toggle-row"><div><div class="toggle-label">Show GST on Invoices</div></div><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+        <div class="toggle-row"><div><div class="toggle-label">Prices Include GST</div></div><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><div class="card-title">International Tax</div></div>
+        <div class="toggle-row"><div><div class="toggle-label">Collect VAT (EU)</div></div><button class="toggle" onclick="this.classList.toggle('on')"></button></div>
+        <div class="toggle-row"><div><div class="toggle-label">Collect Sales Tax (US)</div></div><button class="toggle" onclick="this.classList.toggle('on')"></button></div>
+        <div class="form-group" style="margin-top:14px"><label class="form-label">Tax Registration Number</label><input class="form-input" type="text" placeholder="For international tax filings"/></div>
+      </div>
+    </div>
+  </div><!-- /tax -->
+</div><!-- /page-content -->
 </div><!-- /main-wrap -->
 <!-- ============================================================
      ORDER DETAIL DRAWER
@@ -2308,6 +2376,9 @@ Sitemap: https://modart.co/sitemap.xml</textarea>
     <div class="modal-footer" style="justify-content:center;gap:12px;">
       <button class="btn-outline" onclick="closeModal('confirm-modal')">Cancel</button>
       <button class="btn-red" id="confirm-action-btn">Confirm</button>
+    </div>
+  </div>
+</div>
 <!-- ============================================================
      TOAST NOTIFICATIONS
      ============================================================ -->
@@ -2509,12 +2580,7 @@ function submitForgotPw() {
   document.getElementById('forgot-pw-sent').style.display = 'block';
   setTimeout(() => closeForgotPwModal(), 2200);
 }
-function showAdminToast(msg) {
-  const t = document.getElementById('admin-toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3000);
-}
+// showAdminToast removed - use showToast() instead
 // Allow Enter key to submit
 document.addEventListener('keydown', e => {
   if (e.key === 'Enter' && document.getElementById('admin-login-screen').style.display !== 'none') {
@@ -2890,14 +2956,14 @@ function openDropModal() { openModal('drop-modal'); }
 // ====================================================
 const geoViewData = {
   revenue: {
-    na:  { val: '$38.2k', sub: '584 orders  45.3%' },
-    eu:  { val: '$22.1k', sub: '312 orders  26.2%' },
-    as:  { val: '$14.8k', sub: '187 orders  17.6%' }
+    na:  { val: '38.2k', sub: '584 orders  45.3%' },
+    eu:  { val: '22.1k', sub: '312 orders  26.2%' },
+    as:  { val: '14.8k', sub: '187 orders  17.6%' }
   },
   orders: {
-    na:  { val: '584',    sub: '$38.2k  45.3%' },
-    eu:  { val: '312',    sub: '$22.1k  26.2%' },
-    as:  { val: '187',    sub: '$14.8k  17.6%' }
+    na:  { val: '584',    sub: '38.2k  45.3%' },
+    eu:  { val: '312',    sub: '22.1k  26.2%' },
+    as:  { val: '187',    sub: '14.8k  17.6%' }
   }
 };
 function switchGeoView(view) {
@@ -2920,10 +2986,10 @@ function switchGeoView(view) {
 // P&L MONTH SELECTOR
 // ====================================================
 const plMonthData = {
-  jun: { apparel:'$50,592', drop:'$25,296', accessories:'$8,432', gross:'$84,320', production:'-$31,204', shipping:'-$6,418', fees:'-$2,530', marketing:'-$4,200', refunds:'-$1,327', expenses:'-$45,679', net:'$38,641', margin:'45.8%' },
-  may: { apparel:'$44,210', drop:'$18,500', accessories:'$7,100', gross:'$69,810', production:'-$27,400', shipping:'-$5,800', fees:'-$2,100', marketing:'-$3,800', refunds:'-$1,100', expenses:'-$40,200', net:'$29,610', margin:'42.4%' },
-  apr: { apparel:'$38,900', drop:'$14,200', accessories:'$6,400', gross:'$59,500', production:'-$23,100', shipping:'-$4,900', fees:'-$1,800', marketing:'-$3,200', refunds:'-$980',   expenses:'-$33,980', net:'$25,520', margin:'42.9%' },
-  mar: { apparel:'$32,100', drop:'$10,800', accessories:'$5,200', gross:'$48,100', production:'-$19,200', shipping:'-$4,100', fees:'-$1,500', marketing:'-$2,800', refunds:'-$820',   expenses:'-$28,420', net:'$19,680', margin:'40.9%' }
+  jun: { apparel:'&#8377;50,592', drop:'&#8377;25,296', accessories:'&#8377;8,432', gross:'&#8377;84,320', production:'-&#8377;31,204', shipping:'-&#8377;6,418', fees:'-&#8377;2,530', marketing:'-&#8377;4,200', refunds:'-&#8377;1,327', expenses:'-&#8377;45,679', net:'&#8377;38,641', margin:'45.8%' },
+  may: { apparel:'&#8377;44,210', drop:'&#8377;18,500', accessories:'&#8377;7,100', gross:'&#8377;69,810', production:'-&#8377;27,400', shipping:'-&#8377;5,800', fees:'-&#8377;2,100', marketing:'-&#8377;3,800', refunds:'-&#8377;1,100', expenses:'-&#8377;40,200', net:'&#8377;29,610', margin:'42.4%' },
+  apr: { apparel:'&#8377;38,900', drop:'&#8377;14,200', accessories:'&#8377;6,400', gross:'&#8377;59,500', production:'-&#8377;23,100', shipping:'-&#8377;4,900', fees:'-&#8377;1,800', marketing:'-&#8377;3,200', refunds:'-&#8377;980',   expenses:'-&#8377;33,980', net:'&#8377;25,520', margin:'42.9%' },
+  mar: { apparel:'&#8377;32,100', drop:'&#8377;10,800', accessories:'&#8377;5,200', gross:'&#8377;48,100', production:'-&#8377;19,200', shipping:'-&#8377;4,100', fees:'-&#8377;1,500', marketing:'-&#8377;2,800', refunds:'-&#8377;820',   expenses:'-&#8377;28,420', net:'&#8377;19,680', margin:'40.9%' }
 };
 function updatePLMonth(month) {
   const d = plMonthData[month];
@@ -3066,15 +3132,7 @@ function filterByStatus(tableId, status) {
     showTableEmptyState(tbl, visibleCount, status);
   }
 }
-function _toggleEmptyState(tbl, isEmpty) {
-  const wrap = tbl.closest('.card') || tbl.parentElement;
-  let es = wrap.querySelector('.empty-state');
-  if (!es) {
-    es = document.createElement('div');
-    es.className = 'empty-state';
-    es.innerHTML = '<span class="material-symbols-outlined empty-state-icon">search_off</span><div class="empty-state-title">No results found</div><div class="empty-state-text">Try adjusting your search or filter to find what you\'re looking for.</div>';
-    tbl.closest('.table-wrap')?.after(es) || tbl.after(es);
-  }
+// _toggleEmptyState removed - use showTableEmptyState() instead
   es.classList.toggle('show', isEmpty);
 }
 // ====================================================
@@ -3256,9 +3314,9 @@ setInterval(() => {
   if (typeof csvData === 'undefined') return;
   csvData['payouts'] = [
     'Creator,Email,Commission,Sales MTD,Gross Revenue,Earnings,Paid Out,Balance,Status',
-    '@alicia.m,alicia@email.com,18%,48,$3200,$576,$0,$576,Pending',
-    '@nova_prints,nova@email.com,15%,28,$1820,$273,$0,$273,Pending',
-    '@rael.co,rael@email.com,15%,62,$4820,$723,$400,$323,Pending',
+    '@alicia.m,alicia@email.com,18%,48,$3200,,$0,,Pending',
+    '@nova_prints,nova@email.com,15%,28,$1820,273,$0,273,Pending',
+    '@rael.co,rael@email.com,15%,62,$4820,$723,$400,323,Pending',
     '@ash.p,ash@email.com,15%,4,$240,$36,$0,$36,On Hold',
   ].join('\n');
   csvData['payout-history'] = [
@@ -3549,9 +3607,9 @@ async function loadDashboardKPIs() {
           var name  = (addr.fullName || email || 'Guest').replace(/,/g,' ');
           var itemStr = '"' + items.map(function(i){ return (i.name||i.productId)+' x'+i.qty; }).join(', ') + '"';
           var date  = new Date(o.created_at).toLocaleDateString('en-IN');
-          return [o.order_number, name, email, itemStr, '?'+(o.total_inr||0), o.payment_method||'COD', o.status||'pending', date].join(',');
+          return [o.order_number, name, email, itemStr, ''+(o.total_inr||0), o.payment_method||'COD', o.status||'pending', date].join(',');
         }).join('\n');
-    csvData['dashboard'] = 'Dashboard Export\nPeriod,Revenue,Orders,Avg Order\nLast ' + days + ' Days,?' + total.toLocaleString('en-IN') + ',' + count + ',?' + avg.toLocaleString('en-IN');
+    csvData['dashboard'] = 'Dashboard Export\nPeriod,Revenue,Orders,Avg Order\nLast ' + days + ' Days,' + total.toLocaleString('en-IN') + ',' + count + ',' + avg.toLocaleString('en-IN');
   } catch (e) { console.warn('Dashboard KPI load failed:', e.message); }
 }
 // ====================================================
@@ -3788,12 +3846,17 @@ async function loadOrderStatusCounts() {
       const lbl = card.querySelector('.stat-label')?.textContent?.trim();
       const val = card.querySelector('div[style*="font-size:20px"]');
       if (!val) return;
-      if (lbl === 'Pending')   val.textContent = counts.pending;
+      if (lbl === 'Pending')    val.textContent = counts.pending;
       if (lbl === 'Processing') val.textContent = processing;
-      if (lbl === 'Shipped')   val.textContent = shipped;
-      if (lbl === 'Delivered') val.textContent = counts.delivered;
-      if (lbl === 'Cancelled') val.textContent = counts.cancelled;
+      if (lbl === 'Shipped')    val.textContent = shipped;
+      if (lbl === 'Delivered')  val.textContent = counts.delivered;
+      if (lbl === 'Cancelled')  val.textContent = counts.cancelled;
     });
+    // Update sidebar badges
+    const ob = document.getElementById('badge-orders');
+    if (ob) { ob.textContent = counts.pending; ob.style.display = counts.pending > 0 ? '' : 'none'; }
+    const rb = document.getElementById('returns-badge');
+    if (rb) { rb.textContent = counts.cancelled; rb.style.display = counts.cancelled > 0 ? '' : 'none'; }
   } catch (e) { console.warn('Order counts failed:', e.message); }
 }
 // ====================================================
