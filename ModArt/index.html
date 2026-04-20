@@ -53,7 +53,6 @@
         <li><button class="nav-link" id="nl-shop" onclick="goTo('shop')">Shop</button></li>
         <li><button class="nav-link" id="nl-drops" onclick="goTo('home');setTimeout(()=>{const s=document.getElementById('drop-archive-section');if(s)s.scrollIntoView({behavior:'smooth'});},80)">Drops <span class="nav-live-badge">Live</span></button></li>
         <li><button class="nav-link" id="nl-customize" onclick="goTo('customize')">Customize</button></li>
-        <li><button class="nav-link" id="nl-community" onclick="goTo('community')">Community</button></li>
       </ul>
       <div class="nav-actions">
         <button class="theme-toggle-btn nav-icon-btn" aria-label="Toggle dark mode" onclick="toggleTheme()">
@@ -104,7 +103,6 @@
       <button onclick="goTo('home');toggleMobileMenu()" style="text-align:left;background:none;border:none;cursor:pointer;font-family:var(--font);font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#fff;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.07)">Home</button>
       <button onclick="goTo('shop');toggleMobileMenu()" style="text-align:left;background:none;border:none;cursor:pointer;font-family:var(--font);font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#fff;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.07)">Shop</button>
       <button onclick="goTo('customize');toggleMobileMenu()" style="text-align:left;background:none;border:none;cursor:pointer;font-family:var(--font);font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#fff;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.07)">Customize</button>
-      <button onclick="goTo('community');toggleMobileMenu()" style="text-align:left;background:none;border:none;cursor:pointer;font-family:var(--font);font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#fff;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.07)">Community</button>
       <button onclick="goTo('about');toggleMobileMenu()" style="text-align:left;background:none;border:none;cursor:pointer;font-family:var(--font);font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#fff;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.07)">About</button>
       <button onclick="goTo('contact');toggleMobileMenu()" style="text-align:left;background:none;border:none;cursor:pointer;font-family:var(--font);font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#fff;padding:14px 0">Contact</button>
     </div>
@@ -129,9 +127,6 @@
     <button class="mob-nav-item" id="mob-nav-bag" onclick="goTo('bag')" style="position:relative">
       <span class="material-symbols-outlined icon">shopping_bag</span>
       <span class="cart-badge" id="cart-badge-nav" style="display:none;top:6px;right:calc(50% - 18px)">0</span>Bag
-    </button>
-    <button class="mob-nav-item" id="mob-nav-community" onclick="goTo('community')">
-      <span class="material-symbols-outlined icon">groups</span>Community
     </button>
   </nav>
 
@@ -248,7 +243,6 @@
         <p style="font-size:clamp(13px,1.5vw,17px);color:rgba(255,255,255,.65);line-height:1.65;max-width:440px;margin:0 auto 32px">Upload your art. Set your price. Sell to your community. Get 15% from every sale.</p>
         <div style="display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap">
           <button class="btn-black btn-red-pill" onclick="goTo('customize')" style="background:#fff;color:var(--black)">Open the Studio <span class="material-symbols-outlined icon" style="font-size:16px">palette</span></button>
-          <button class="btn-outline" style="color:#fff;border-color:rgba(255,255,255,.3);border-radius:var(--r-full)" onclick="goTo('community')">See Creator Spotlight</button>
         </div>
       </div>
     </section>
@@ -276,22 +270,6 @@
               <div class="manifesto-img-badge-sub">600 GSM · Limited to 200 Units · Own Manufacture</div>
             </div>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- COMMUNITY SPOTLIGHT -->
-    <section class="community">
-      <div class="container">
-        <div class="section-hdr">
-          <div><div class="eyebrow eyebrow-red" style="margin-bottom:6px">Creator Economy</div><h2 class="section-title">Community Spotlight</h2></div>
-          <button class="section-link" onclick="goTo('community')">Leaderboard <span class="material-symbols-outlined icon">arrow_forward</span></button>
-        </div>
-        <div class="creator-grid">
-          <div class="creator-card"><img class="creator-img" src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&q=80" alt="Kira Sato" loading="lazy"/><div class="creator-info"><div class="creator-name">Kira Sato</div><div class="creator-handle">@kirasato.design</div><div class="creator-footer"><div class="creator-drops-lbl"><span>4</span> Drops</div><button class="creator-follow">Follow</button></div></div></div>
-          <div class="creator-card"><img class="creator-img" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&q=80" alt="Zane Mori" loading="lazy"/><div class="creator-info"><div class="creator-name">Zane Mori</div><div class="creator-handle">@zanemori.art</div><div class="creator-footer"><div class="creator-drops-lbl"><span>7</span> Drops</div><button class="creator-follow">Follow</button></div></div></div>
-          <div class="creator-card"><img class="creator-img" src="https://images.unsplash.com/photo-1494790108755-2616b612b130?w=400&q=80" alt="Noe Park" loading="lazy"/><div class="creator-info"><div class="creator-name">Noe Park</div><div class="creator-handle">@noepark.creates</div><div class="creator-footer"><div class="creator-drops-lbl"><span>3</span> Drops</div><button class="creator-follow">Follow</button></div></div></div>
-          <div class="creator-card"><img class="creator-img" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&q=80" alt="Alex Rivera" loading="lazy"/><div class="creator-info"><div class="creator-name">Alex Rivera</div><div class="creator-handle">@alexrivera.mod</div><div class="creator-footer"><div class="creator-drops-lbl"><span>11</span> Drops</div><button class="creator-follow">Follow</button></div></div></div>
         </div>
       </div>
     </section>
@@ -381,15 +359,6 @@
               <button class="footer-link" onclick="goTo('shop')">New Drops</button>
               <button class="footer-link">Sold Out Archive</button>
               <button class="footer-link">Size Guide</button>
-            </div>
-          </div>
-          <div>
-            <div class="footer-col-title">Create</div>
-            <div class="footer-links">
-              <button class="footer-link" onclick="goTo('customize')">Open Studio</button>
-              <button class="footer-link" onclick="goTo('community')">Creators</button>
-              <button class="footer-link">Revenue Share</button>
-              <button class="footer-link">Wholesale</button>
             </div>
           </div>
           <div>
@@ -857,30 +826,6 @@
           <button class="btn-red btn-red-pill" onclick="goTo('shop')">Browse Collection</button>
         </div>
         <div id="wishlist-grid" class="product-grid" style="display:none"></div>
-      </div>
-    </div>
-    <div class="mob-nav-spacer"></div>
-  </main>
-
-  <!-- PAGE: COMMUNITY -->
-  <main class="page" id="page-community" aria-label="Community">
-    <div class="container">
-      <div class="section">
-        <div class="section-hdr"><div><div class="eyebrow eyebrow-red" style="margin-bottom:6px">Creator Economy</div><h1 class="section-title">Community</h1></div></div>
-        <div class="creator-grid">
-          <div class="creator-card"><img class="creator-img" src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&q=80" alt="Kira Sato" loading="lazy"/><div class="creator-info"><div class="creator-name">Kira Sato</div><div class="creator-handle">@kirasato.design</div><div class="creator-footer"><div class="creator-drops-lbl"><span>4</span> Drops</div><button class="creator-follow">Follow</button></div></div></div>
-          <div class="creator-card"><img class="creator-img" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&q=80" alt="Zane Mori" loading="lazy"/><div class="creator-info"><div class="creator-name">Zane Mori</div><div class="creator-handle">@zanemori.art</div><div class="creator-footer"><div class="creator-drops-lbl"><span>7</span> Drops</div><button class="creator-follow">Follow</button></div></div></div>
-          <div class="creator-card"><img class="creator-img" src="https://images.unsplash.com/photo-1494790108755-2616b612b130?w=400&q=80" alt="Noe Park" loading="lazy"/><div class="creator-info"><div class="creator-name">Noe Park</div><div class="creator-handle">@noepark.creates</div><div class="creator-footer"><div class="creator-drops-lbl"><span>3</span> Drops</div><button class="creator-follow">Follow</button></div></div></div>
-          <div class="creator-card"><img class="creator-img" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&q=80" alt="Alex Rivera" loading="lazy"/><div class="creator-info"><div class="creator-name">Alex Rivera</div><div class="creator-handle">@alexrivera.mod</div><div class="creator-footer"><div class="creator-drops-lbl"><span>11</span> Drops</div><button class="creator-follow">Follow</button></div></div></div>
-        </div>
-        <div style="margin-top:clamp(40px,6vw,64px)">
-          <div class="section-hdr"><div class="eyebrow eyebrow-muted" style="margin-bottom:6px">Top Earners</div><h2 class="section-title">Leaderboard</h2></div>
-          <div style="border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden">
-            <div class="leaderboard-item"><div style="font-size:20px;font-weight:900;font-style:italic;color:var(--amber);min-width:32px">1</div><div style="display:flex;align-items:center;gap:12px"><div class="lb-avatar" style="width:40px;height:40px;border-radius:50%;background:var(--bg-d);overflow:hidden"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=80&q=80" alt="Alex" style="width:100%;height:100%;object-fit:cover"/></div><div><div class="lb-name" style="font-size:13px;font-weight:800">Alex Rivera</div><div class="lb-handle" style="font-size:11px;color:var(--g3)">@alexrivera.mod</div></div></div><div style="margin-left:auto;text-align:right"><div style="font-size:14px;font-weight:800;color:var(--green)">₹1,24,800</div><div style="font-size:10px;color:var(--g3)">11 drops</div></div></div>
-            <div class="leaderboard-item"><div style="font-size:20px;font-weight:900;font-style:italic;color:var(--g2);min-width:32px">2</div><div style="display:flex;align-items:center;gap:12px"><div class="lb-avatar" style="width:40px;height:40px;border-radius:50%;background:var(--bg-d);overflow:hidden"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&q=80" alt="Zane" style="width:100%;height:100%;object-fit:cover"/></div><div><div class="lb-name" style="font-size:13px;font-weight:800">Zane Mori</div><div class="lb-handle" style="font-size:11px;color:var(--g3)">@zanemori.art</div></div></div><div style="margin-left:auto;text-align:right"><div style="font-size:14px;font-weight:800;color:var(--green)">₹84,200</div><div style="font-size:10px;color:var(--g3)">7 drops</div></div></div>
-            <div class="leaderboard-item"><div style="font-size:20px;font-weight:900;font-style:italic;color:var(--g3);min-width:32px">3</div><div style="display:flex;align-items:center;gap:12px"><div class="lb-avatar" style="width:40px;height:40px;border-radius:50%;background:var(--bg-d);overflow:hidden"><img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=80&q=80" alt="Kira" style="width:100%;height:100%;object-fit:cover"/></div><div><div class="lb-name" style="font-size:13px;font-weight:800">Kira Sato</div><div class="lb-handle" style="font-size:11px;color:var(--g3)">@kirasato.design</div></div></div><div style="margin-left:auto;text-align:right"><div style="font-size:14px;font-weight:800;color:var(--green)">₹52,600</div><div style="font-size:10px;color:var(--g3)">4 drops</div></div></div>
-          </div>
-        </div>
       </div>
     </div>
     <div class="mob-nav-spacer"></div>

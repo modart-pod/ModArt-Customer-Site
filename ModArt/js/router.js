@@ -22,7 +22,6 @@ const PAGES = {
   faq:              'page-faq',
   account:          'page-account',
   wishlist:         'page-wishlist',
-  community:        'page-community',
   admin:            'page-admin'
 };
 
@@ -94,12 +93,12 @@ function triggerPageRender(pageName) {
 
 function updateNavState(pageName) {
   document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-  const desktopMap = { home:'nl-home', shop:'nl-shop', customize:'nl-customize', community:'nl-community' };
+  const desktopMap = { home:'nl-home', shop:'nl-shop', customize:'nl-customize' };
   const dlEl = desktopMap[pageName] && document.getElementById(desktopMap[pageName]);
   if (dlEl) dlEl.classList.add('active');
 
   document.querySelectorAll('.mob-nav-item').forEach(i => i.classList.remove('active'));
-  const mobileMap = { home:'mob-nav-home', shop:'mob-nav-shop', customize:'mob-nav-customize', bag:'mob-nav-bag', community:'mob-nav-community' };
+  const mobileMap = { home:'mob-nav-home', shop:'mob-nav-shop', customize:'mob-nav-customize', bag:'mob-nav-bag' };
   const mlEl = mobileMap[pageName] && document.getElementById(mobileMap[pageName]);
   if (mlEl) mlEl.classList.add('active');
 
@@ -210,7 +209,6 @@ const META_MAP = {
   orders:      { title: 'My Orders — ModArt',                          desc: 'Track your ModArt orders.' },
   account:     { title: 'My Account — ModArt',                         desc: 'Manage your orders, profile, and preferences.' },
   wishlist:    { title: 'Wishlist — ModArt',                           desc: 'Your saved ModArt pieces.' },
-  community:   { title: 'Community — ModArt',                          desc: 'Creator spotlight, leaderboard, and community drops.' },
   login:       { title: 'Sign In — ModArt',                            desc: 'Sign in to your ModArt account.' },
   register:    { title: 'Create Account — ModArt',                     desc: 'Join ModArt. First access every drop.' },
   'forgot-password': { title: 'Reset Password — ModArt',              desc: 'Reset your ModArt account password.' },

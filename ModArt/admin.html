@@ -763,16 +763,9 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
     </ul>
   </div>
   <div class="sidebar-section">
-    <div class="sidebar-section-label">Community</div>
-    <ul class="sidebar-nav">
-      <li><button class="nav-item" onclick="showPage('creators')"><span class="icon material-symbols-outlined">brush</span>Creators<span class="nav-badge" id="badge-creators">3</span></button></li>
-      <li><button class="nav-item" onclick="showPage('customers')"><span class="icon material-symbols-outlined">group</span>Customers</button></li>
-      <li><button class="nav-item" onclick="showPage('designs')"><span class="icon material-symbols-outlined">palette</span>Design Requests<span class="nav-badge">7</span></button></li>
-    </ul>
-  </div>
-  <div class="sidebar-section">
     <div class="sidebar-section-label">System</div>
     <ul class="sidebar-nav">
+      <li><button class="nav-item" onclick="showPage('customers')"><span class="icon material-symbols-outlined">group</span>Customers</button></li>
       <li><button class="nav-item" onclick="showPage('content')"><span class="icon material-symbols-outlined">web</span>Content</button></li>
       <li><button class="nav-item" onclick="showPage('notifications')"><span class="icon material-symbols-outlined">notifications</span>Notifications<span class="nav-badge" id="badge-notifications">9</span></button></li>
       <li><button class="nav-item" onclick="showPage('returns')"><span class="icon material-symbols-outlined">assignment_return</span>Returns<span class="nav-badge" id="returns-badge">5</span></button></li>
@@ -786,7 +779,6 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
       <li><button class="nav-item" onclick="showPage('bundles')"><span class="icon material-symbols-outlined">inventory</span>Bundles</button></li>
       <li><button class="nav-item" onclick="showPage('seo')"><span class="icon material-symbols-outlined">travel_explore</span>SEO & Meta</button></li>
       <li><button class="nav-item" onclick="showPage('payments')"><span class="icon material-symbols-outlined">credit_card</span>Payments</button></li>
-      <li><button class="nav-item" onclick="showPage('payouts')"><span class="icon material-symbols-outlined">account_balance_wallet</span>Creator Payouts</button></li>
       <li><button class="nav-item" onclick="showPage('settings')"><span class="icon material-symbols-outlined">settings</span>Settings</button></li>
     </ul>
   </div>
@@ -1272,65 +1264,7 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
       </div>
     </div>
   </div><!-- /inventory -->
-  <!-- ============================================================
-       CREATORS (separate from customers)
-       ============================================================ -->
-  <div class="page" id="page-creators">
-    <div class="page-hdr">
-      <div><div class="eyebrow eyebrow-red" style="margin-bottom:6px">Community</div><h1 class="page-title">Creator Accounts</h1></div>
-      <div class="flex gap-8">
-        <select class="filter-select"><option>All Statuses</option><option>Pending Approval</option><option>Active</option><option>Suspended</option></select>
-        <button class="btn-red"><span class="material-symbols-outlined" style="font-size:15px">add</span>Invite Creator</button>
-      </div>
-    </div>
-    <div class="stats-grid mb-6" style="grid-template-columns:repeat(4,1fr)">
-      <div class="stat-card" style="padding:14px"><div class="stat-icon red" style="width:28px;height:28px"><span class="material-symbols-outlined" style="font-size:14px">brush</span></div><div style="font-size:20px;font-weight:800;margin-top:8px">284</div><div class="stat-label">Total Creators</div></div>
-      <div class="stat-card amber" style="padding:14px"><div class="stat-icon amber" style="width:28px;height:28px"><span class="material-symbols-outlined" style="font-size:14px">pending</span></div><div style="font-size:20px;font-weight:800;color:var(--amber);margin-top:8px">3</div><div class="stat-label">Pending Approval</div></div>
-      <div class="stat-card green" style="padding:14px"><div class="stat-icon green" style="width:28px;height:28px"><span class="material-symbols-outlined" style="font-size:14px">check_circle</span></div><div style="font-size:20px;font-weight:800;margin-top:8px">278</div><div class="stat-label">Active</div></div>
-      <div class="stat-card red" style="padding:14px"><div class="stat-icon red" style="width:28px;height:28px"><span class="material-symbols-outlined" style="font-size:14px">block</span></div><div style="font-size:20px;font-weight:800;margin-top:8px">3</div><div class="stat-label">Suspended</div></div>
-    </div>
-    <!-- Pending Approval section -->
-    <div class="card mb-6">
-      <div class="card-hdr"><div class="card-title" style="color:var(--amber)">â³ Pending Approval (3)</div></div>
-      <div class="grid-3">
-        <div class="creator-card" style="border-color:rgba(245,158,11,.3)">
-          <div class="creator-card-top"><div class="creator-avatar" style="background:linear-gradient(135deg,#F59E0B,#D97706)">NP</div><div><div class="creator-handle">@nova_prints</div><div class="creator-since">Requested Jun 28, 2025</div></div></div>
-          <div class="creator-stats"><div><div class="creator-stat-val">2.4k</div><div class="creator-stat-label">Followers</div></div><div><div class="creator-stat-val">8</div><div class="creator-stat-label">Designs</div></div><div><div class="creator-stat-val"></div><div class="creator-stat-label">Revenue</div></div></div>
-          <div style="font-size:11px;font-weight:500;color:var(--g2);padding:10px;background:var(--bg);border-radius:var(--r-md)">"Textile artist specializing in screen print and risograph. Portfolio: novastudio.co"</div>
-          <div class="creator-actions"><button class="btn-success" style="flex:1" onclick="approveCreator('@nova_prints',this)"><span class="material-symbols-outlined" style="font-size:14px">check</span>Approve</button><button class="btn-danger" style="flex:1" onclick="rejectCreator('@nova_prints',this)">Reject</button></div>
-        </div>
-        <div class="creator-card" style="border-color:rgba(245,158,11,.3)">
-          <div class="creator-card-top"><div class="creator-avatar" style="background:linear-gradient(135deg,#3B82F6,#1D4ED8)">RC</div><div><div class="creator-handle">@rael.co</div><div class="creator-since">Requested Jun 27, 2025</div></div></div>
-          <div class="creator-stats"><div><div class="creator-stat-val">18.1k</div><div class="creator-stat-label">Followers</div></div><div><div class="creator-stat-val">24</div><div class="creator-stat-label">Designs</div></div><div><div class="creator-stat-val"></div><div class="creator-stat-label">Revenue</div></div></div>
-          <div style="font-size:11px;font-weight:500;color:var(--g2);padding:10px;background:var(--bg);border-radius:var(--r-md)">"Graphic designer  brutalist posters and streetwear graphics. rael.co/work"</div>
-          <div class="creator-actions"><button class="btn-success" style="flex:1" onclick="approveCreator('@rael.co',this)"><span class="material-symbols-outlined" style="font-size:14px">check</span>Approve</button><button class="btn-danger" style="flex:1" onclick="rejectCreator('@rael.co',this)">Reject</button></div>
-        </div>
-        <div class="creator-card" style="border-color:rgba(245,158,11,.3)">
-          <div class="creator-card-top"><div class="creator-avatar" style="background:linear-gradient(135deg,#8B5CF6,#7C3AED)">CL</div><div><div class="creator-handle">@chrome.lab</div><div class="creator-since">Requested Jun 25, 2025</div></div></div>
-          <div class="creator-stats"><div><div class="creator-stat-val">5.8k</div><div class="creator-stat-label">Followers</div></div><div><div class="creator-stat-val">12</div><div class="creator-stat-label">Designs</div></div><div><div class="creator-stat-val"></div><div class="creator-stat-label">Revenue</div></div></div>
-          <div style="font-size:11px;font-weight:500;color:var(--g2);padding:10px;background:var(--bg);border-radius:var(--r-md)">"Metallic foil and holographic print specialist. chromelab.studio"</div>
-          <div class="creator-actions"><button class="btn-success" style="flex:1" onclick="approveCreator('@chrome.lab',this)"><span class="material-symbols-outlined" style="font-size:14px">check</span>Approve</button><button class="btn-danger" style="flex:1" onclick="rejectCreator('@chrome.lab',this)">Reject</button></div>
-        </div>
-      </div>
-    </div>
-    <!-- Active creators table -->
-    <div class="card" style="padding:0">
-      <div style="padding:16px 18px;border-bottom:1px solid var(--border)"><div class="card-title">Active Creators</div></div>
-      <div class="table-wrap">
-        <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
-<table>
-          <thead><tr><th>Creator</th><th>Followers</th><th>Designs</th><th>Revenue</th><th>Joined</th><th>Status</th><th>Actions</th></tr></thead>
-          <tbody>
-            <tr><td><div class="creator-card-top" style="gap:10px"><div class="user-avatar" style="background:linear-gradient(135deg,#D72638,#B81F2E);">AM</div><div><div class="td-bold">@alicia.m</div><div class="text-xs text-muted">alicia@email.com</div></div></div></td><td class="td-bold">12.4k</td><td class="td-bold">18</td><td class="td-bold text-green">4,820</td><td class="text-muted text-sm">Mar 2025</td><td><span class="pill active"><span class="pill-dot"></span>Active</span></td><td><div class="flex gap-8"><button class="btn-ghost">View</button><button class="btn-ghost" style="color:var(--red)" onclick="confirmAction('Suspend @alicia.m?','This will revoke design submission and drop access until restored.','Suspend',function(){showToast('@alicia.m suspended','refund')})">Suspend</button></div></td></tr>
-            <tr><td><div class="creator-card-top" style="gap:10px"><div class="user-avatar" style="background:linear-gradient(135deg,#F59E0B,#D97706);">AP</div><div><div class="td-bold">@ash.p</div><div class="text-xs text-muted">ash@email.com</div></div></div></td><td class="td-bold">3.1k</td><td class="td-bold">4</td><td class="td-bold">$840</td><td class="text-muted text-sm">May 2025</td><td><span class="pill suspended"><span class="pill-dot"></span>Suspended</span></td><td><div class="flex gap-8"><button class="btn-ghost" style="color:var(--green)" onclick="confirmAction('Restore @ash.p?','Creator access will be fully reinstated.','Restore',function(){showToast('@ash.p restored','order')},'success')">Restore</button><button class="btn-ghost">View</button></div></td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="pagination"><div class="pag-info">Showing 12 of 278 active creators</div><div class="pag-controls"><button class="pag-btn" disabled>&#8249;</button><button class="pag-btn active">1</button><button class="pag-btn">2</button><button class="pag-btn"></button></div></div>
-    </div>
-  </div>
-  </div><!-- /creators -->
-  <!-- ============================================================
+<!-- ============================================================
        CUSTOMERS
        ============================================================ -->
   <div class="page" id="page-customers">
@@ -1352,33 +1286,7 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
       <div class="pagination"><div class="pag-info">Loading customers</div><div class="pag-controls"><button class="pag-btn" disabled>&#8249;</button><button class="pag-btn active">1</button><button class="pag-btn">2</button><button class="pag-btn"></button></div></div>
     </div>
   </div><!-- /customers -->
-  <!-- ============================================================
-       DESIGN REQUESTS
-       ============================================================ -->
-  <div class="page" id="page-designs">
-    <div class="page-hdr">
-      <div><div class="eyebrow eyebrow-red" style="margin-bottom:6px">Community</div><h1 class="page-title">Design Requests</h1></div>
-      <select class="filter-select"><option>All</option><option>Pending Review</option><option>Approved</option><option>Rejected</option></select>
-    </div>
-    <div class="card" style="padding:0">
-      <div style="padding:16px 18px;border-bottom:1px solid var(--border)"><div class="card-title">Pending Review <span style="color:var(--red)">(7)</span></div></div>
-      <div class="table-wrap">
-        <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
-<table>
-          <thead><tr><th>Request ID</th><th>Creator</th><th>Description</th><th>Product</th><th>Submitted</th><th>Status</th><th>Actions</th></tr></thead>
-          <tbody>
-            <tr><td class="td-mono">#CR-088</td><td class="td-bold">@nova_prints</td><td>Abstract mesh overlay, 3-color screen print</td><td><span class="tag">Hoodie</span></td><td class="text-muted text-sm">Jun 28</td><td><span class="pill pending-review"><span class="pill-dot"></span>Review</span></td><td><div class="flex gap-8"><button class="btn-success btn-sm" onclick="confirmAction('Approve Design #CR-088?','The creator will be notified and production can begin.','Approve Design',function(){showToast('Design #CR-088 approved','order')},'success')">Approve</button><button class="btn-danger btn-sm" onclick="confirmAction('Reject Design #CR-088?','Creator will receive a rejection notice with feedback.','Reject Design',function(){showToast('Design rejected','refund')})">Reject</button></div></td></tr>
-            <tr><td class="td-mono">#CR-087</td><td class="td-bold">@rael.co</td><td>Minimalist serif wordmark front-print</td><td><span class="tag">Tee</span></td><td class="text-muted text-sm">Jun 27</td><td><span class="pill pending-review"><span class="pill-dot"></span>Review</span></td><td><div class="flex gap-8"><button class="btn-success btn-sm" onclick="confirmAction('Approve Design #CR-087?','Production will be scheduled.','Approve Design',function(){showToast('Design #CR-087 approved','order')},'success')">Approve</button><button class="btn-danger btn-sm" onclick="rejectCreator('@chrome.lab',this)">Reject</button></div></td></tr>
-            <tr><td class="td-mono">#CR-086</td><td class="td-bold">@alicia.m</td><td>Full-back embroidery botanical</td><td><span class="tag">Hoodie</span></td><td class="text-muted text-sm">Jun 25</td><td><span class="pill approved"><span class="pill-dot"></span>Approved</span></td><td><button class="btn-ghost">View</button></td></tr>
-            <tr><td class="td-mono">#CR-085</td><td class="td-bold">@chrome.lab</td><td>Metallic foil transfer logo</td><td><span class="tag">Tote</span></td><td class="text-muted text-sm">Jun 22</td><td><span class="pill rejected"><span class="pill-dot"></span>Rejected</span></td><td><button class="btn-ghost">View</button></td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="pagination"><div class="pag-info">Showing 14 of 7 requests</div><div class="pag-controls"><button class="pag-btn" disabled>&#8249;</button><button class="pag-btn active">1</button><button class="pag-btn"></button></div></div>
-    </div>
-  </div>
-  </div><!-- /designs -->
-  <!-- ============================================================
+<!-- ============================================================
        CONTENT MANAGEMENT
        ============================================================ -->
   <div class="page" id="page-content">
