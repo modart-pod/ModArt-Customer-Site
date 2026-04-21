@@ -89,7 +89,7 @@ export async function createOrder(shippingAddress, paymentMethod = 'cod', shippi
 
 /**
  * Confirms an order after successful payment.
- * Updates status, decrements inventory, sends confirmation email.
+ * Updates status, decrements inventory, increments coupon usage, sends confirmation email.
  */
 export async function confirmOrder(orderId, paymentId = 'COD') {
   try {
@@ -106,6 +106,23 @@ export async function confirmOrder(orderId, paymentId = 'COD') {
     const items = JSON.parse(order.items || '[]');
     for (const item of items) {
       await decrementStock(item.productId, item.size, item.qty);
+    }
+
+    // Increment coupon usage now that order is confirmed (not at validation time)
+    const discountCode = window.getDiscountCode ? window.getDiscountCode() : null;
+    if (discountCode && order.discount_inr > 0) {
+      try {
+        const SUPABASE_URL = 'https://ddodctzzsrlgyhtclabz.supabase.co';
+        await fetch(`${SUPABASE_URL}/rest/v1/rpc/increment_coupon_usage`, {
+          method: 'POST',
+          headers: {
+            'apikey':        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRkb2RjdHp6c3JsZ3lodGNsYWJ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1MDY5MzEsImV4cCI6MjA4OTA4MjkzMX0.Wfrlocx56uR_8-5EZoBajIzHt09GX_JcrBCSeZuVqMY',
+            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRkb2RjdHp6c3JsZ3lodGNsYWJ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1MDY5MzEsImV4cCI6MjA4OTA4MjkzMX0.Wfrlocx56uR_8-5EZoBajIzHt09GX_JcrBCSeZuVqMY',
+            'Content-Type':  'application/json',
+          },
+          body: JSON.stringify({ p_code: discountCode }),
+        }).catch(() => {});
+      } catch {}
     }
 
     cart.items = [];

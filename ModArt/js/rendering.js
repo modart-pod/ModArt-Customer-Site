@@ -125,11 +125,12 @@ export function renderProductDetail() {
   const mainImg = document.getElementById('product-main-img');
   if (mainImg) { mainImg.src = p.img; mainImg.alt = p.name; }
 
-  // Update thumbnails to use the product image
+  // Update thumbnails to use the product image — escape URL to prevent attribute injection
+  const safeImg = p.img.replace(/'/g, '%27').replace(/"/g, '%22');
   const thumbs = document.querySelectorAll('#page-product .product-img-thumb');
   if (thumbs.length > 0) {
     thumbs[0].src = p.img;
-    thumbs[0].setAttribute('onclick', `switchImg(this,'${p.img}')`);
+    thumbs[0].setAttribute('onclick', `switchImg(this,'${safeImg}')`);
   }
 
   const titleEl = document.querySelector('#page-product .product-detail-title');

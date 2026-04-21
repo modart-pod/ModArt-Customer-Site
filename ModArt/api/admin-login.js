@@ -1,6 +1,8 @@
 const SUPABASE_URL     = process.env.SUPABASE_URL     || 'https://ddodctzzsrlgyhtclabz.supabase.co';
 const SUPABASE_SERVICE = process.env.SUPABASE_SERVICE_KEY;
-const ADMIN_EMAILS     = ['modart.pod@gmail.com'];
+// Admin emails loaded from env — never hardcoded in source
+const ADMIN_EMAILS     = (process.env.ADMIN_EMAILS || 'modart.pod@gmail.com')
+  .split(',').map(e => e.trim().toLowerCase()).filter(Boolean);
 
 const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || 'https://modart-print-on-demand.vercel.app';
 
