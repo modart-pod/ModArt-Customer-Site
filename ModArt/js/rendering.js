@@ -94,6 +94,7 @@ export function renderProducts(page) {
         ${low && !sold ? `<div class="product-card-scarcity">Only ${p.stock} Left</div>` : ''}
         ${sold ? '<div style="font-size:9px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--g3)">Sold Out</div>' : ''}
       </div>
+      ${sold ? `<button onclick="event.stopPropagation();window.notifyMe&&window.notifyMe('${esc(p.id)}',this)" style="width:100%;margin-top:8px;padding:8px;background:none;border:1.5px solid var(--border);border-radius:var(--r-full);font-family:var(--font);font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--g3);cursor:pointer;transition:all var(--t)" onmouseover="this.style.borderColor='var(--black)';this.style.color='var(--black)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--g3)'">Notify Me</button>` : ''}
     </div>`;
   }).join('');
 

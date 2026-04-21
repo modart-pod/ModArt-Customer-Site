@@ -243,6 +243,12 @@ function handleSearchInput(query) {
   if (!q) { results.innerHTML = ''; return; }
 
   const src = (window._PRODUCTS && window._PRODUCTS.length > 0) ? window._PRODUCTS : [];
+
+  // Show loading state if products haven't loaded yet
+  if (!window._PRODUCTS || window._PRODUCTS.length === 0) {
+    results.innerHTML = '<div style="padding:16px;font-size:13px;color:var(--g3);text-align:center">Loading products…</div>';
+    return;
+  }
   const matches = src.filter(p =>
     p.name.toLowerCase().includes(q) || p.series.toLowerCase().includes(q)
   ).slice(0, 6);
@@ -295,6 +301,36 @@ window.handleSearchInput  = handleSearchInput;
 window.initCookieBanner   = initCookieBanner;
 window.acceptCookies      = acceptCookies;
 window.declineCookies     = declineCookies;
+
+// ================================================================
+// NOTIFY ME (sold-out products)
+// ================================================================
+
+async function notifyMe(productId, btn) {
+  const email = prompt('Enter your email to be notified when this item is back in stock:');
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) return;
+
+  if (btn) { btn.textContent = 'Saving…'; btn.disabled = true; }
+
+  try {
+    const { supabase } = await import('./auth.js');
+    if (supabase) {
+      await supabase.from('waitlist').upsert(
+        { email: email.trim().toLowerCase(), drop_id: productId },
+        { onConflict: 'email,drop_id' }
+      );
+    }
+    if (btn) {
+      btn.textContent = '✓ You\'ll be notified';
+      btn.style.color = 'var(--green)';
+      btn.style.borderColor = 'var(--green)';
+    }
+  } catch {
+    if (btn) { btn.textContent = 'Notify Me'; btn.disabled = false; }
+  }
+}
+
+window.notifyMe = notifyMe;
 
 // ================================================================
 // EXPORTS

@@ -128,6 +128,9 @@
       <span class="material-symbols-outlined icon">shopping_bag</span>
       <span class="cart-badge" id="cart-badge-nav" style="display:none;top:6px;right:calc(50% - 18px)">0</span>Bag
     </button>
+    <button class="mob-nav-item" id="mob-nav-account" onclick="goTo(window.currentUser?'account':'login')">
+      <span class="material-symbols-outlined icon">person</span>Account
+    </button>
   </nav>
 
   <!-- ============================================================
@@ -593,6 +596,14 @@
     <div class="container">
       <div class="checkout-layout">
         <div>
+          <!-- Progress indicator -->
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:clamp(16px,3vw,24px)">
+            <button onclick="goTo('bag')" style="display:flex;align-items:center;gap:6px;background:none;border:none;cursor:pointer;font-family:var(--font);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g3);padding:0"><span class="material-symbols-outlined" style="font-size:16px">arrow_back</span>Bag</button>
+            <span style="color:var(--border);font-size:14px">›</span>
+            <span style="font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--red)">Checkout</span>
+            <span style="color:var(--border);font-size:14px">›</span>
+            <span style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g3)">Confirmation</span>
+          </div>
           <h1 style="font-size:clamp(22px,3.5vw,32px);font-weight:900;font-style:italic;text-transform:uppercase;margin-bottom:clamp(20px,3vw,32px)">Checkout</h1>
           <div class="form-section">
             <div class="form-section-title">Contact</div>
@@ -607,7 +618,7 @@
               <div class="form-group"><label class="form-label">City</label><input class="form-input" type="text" placeholder="Mumbai"/></div>
               <div class="form-group"><label class="form-label">PIN Code</label><input class="form-input" type="text" placeholder="400001"/></div>
             </div>
-            <div class="form-group"><label class="form-label">Country</label><select class="form-input"><option value="IN">India</option><option value="US">United States</option><option value="GB">United Kingdom</option><option value="SG">Singapore</option><option value="AE">UAE</option></select></div>
+            <div class="form-group"><label class="form-label">Country</label><select class="form-input"><option value="IN">India</option><option value="US">United States</option><option value="GB">United Kingdom</option><option value="AU">Australia</option><option value="CA">Canada</option><option value="SG">Singapore</option><option value="AE">UAE</option><option value="MY">Malaysia</option><option value="NZ">New Zealand</option><option value="DE">Germany</option><option value="FR">France</option><option value="NL">Netherlands</option><option value="JP">Japan</option><option value="ZA">South Africa</option><option value="NG">Nigeria</option><option value="KE">Kenya</option><option value="PK">Pakistan</option><option value="BD">Bangladesh</option><option value="LK">Sri Lanka</option><option value="NP">Nepal</option><option value="OTHER">Other</option></select></div>
           </div>
           <div class="form-section">
             <div class="form-section-title">Shipping Method</div>
@@ -647,8 +658,10 @@
         </div>
         <div class="eyebrow eyebrow-white" style="margin-bottom:12px">Order Confirmed</div>
         <h1 style="font-size:clamp(28px,5vw,52px);font-weight:900;font-style:italic;text-transform:uppercase;color:#fff;line-height:.93;margin-bottom:16px">You're In The Drop.</h1>
-        <div id="confirmation-order-badge" style="display:inline-block;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);padding:8px 20px;border-radius:var(--r-full);font-size:12px;font-weight:700;color:rgba(255,255,255,.7);margin-bottom:32px">Order placed successfully</div>
-        <div id="confirmation-email-note" style="display:none;font-size:12px;color:rgba(255,255,255,.5);margin-top:-20px;margin-bottom:32px">Check your email for your order details and confirmation number.</div>
+        <div id="confirmation-order-badge" style="display:inline-block;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);padding:8px 20px;border-radius:var(--r-full);font-size:12px;font-weight:700;color:rgba(255,255,255,.7);margin-bottom:16px">Order placed successfully</div>
+        <div id="confirmation-email-note" style="display:none;font-size:12px;color:rgba(255,255,255,.5);margin-top:0;margin-bottom:24px">Check your email for your order details and confirmation number.</div>
+        <!-- Order summary from sessionStorage -->
+        <div id="confirmation-items" style="display:none;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:var(--r-lg);padding:16px 20px;max-width:420px;margin:0 auto 32px;text-align:left"></div>
         <div style="display:flex;flex-direction:column;gap:16px;max-width:480px;margin:0 auto 32px">
           <div class="confirmation-step" style="display:flex;align-items:flex-start;gap:16px;text-align:left">
             <div style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0"><span class="material-symbols-outlined" style="font-size:18px;color:rgba(255,255,255,.6)">email</span></div>

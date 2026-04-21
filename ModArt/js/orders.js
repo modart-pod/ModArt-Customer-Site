@@ -395,6 +395,28 @@ export function renderConfirmationPage() {
     const fmt = window.formatPrice ? window.formatPrice(total) : '₹' + total;
     badge.textContent = `${orderNumber} · ${items?.length||0} item${(items?.length||0)!==1?'s':''} · ${fmt}`;
     if (noteEl) noteEl.style.display = 'none';
+
+    // Populate order summary
+    const itemsEl = document.getElementById('confirmation-items');
+    if (itemsEl && items && items.length > 0) {
+      const src = (window._PRODUCTS && window._PRODUCTS.length > 0) ? window._PRODUCTS : [];
+      itemsEl.style.display = 'block';
+      itemsEl.innerHTML = `
+        <div style="font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:12px">Order Summary</div>
+        ${items.map(item => {
+          const p = src.find(p => p.id === item.productId);
+          const name = p ? p.name : (item.productId || 'Item');
+          const lineTotal = window.formatPrice ? window.formatPrice((item.price || 0) * item.qty) : '₹' + ((item.price || 0) * item.qty);
+          return `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.07);font-size:12px">
+            <span style="color:rgba(255,255,255,.75)">${name} <span style="color:rgba(255,255,255,.35)">× ${item.qty} (${item.size})</span></span>
+            <span style="font-weight:700;color:#fff">${lineTotal}</span>
+          </div>`;
+        }).join('')}
+        <div style="display:flex;justify-content:space-between;padding-top:10px;font-size:14px;font-weight:800">
+          <span style="color:rgba(255,255,255,.6)">Total</span>
+          <span style="color:#fff">${fmt}</span>
+        </div>`;
+    }
   } catch (e) {
     badge.textContent = 'Your order has been placed';
     if (noteEl) noteEl.style.display = 'block';
