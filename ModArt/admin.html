@@ -723,7 +723,7 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
       <label style="display:block;font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--g3);margin-bottom:6px;">Email Address</label>
       <input id="forgot-pw-email" type="email" placeholder="admin@modart.co" style="width:100%;padding:11px 14px;border:1.5px solid var(--border);background:var(--input-bg);font-family:var(--font);font-size:13px;font-weight:500;color:var(--black);border-radius:var(--r-sm);outline:none;transition:border-color .22s ease;" onfocus="this.style.borderColor='var(--black)'" onblur="this.style.borderColor='var(--border)'"/>
     </div>
-    <div id="forgot-pw-sent" style="display:none;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.25);border-radius:var(--r-sm);padding:10px 14px;margin-bottom:14px;font-size:11px;font-weight:700;color:var(--green);">? Reset link sent  check your inbox</div>
+    <div id="forgot-pw-sent" style="display:none;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.25);border-radius:var(--r-sm);padding:10px 14px;margin-bottom:14px;font-size:11px;font-weight:700;color:var(--green);">✓ Reset link sent — check your inbox</div>
     <div style="display:flex;gap:10px;">
       <button onclick="closeForgotPwModal()" style="flex:1;padding:11px;background:transparent;color:var(--black);font-family:var(--font);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;border:1.5px solid var(--border);border-radius:var(--r-sm);cursor:pointer;transition:all .22s ease;" onmouseover="this.style.borderColor='var(--black)'" onmouseout="this.style.borderColor='var(--border)'">Cancel</button>
       <button onclick="submitForgotPw()" style="flex:1;padding:11px;background:var(--red);color:#fff;font-family:var(--font);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;border:none;border-radius:var(--r-sm);cursor:pointer;transition:background .22s ease;" onmouseover="this.style.background='var(--red-dk)'" onmouseout="this.style.background='var(--red)'">Send Link</button>
@@ -2598,7 +2598,7 @@ function showPage(id) {
   if (id === 'products')  loadAdminProducts();
   if (id === 'inventory') { loadAdminInventory(); loadInventoryStats(); }
   if (id === 'customers') loadAdminCustomers();
-  if (id === 'dashboard') { loadDashboardKPIs(); loadLowStock(); }
+  if (id === 'dashboard') { loadDashboardKPIs(); loadLowStock(); loadActivityFeed(); loadSidebarBadges(); }
   if (id === 'coupons')   loadAdminCoupons();
   if (id === 'analytics') loadAnalytics();
   if (id === 'returns')   loadAdminReturns();
@@ -3197,8 +3197,74 @@ function markAllRead() {
   showToast('All notifications marked as read','order');
 }
 // ====================================================
-// LIVE ACTIVITY SIMULATION
+// SIDEBAR BADGES — real counts from Supabase
 // ====================================================
+async function loadSidebarBadges() {
+  const sb = getSB(); if (!sb) return;
+  try {
+    // Pending orders count
+    const { count: pendingCount } = await sb.from('orders')
+      .select('id', { count: 'exact', head: true })
+      .eq('status', 'pending');
+    const ob = document.getElementById('badge-orders');
+    if (ob) {
+      ob.textContent = pendingCount || 0;
+      ob.style.display = pendingCount > 0 ? '' : 'none';
+    }
+    // Cancelled/returns count
+    const { count: cancelCount } = await sb.from('orders')
+      .select('id', { count: 'exact', head: true })
+      .eq('status', 'cancelled');
+    const rb = document.getElementById('returns-badge');
+    if (rb) {
+      rb.textContent = cancelCount || 0;
+      rb.style.display = cancelCount > 0 ? '' : 'none';
+    }
+    // Notifications badge — count unread (orders in last 24h)
+    const since = new Date(Date.now() - 86400000).toISOString();
+    const { count: newOrders } = await sb.from('orders')
+      .select('id', { count: 'exact', head: true })
+      .gte('created_at', since);
+    const nb = document.getElementById('badge-notifications');
+    if (nb) {
+      nb.textContent = newOrders || 0;
+      nb.style.display = newOrders > 0 ? '' : 'none';
+    }
+  } catch (e) { /* keep hardcoded fallback */ }
+}
+
+// ====================================================
+// LIVE ACTIVITY — seeds from real orders, then simulates
+// ====================================================
+async function loadActivityFeed() {
+  const sb = getSB(); if (!sb) return;
+  const feed = document.getElementById('activity-feed');
+  if (!feed) return;
+  try {
+    const since = new Date(Date.now() - 24 * 3600000).toISOString();
+    const { data } = await sb.from('orders')
+      .select('order_number, created_at, items, shipping_address, guest_email')
+      .gte('created_at', since)
+      .order('created_at', { ascending: false })
+      .limit(5);
+    if (data && data.length > 0) {
+      feed.innerHTML = data.map(o => {
+        const items = (() => { try { return JSON.parse(o.items || '[]'); } catch { return []; } })();
+        const addr  = (() => { try { return JSON.parse(o.shipping_address || '{}'); } catch { return {}; } })();
+        const name  = addr.fullName || o.guest_email || 'Guest';
+        const summary = items.slice(0,2).map(i => (i.name || i.productId) + ' ×' + i.qty).join(', ');
+        const ago = (() => {
+          const diff = Date.now() - new Date(o.created_at).getTime();
+          if (diff < 60000) return 'Just now';
+          if (diff < 3600000) return Math.floor(diff/60000) + ' min ago';
+          return Math.floor(diff/3600000) + ' hr ago';
+        })();
+        return `<div class="activity-item"><div class="activity-icon order"><span class="material-symbols-outlined" style="font-size:14px">shopping_bag</span></div><div class="activity-body"><div class="activity-text"><strong>${esc(o.order_number)}</strong> — ${esc(name)}: ${esc(summary)}</div><div class="activity-time">${ago}</div></div></div>`;
+      }).join('');
+    }
+  } catch (e) { /* keep simulated feed on error */ }
+}
+
 const liveEvents = [
   {cls:'order',sym:'shopping_bag',text:'<strong>New order</strong> #MA-{n}  Oversized Hoodie × {q}'},
   {cls:'user', sym:'person_add',  text:'<strong>New signup</strong> from Instagram campaign'},
