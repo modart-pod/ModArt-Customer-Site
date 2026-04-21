@@ -87,6 +87,14 @@ CREATE TABLE IF NOT EXISTS waitlist (
   UNIQUE(email, drop_id)
 );
 
+CREATE TABLE IF NOT EXISTS wishlists (
+  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id    UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  items      TEXT NOT NULL DEFAULT '[]',
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE(user_id)
+);
+
 -- ── 2. SEED PRODUCTS ─────────────────────────────────────────────
 
 INSERT INTO products (id, name, series, price_inr, badge, description, fabric_gsm, fabric_material, fabric_origin, fabric_shrinkage, fabric_finish, print_durability, is_active)
@@ -202,6 +210,7 @@ ALTER TABLE orders    ENABLE ROW LEVEL SECURITY;
 ALTER TABLE carts     ENABLE ROW LEVEL SECURITY;
 ALTER TABLE coupons   ENABLE ROW LEVEL SECURITY;
 ALTER TABLE waitlist  ENABLE ROW LEVEL SECURITY;
+ALTER TABLE wishlists ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "products_read"      ON products;
 DROP POLICY IF EXISTS "products_admin_all" ON products;
@@ -218,6 +227,8 @@ DROP POLICY IF EXISTS "coupons_read"       ON coupons;
 DROP POLICY IF EXISTS "coupons_admin_all"  ON coupons;
 DROP POLICY IF EXISTS "waitlist_insert"    ON waitlist;
 DROP POLICY IF EXISTS "waitlist_admin_all" ON waitlist;
+DROP POLICY IF EXISTS "wishlists_user_all" ON wishlists;
+DROP POLICY IF EXISTS "wishlists_admin_read" ON wishlists;
 
 CREATE POLICY "products_read"      ON products  FOR SELECT USING (is_active = TRUE OR is_admin());
 CREATE POLICY "products_admin_all" ON products  FOR ALL    USING (is_admin()) WITH CHECK (is_admin());
@@ -234,6 +245,8 @@ CREATE POLICY "coupons_read"       ON coupons   FOR SELECT USING (is_active = TR
 CREATE POLICY "coupons_admin_all"  ON coupons   FOR ALL    USING (is_admin()) WITH CHECK (is_admin());
 CREATE POLICY "waitlist_insert"    ON waitlist  FOR INSERT WITH CHECK (TRUE);
 CREATE POLICY "waitlist_admin_all" ON waitlist  FOR ALL    USING (is_admin()) WITH CHECK (is_admin());
+CREATE POLICY "wishlists_user_all" ON wishlists FOR ALL    USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "wishlists_admin_read" ON wishlists FOR SELECT USING (is_admin());
 
 -- ── 9. ANALYTICS HELPER RPCs ─────────────────────────────────────
 

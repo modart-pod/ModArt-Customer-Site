@@ -72,7 +72,7 @@ export function renderProducts(page) {
     const starsRow = isShop ? `
       <div class="card-stars" style="display:flex;align-items:center;gap:2px;padding:4px 10px 0">
         ${renderStars(rev.rating)}
-        <span class="card-stars-count" style="font-size:10px;color:var(--g2);margin-left:3px">(${rev.count})</span>
+        <span class="card-stars-count" style="font-size:10px;color:var(--g2);margin-left:3px">${rev.count > 0 ? '(' + rev.count + ')' : 'New'}</span>
       </div>` : '';
 
     return `<div class="product-card" data-product-id="${esc(p.id)}" data-product-price="${p.price}" data-product-stock="${p.stock}" data-product-name="${esc(p.name)}" onclick="window.openProduct && window.openProduct('${esc(p.id)}')" role="article" aria-label="${esc(p.name)}">
@@ -125,11 +125,22 @@ export function renderProductDetail() {
   const mainImg = document.getElementById('product-main-img');
   if (mainImg) { mainImg.src = p.img; mainImg.alt = p.name; }
 
+  // Update thumbnails to use the product image
+  const thumbs = document.querySelectorAll('#page-product .product-img-thumb');
+  if (thumbs.length > 0) {
+    thumbs[0].src = p.img;
+    thumbs[0].setAttribute('onclick', `switchImg(this,'${p.img}')`);
+  }
+
   const titleEl = document.querySelector('#page-product .product-detail-title');
   if (titleEl) titleEl.textContent = p.name;
 
   const subtitleEl = document.querySelector('#page-product .product-detail-subtitle');
   if (subtitleEl) subtitleEl.textContent = `${p.series} / Limited Release`;
+
+  // Update eyebrow series label
+  const eyebrowEl = document.querySelector('#page-product .eyebrow-red');
+  if (eyebrowEl) eyebrowEl.textContent = p.series;
 
   const priceFormatted = formatPrice(p.price);
   const priceEl = document.getElementById('detail-price');
@@ -137,6 +148,24 @@ export function renderProductDetail() {
 
   const priceBtnEl = document.getElementById('detail-price-btn');
   if (priceBtnEl) priceBtnEl.textContent = priceFormatted;
+
+  // Update description
+  const descEl = document.querySelector('#page-product .product-detail-desc');
+  if (descEl && p.description) descEl.textContent = p.description;
+
+  // Update fabric specs if product has them
+  if (p.specs) {
+    const specItems = document.querySelectorAll('#page-product .fabric-item');
+    const specKeys = Object.keys(p.specs);
+    specItems.forEach((item, i) => {
+      if (specKeys[i]) {
+        const lbl = item.querySelector('.fabric-item-lbl');
+        const val = item.querySelector('.fabric-item-val');
+        if (lbl) lbl.textContent = specKeys[i];
+        if (val) val.textContent = p.specs[specKeys[i]];
+      }
+    });
+  }
 
   const addBagBtn = document.querySelector('#page-product .btn-black.btn-red-full');
   if (addBagBtn) {
@@ -149,6 +178,17 @@ export function renderProductDetail() {
     if (sold) scarcityEl.innerHTML = '<span class="scarcity-dot" style="background:var(--g3)"></span> Sold Out';
     else if (low) scarcityEl.innerHTML = `<span class="scarcity-dot"></span> ${p.stock} Left`;
     else scarcityEl.style.display = 'none';
+  }
+
+  // Update wishlist button state
+  const wishBtn = document.getElementById('wishlist-detail-btn');
+  if (wishBtn) {
+    const isWished = wishlist.has(p.id);
+    const icon = wishBtn.querySelector('.icon');
+    if (icon) {
+      icon.textContent = isWished ? 'favorite' : 'favorite_border';
+      icon.style.color = isWished ? 'var(--red)' : '';
+    }
   }
 }
 
@@ -256,14 +296,27 @@ export function toggleWishlist(id, btn) {
 }
 
 /**
- * Toggles wishlist state for product detail page
+ * Toggles wishlist state for product detail page — persists to state
  * @param {HTMLElement} btn - Wishlist button element
  */
 export function toggleWishlistDetail(btn) {
-  const icon = btn.querySelector('.icon');
-  const isWish = icon.textContent === 'favorite';
-  icon.textContent = isWish ? 'favorite_border' : 'favorite';
-  icon.style.color = isWish ? '' : 'var(--red)';
+  const productId = window._currentProductId;
+  if (productId) {
+    toggleWishlistItem(productId);
+    const isWished = wishlist.has(productId);
+    const icon = btn.querySelector('.icon');
+    if (icon) {
+      icon.textContent = isWished ? 'favorite' : 'favorite_border';
+      icon.style.color = isWished ? 'var(--red)' : '';
+    }
+  } else {
+    // Fallback: just toggle visually if no product ID
+    const icon = btn.querySelector('.icon');
+    if (!icon) return;
+    const isWish = icon.textContent === 'favorite';
+    icon.textContent = isWish ? 'favorite_border' : 'favorite';
+    icon.style.color = isWish ? '' : 'var(--red)';
+  }
 }
 
 /* ================================================================
@@ -348,22 +401,27 @@ export function filterShop(type, btn) {
   });
   if (btn) btn.classList.add('active');
 
-  const CATEGORY_MAP = {
-    hoodies: ['elfima-hoodie', 'vanta-hoodie'],
-    tees:    ['vanta-tee', 'neo-tee'],
-    bottoms: ['cargo-pants'],
-    instock: null,
-    all:     null
+  // Map filter types to series keywords — works with any products added via admin
+  const SERIES_MAP = {
+    hoodies: ['hoodie'],
+    tees:    ['tee'],
+    bottoms: ['cargo', 'pant', 'short'],
   };
+
   const grid = document.getElementById('shop-product-grid');
   if (!grid) return;
   const cards = Array.from(grid.querySelectorAll('[data-product-id]'));
   cards.forEach(card => {
-    const pid   = card.dataset.productId;
+    const pid   = card.dataset.productId?.toLowerCase() || '';
+    const name  = card.dataset.productName?.toLowerCase() || '';
     const stock = parseInt(card.dataset.productStock || '1');
     let show = true;
-    if (type === 'instock') show = stock > 0;
-    else if (type !== 'all' && CATEGORY_MAP[type]) show = CATEGORY_MAP[type].includes(pid);
+    if (type === 'instock') {
+      show = stock > 0;
+    } else if (type !== 'all' && SERIES_MAP[type]) {
+      const keywords = SERIES_MAP[type];
+      show = keywords.some(kw => pid.includes(kw) || name.includes(kw));
+    }
     card.style.display = show ? '' : 'none';
   });
 }
@@ -421,8 +479,49 @@ export function renderRelatedProducts(excludeId) {
 }
 
 /* ================================================================
-   FREE SHIPPING PROGRESS (called from renderBag)
+   CHECKOUT SUMMARY POPULATION
    ================================================================ */
+
+/**
+ * Populates the checkout sidebar with cart items, subtotal, and total.
+ * Re-runs when shipping method changes.
+ */
+export function populateCheckoutSummary() {
+  if (!window.cart) return;
+  const src      = (window._PRODUCTS && window._PRODUCTS.length > 0) ? window._PRODUCTS : PRODUCTS;
+  const itemsEl  = document.getElementById('checkout-items');
+  const coSub    = document.getElementById('co-subtotal');
+  const coTotal  = document.getElementById('co-total');
+  const coShip   = document.getElementById('co-shipping');
+
+  if (itemsEl) {
+    itemsEl.innerHTML = window.cart.items.map(item => {
+      const p = src.find(p => p.id === item.productId);
+      if (!p) return '';
+      const lineTotal = window.formatPrice ? window.formatPrice(p.price * item.qty) : '₹' + (p.price * item.qty);
+      return `<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:8px">
+        <span style="color:var(--g2)">${esc(p.name)} × ${item.qty} <span style="color:var(--g3)">(${esc(item.size)})</span></span>
+        <span style="font-weight:700">${lineTotal}</span>
+      </div>`;
+    }).join('') || '<div style="font-size:12px;color:var(--g3)">No items in cart</div>';
+  }
+
+  const sub = window.cart.subtotal;
+  const shippingMethod = document.querySelector('#page-checkout input[name="shipping"]:checked')?.value || 'standard';
+  const shipping = shippingMethod === 'express' ? 499 : (sub >= 2499 ? 0 : 149);
+  const total = sub + shipping;
+
+  const fmt = v => window.formatPrice ? window.formatPrice(v) : '₹' + v;
+  if (coSub)  coSub.textContent  = fmt(sub);
+  if (coShip) coShip.textContent = shipping === 0 ? 'Free' : fmt(shipping);
+  if (coTotal) coTotal.textContent = fmt(total);
+}
+
+if (typeof window !== 'undefined') {
+  window.populateCheckoutSummary = populateCheckoutSummary;
+}
+
+
 
 function updateShippingProgress() {
   const FREE_THRESHOLD = 2499;

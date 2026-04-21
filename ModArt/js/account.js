@@ -17,24 +17,49 @@ export async function syncWishlistToSupabase() {
   if (!currentUser || !supabase) return;
   try {
     const ids = JSON.stringify([...wishlist]);
-    await supabase.from('carts').upsert(
-      { user_id: currentUser.id, items: window.cart?.items ? JSON.stringify(window.cart.items) : '[]', updated_at: new Date().toISOString() },
+    // Persist wishlist to Supabase wishlists table for cross-device sync
+    await supabase.from('wishlists').upsert(
+      { user_id: currentUser.id, items: ids, updated_at: new Date().toISOString() },
       { onConflict: 'user_id' }
     );
-    // Store wishlist in localStorage keyed by user
+    // Also keep localStorage as fast local cache
     localStorage.setItem('modart_wishlist_' + currentUser.id, ids);
-  } catch (e) { console.warn('Wishlist sync failed:', e.message); }
+  } catch (e) {
+    // Fallback: at least persist locally
+    try {
+      localStorage.setItem('modart_wishlist_' + currentUser.id, JSON.stringify([...wishlist]));
+    } catch {}
+    console.warn('Wishlist sync failed:', e.message);
+  }
 }
 
 export async function loadWishlistFromSupabase() {
   if (!currentUser || !supabase) return;
+  try {
+    // Try Supabase first for cross-device sync
+    const { data } = await supabase
+      .from('wishlists')
+      .select('items')
+      .eq('user_id', currentUser.id)
+      .single();
+    if (data?.items) {
+      const ids = JSON.parse(data.items);
+      ids.forEach(id => { if (!wishlist.has(id)) wishlist.add(id); });
+      // Update local cache
+      localStorage.setItem('modart_wishlist_' + currentUser.id, data.items);
+      return;
+    }
+  } catch (e) {
+    console.warn('Wishlist Supabase load failed, falling back to localStorage:', e.message);
+  }
+  // Fallback to localStorage
   try {
     const saved = localStorage.getItem('modart_wishlist_' + currentUser.id);
     if (saved) {
       const ids = JSON.parse(saved);
       ids.forEach(id => { if (!wishlist.has(id)) wishlist.add(id); });
     }
-  } catch (e) { console.warn('Wishlist load failed:', e.message); }
+  } catch (e) { console.warn('Wishlist localStorage load failed:', e.message); }
 }
 
 /**

@@ -4,7 +4,7 @@
  */
 
 import { initRouter } from './router.js';
-import { renderProducts, renderBag, updateBadges } from './rendering.js';
+import { renderProducts, renderBag, updateBadges, populateCheckoutSummary } from './rendering.js';
 import { initCustomizer, updateCost } from './customizer.js';
 import { initLayoutManager } from './layouts/LayoutManager.js';
 import { applyMobileLayout  } from './layouts/MobileLayout.js';
@@ -23,8 +23,13 @@ import './modals.js';
    COUNTDOWN TIMER
    ================================================================ */
 function initCountdownTimer() {
-  // Dynamically set end time: 48 hours from now so it's always in the future
-  const end = Date.now() + 48 * 3600 * 1000;
+  // Persist end time in sessionStorage so it doesn't reset on refresh
+  const STORAGE_KEY = 'modart_drop_end';
+  let end = parseInt(sessionStorage.getItem(STORAGE_KEY) || '0');
+  if (!end || end < Date.now()) {
+    end = Date.now() + 48 * 3600 * 1000;
+    sessionStorage.setItem(STORAGE_KEY, String(end));
+  }
 
   function tick() {
     const remaining = Math.max(0, end - Date.now());
@@ -74,8 +79,8 @@ async function initLiveOrdersCounter() {
     const totalStock = inv?.reduce((s, r) => s + r.stock, 0) ?? 0;
     if (stockEl) stockEl.textContent = totalStock;
   } catch (e) {
-    if (el) el.textContent = '12';
-    if (stockEl) stockEl.textContent = '8';
+    if (el) el.textContent = '—';
+    if (stockEl) stockEl.textContent = '—';
   }
 }
 

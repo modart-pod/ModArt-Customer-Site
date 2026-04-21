@@ -76,6 +76,10 @@ function triggerPageRender(pageName) {
     case 'bag':
       window.renderBag && window.renderBag();
       break;
+    case 'checkout':
+      window.renderBag && window.renderBag();
+      window.populateCheckoutSummary && window.populateCheckoutSummary();
+      break;
     case 'account':
       window.renderAccountPage && window.renderAccountPage();
       break;

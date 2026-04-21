@@ -41,9 +41,8 @@ export async function sendOrderEmail(payload) {
  * Validates stock before inserting.
  * Returns { orderId, orderNumber, total, error }
  */
-export async function createOrder(shippingAddress, paymentMethod = 'cod') {
+export async function createOrder(shippingAddress, paymentMethod = 'cod', shippingOverride = null) {
   try {
-    // ── Stock validation before order creation ──────────────────
     const stockCheck = validateCartStock(cart.items);
     if (!stockCheck.valid) {
       return { orderId: null, orderNumber: null, total: 0, error: stockCheck.message };
@@ -60,7 +59,8 @@ export async function createOrder(shippingAddress, paymentMethod = 'cod') {
     const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0);
     const discPct  = (window.getDiscountPercent && window.getDiscountPercent()) || 0;
     const discount = discPct ? Math.round(subtotal * discPct / 100) : 0;
-    const shipping = (subtotal - discount) >= 2499 ? 0 : 149;
+    // Use override shipping cost (express=499, standard=149) or calculate from threshold
+    const shipping = shippingOverride !== null ? shippingOverride : ((subtotal - discount) >= 2499 ? 0 : 149);
     const total    = subtotal - discount + shipping;
     const orderNum = 'MA-' + Date.now().toString().slice(-8);
 
@@ -261,11 +261,12 @@ export async function handleCheckoutSubmit() {
 
   const fullName = document.querySelector('#page-checkout input[autocomplete="name"]')?.value?.trim();
   const email    = document.querySelector('#page-checkout input[autocomplete="email"], #page-checkout input[type="email"]')?.value?.trim();
-  const street   = allTextInputs[1]?.value?.trim(); // 0=name, 1=street
-  const city     = formRowInputs[0]?.value?.trim(); // first in form-row-2
-  const postal   = formRowInputs[1]?.value?.trim(); // second in form-row-2
+  const street   = document.querySelector('#page-checkout input[autocomplete="street-address"]')?.value?.trim();
+  const city     = formRowInputs[0]?.value?.trim();
+  const postal   = formRowInputs[1]?.value?.trim();
   const country  = document.querySelector('#page-checkout select')?.value || 'India';
-  const shipping = document.querySelector('#page-checkout input[name="shipping"]:checked')?.value || 'standard';
+  const shippingMethod = document.querySelector('#page-checkout input[name="shipping"]:checked')?.value || 'standard';
+  const shippingCost   = shippingMethod === 'express' ? 499 : 149;
 
   // Validate form
   const formCheck = validateCheckoutForm(fullName, email, street, city, postal);
@@ -282,14 +283,17 @@ export async function handleCheckoutSubmit() {
     return;
   }
 
-  const shippingAddress = { fullName, email, street, city, postal, country, shippingMethod: shipping };
-  const { orderId, orderNumber, total, error } = await createOrder(shippingAddress, 'cod');
+  const shippingAddress = { fullName, email, street, city, postal, country, shippingMethod };
+  const { orderId, orderNumber, total, error } = await createOrder(shippingAddress, 'cod', shippingCost);
 
   if (error) {
     if (btn) { btn.textContent = 'Pay Now'; btn.disabled = false; }
     alert('Could not place order: ' + error);
     return;
   }
+
+  // Save order to sessionStorage BEFORE clearing cart
+  sessionStorage.setItem('modart_last_order', JSON.stringify({ orderNumber, total, items: cart.items }));
 
   const { success, error: confirmError, order } = await confirmOrder(orderId, 'COD');
   if (!success) {
@@ -298,7 +302,6 @@ export async function handleCheckoutSubmit() {
     return;
   }
 
-  // Send order confirmation email (non-blocking)
   sendOrderEmail({
     type:            'order_confirmation',
     to:              shippingAddress.email,
@@ -308,8 +311,7 @@ export async function handleCheckoutSubmit() {
     shippingAddress,
   }).catch(() => {});
 
-  sessionStorage.setItem('modart_last_order', JSON.stringify({ orderNumber, total, items: cart.items }));
-  if (btn) { btn.textContent = 'Pay Now'; btn.disabled = false; }
+  // Keep button disabled until navigation completes to prevent double-submit
   window.goTo && window.goTo('confirmation');
 }
 

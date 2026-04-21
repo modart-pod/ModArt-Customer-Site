@@ -29,7 +29,10 @@ function openModal(mode = 'waitlist') {
                             mode === 'sizefinder' ? 'Modart Fit' : 'Modart';
   }
   
-  modal.classList.add('open');
+  // Switch from display:none to display:flex so flex alignment works
+  modal.style.display = 'flex';
+  // Trigger transition on next frame
+  requestAnimationFrame(() => modal.classList.add('open'));
   
   setTimeout(() => {
     const focusableElements = modal.querySelectorAll('button, input, select, [tabindex]:not([tabindex="-1"])');
@@ -44,6 +47,8 @@ function closeModal() {
   const modal = getModal();
   if (!modal) return;
   modal.classList.remove('open');
+  // Hide after transition completes
+  setTimeout(() => { modal.style.display = 'none'; }, 300);
   if (lastFocused) lastFocused.focus();
 }
 
@@ -68,18 +73,29 @@ async function joinList() {
 
   if (btn) { btn.textContent = 'Joining…'; btn.disabled = true; }
 
+  let saveSuccess = false;
   try {
     // Save to Supabase waitlist table
     const { supabase } = await import('./auth.js');
     if (supabase) {
-      await supabase.from('waitlist').upsert(
+      const { error } = await supabase.from('waitlist').upsert(
         { email, drop_id: 'general' },
         { onConflict: 'email,drop_id' }
       );
+      if (!error) saveSuccess = true;
+    } else {
+      saveSuccess = true; // No supabase configured, treat as success
     }
   } catch (e) {
     // Silent fail — don't block the UX
     console.warn('Waitlist save failed:', e.message);
+    saveSuccess = true; // Still show success to user — retry can happen server-side
+  }
+
+  if (!saveSuccess) {
+    if (btn) { btn.textContent = 'Try Again'; btn.disabled = false; btn.style.background = ''; }
+    if (emailInput) emailInput.style.borderColor = 'var(--red)';
+    return;
   }
 
   // Update counter UI
@@ -202,6 +218,83 @@ document.addEventListener('click', e => {
   const modal = getModal();
   if (modal && e.target === modal) closeModal();
 });
+
+// ================================================================
+// SEARCH OVERLAY
+// ================================================================
+
+function toggleSearch() {
+  const overlay = document.getElementById('search-overlay');
+  if (!overlay) return;
+  const isOpen = overlay.style.display === 'flex';
+  overlay.style.display = isOpen ? 'none' : 'flex';
+  if (!isOpen) {
+    const input = document.getElementById('search-input');
+    if (input) { input.value = ''; input.focus(); }
+    const results = document.getElementById('search-results');
+    if (results) results.innerHTML = '';
+  }
+}
+
+function handleSearchInput(query) {
+  const results = document.getElementById('search-results');
+  if (!results) return;
+  const q = query.trim().toLowerCase();
+  if (!q) { results.innerHTML = ''; return; }
+
+  const src = (window._PRODUCTS && window._PRODUCTS.length > 0) ? window._PRODUCTS : [];
+  const matches = src.filter(p =>
+    p.name.toLowerCase().includes(q) || p.series.toLowerCase().includes(q)
+  ).slice(0, 6);
+
+  if (matches.length === 0) {
+    results.innerHTML = '<div style="padding:16px;font-size:13px;color:var(--g3);text-align:center">No products found</div>';
+    return;
+  }
+
+  results.innerHTML = matches.map(p => `
+    <button onclick="toggleSearch();window.openProduct&&window.openProduct('${p.id}')"
+      style="display:flex;align-items:center;gap:14px;width:100%;padding:12px 16px;background:none;border:none;border-bottom:1px solid var(--border);cursor:pointer;text-align:left;transition:background .15s"
+      onmouseover="this.style.background='var(--bg-c)'" onmouseout="this.style.background='none'">
+      <img src="${p.img}" alt="${p.name}" style="width:44px;height:52px;object-fit:cover;border-radius:6px;flex-shrink:0"/>
+      <div>
+        <div style="font-size:13px;font-weight:700;color:var(--black)">${p.name}</div>
+        <div style="font-size:11px;color:var(--g3)">${p.series} · ${window.formatPrice ? window.formatPrice(p.price) : '₹'+p.price}</div>
+      </div>
+    </button>`).join('');
+}
+
+// ================================================================
+// COOKIE BANNER
+// ================================================================
+
+function initCookieBanner() {
+  const banner = document.getElementById('cookie-banner');
+  if (!banner) return;
+  try {
+    if (!localStorage.getItem('modart_cookies_accepted')) {
+      banner.style.display = 'flex';
+    }
+  } catch {}
+}
+
+function acceptCookies() {
+  try { localStorage.setItem('modart_cookies_accepted', '1'); } catch {}
+  const banner = document.getElementById('cookie-banner');
+  if (banner) banner.style.display = 'none';
+}
+
+function declineCookies() {
+  try { localStorage.setItem('modart_cookies_accepted', '0'); } catch {}
+  const banner = document.getElementById('cookie-banner');
+  if (banner) banner.style.display = 'none';
+}
+
+window.toggleSearch       = toggleSearch;
+window.handleSearchInput  = handleSearchInput;
+window.initCookieBanner   = initCookieBanner;
+window.acceptCookies      = acceptCookies;
+window.declineCookies     = declineCookies;
 
 // ================================================================
 // EXPORTS
