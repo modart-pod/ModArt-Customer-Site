@@ -127,6 +127,9 @@ export async function confirmOrder(orderId, paymentId = 'COD') {
 
     cart.items = [];
     cart.sync();
+    // Clear persisted discount after successful order
+    try { sessionStorage.removeItem('modart_discount'); } catch {}
+    if (window.setDiscountApplied) window.setDiscountApplied(false);
     return { success: true, order };
   } catch (e) {
     return { success: false, error: e.message };

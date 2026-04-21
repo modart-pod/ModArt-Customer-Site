@@ -101,6 +101,24 @@ export function getSizesForProduct(productId) {
 }
 
 /**
+ * Syncs total stock count from LIVE_INVENTORY back to the product object
+ * and window._PRODUCTS so the UI reflects the latest stock immediately.
+ */
+function _syncProductStock(productId) {
+  const inv = LIVE_INVENTORY[productId] || {};
+  const totalStock = Object.values(inv).reduce((s, v) => s + v, 0);
+  const p = LIVE_PRODUCTS.find(p => p.id === productId);
+  if (p) {
+    p.stock = totalStock;
+    p.badge = totalStock === 0 ? 'Sold Out' : totalStock <= 5 ? 'Low Stock' : p.badge;
+  }
+  if (typeof window !== 'undefined') {
+    window.LIVE_INVENTORY = LIVE_INVENTORY;
+    window._PRODUCTS      = LIVE_PRODUCTS;
+  }
+}
+
+/**
  * Atomically decrements stock using a Supabase RPC to prevent overselling.
  * Falls back to read-then-write if RPC not available.
  */
@@ -118,6 +136,8 @@ export async function decrementStock(productId, size, quantity = 1) {
       if (LIVE_INVENTORY[productId]) {
         LIVE_INVENTORY[productId][size] = Math.max(0, (LIVE_INVENTORY[productId][size] || 0) - quantity);
       }
+      // Update total stock on the product object so UI reflects immediately
+      _syncProductStock(productId);
       return { success: true };
     }
 
@@ -144,6 +164,7 @@ export async function decrementStock(productId, size, quantity = 1) {
     if (LIVE_INVENTORY[productId]) {
       LIVE_INVENTORY[productId][size] = current.stock - quantity;
     }
+    _syncProductStock(productId);
     return { success: true };
   } catch (e) {
     return { success: false, error: e.message };
@@ -172,6 +193,8 @@ export function validateCartStock(cartItems) {
 
 /**
  * Initialises products and inventory together.
+ * Also subscribes to Supabase Realtime so the customer site
+ * auto-updates when admin changes products or inventory.
  */
 export async function initProducts() {
   await fetchProducts();
@@ -180,6 +203,40 @@ export async function initProducts() {
     window._PRODUCTS      = LIVE_PRODUCTS;
     window.LIVE_INVENTORY = LIVE_INVENTORY;
   }
+
+  // Subscribe to realtime changes on products + inventory tables
+  if (supabase) {
+    supabase
+      .channel('modart-product-sync')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, async () => {
+        await fetchProducts();
+        await fetchInventory();
+        if (typeof window !== 'undefined') {
+          window._PRODUCTS      = LIVE_PRODUCTS;
+          window.LIVE_INVENTORY = LIVE_INVENTORY;
+          window.renderProducts && window.renderProducts('home');
+          window.renderProducts && window.renderProducts('shop');
+        }
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'inventory' }, async () => {
+        await fetchInventory();
+        if (typeof window !== 'undefined') {
+          window.LIVE_INVENTORY = LIVE_INVENTORY;
+          window.renderProducts && window.renderProducts('home');
+          window.renderProducts && window.renderProducts('shop');
+          // Re-render product detail if open
+          const page = window.getCurrentPage ? window.getCurrentPage() : '';
+          if (page === 'product') {
+            window.renderProductDetail && window.renderProductDetail();
+            if (window._currentProductId) {
+              window.renderSizeOptions && window.renderSizeOptions(window._currentProductId);
+            }
+          }
+        }
+      })
+      .subscribe();
+  }
+
   return LIVE_PRODUCTS;
 }
 

@@ -98,21 +98,39 @@ export const cart = {
 };
 
 /* ================================================================
-   DISCOUNT STATE
+   DISCOUNT STATE — persisted to sessionStorage so it survives refresh
    ================================================================ */
-export let discountApplied = false;
-export let discountPercent = 0;
-export let discountCode    = '';
+function _loadDiscount() {
+  try {
+    const saved = sessionStorage.getItem('modart_discount');
+    if (saved) return JSON.parse(saved);
+  } catch {}
+  return { applied: false, percent: 0, code: '' };
+}
+
+const _savedDiscount = _loadDiscount();
+export let discountApplied = _savedDiscount.applied;
+export let discountPercent = _savedDiscount.percent;
+export let discountCode    = _savedDiscount.code;
 
 export function setDiscountApplied(value, percent = 10, code = '') {
   discountApplied = value;
   discountPercent = value ? percent : 0;
   discountCode    = value ? code : '';
+  // Persist to sessionStorage so discount survives page refresh
+  try {
+    if (value) {
+      sessionStorage.setItem('modart_discount', JSON.stringify({ applied: true, percent: discountPercent, code: discountCode }));
+    } else {
+      sessionStorage.removeItem('modart_discount');
+    }
+  } catch {}
 }
 
 if (typeof window !== 'undefined') {
-  window.getDiscountPercent = () => discountPercent;
-  window.getDiscountCode    = () => discountCode;
+  window.getDiscountPercent  = () => discountPercent;
+  window.getDiscountCode     = () => discountCode;
+  window.setDiscountApplied  = setDiscountApplied;
 }
 
 /* ================================================================
