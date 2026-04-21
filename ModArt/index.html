@@ -649,6 +649,7 @@
         <div class="eyebrow eyebrow-white" style="margin-bottom:12px">Order Confirmed</div>
         <h1 style="font-size:clamp(28px,5vw,52px);font-weight:900;font-style:italic;text-transform:uppercase;color:#fff;line-height:.93;margin-bottom:16px">You're In The Drop.</h1>
         <div id="confirmation-order-badge" style="display:inline-block;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);padding:8px 20px;border-radius:var(--r-full);font-size:12px;font-weight:700;color:rgba(255,255,255,.7);margin-bottom:32px">Order placed successfully</div>
+        <div id="confirmation-email-note" style="display:none;font-size:12px;color:rgba(255,255,255,.5);margin-top:-20px;margin-bottom:32px">Check your email for your order details and confirmation number.</div>
         <div style="display:flex;flex-direction:column;gap:16px;max-width:480px;margin:0 auto 32px">
           <div class="confirmation-step" style="display:flex;align-items:flex-start;gap:16px;text-align:left">
             <div style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0"><span class="material-symbols-outlined" style="font-size:18px;color:rgba(255,255,255,.6)">email</span></div>
@@ -679,8 +680,21 @@
         <h1 style="font-size:clamp(22px,3.5vw,32px);font-weight:900;font-style:italic;text-transform:uppercase;margin-bottom:clamp(20px,3vw,32px)">My Orders</h1>
         <div id="orders-loading" style="text-align:center;padding:48px 0;color:var(--g3)"><span class="material-symbols-outlined" style="font-size:32px;display:block;margin-bottom:12px;animation:spin 1s linear infinite">autorenew</span>Loading orders…</div>
         <div id="orders-logged-out" style="display:none;text-align:center;padding:48px 0">
+          <span class="material-symbols-outlined" style="font-size:48px;color:var(--border);display:block;margin-bottom:16px">account_circle</span>
           <div style="font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g3);margin-bottom:20px">Sign in to view your orders</div>
-          <button class="btn-red btn-red-pill" onclick="goTo('login')">Sign In</button>
+          <button class="btn-red btn-red-pill" onclick="goTo('login')" style="margin-bottom:16px">Sign In</button>
+          <div style="font-size:12px;color:var(--g3);margin-bottom:24px">or</div>
+          <!-- Guest order tracking -->
+          <div style="background:var(--bg-c);border:1px solid var(--border);border-radius:var(--r-lg);padding:clamp(20px,3vw,28px);text-align:left;max-width:420px;margin:0 auto">
+            <div style="font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;margin-bottom:4px">Track a Guest Order</div>
+            <div style="font-size:12px;color:var(--g2);margin-bottom:18px">Enter your order number and email address</div>
+            <div id="guest-track-error" style="display:none;background:rgba(215,38,56,.08);border:1px solid rgba(215,38,56,.25);color:var(--red);font-size:12px;font-weight:600;padding:10px 14px;border-radius:var(--r-sm);margin-bottom:14px"></div>
+            <div class="form-group"><label class="form-label">Order Number</label><input id="guest-order-num" class="form-input" type="text" placeholder="MA-12345678" autocomplete="off"/></div>
+            <div class="form-group"><label class="form-label">Email Address</label><input id="guest-order-email" class="form-input" type="email" placeholder="you@email.com" autocomplete="email"/></div>
+            <button class="btn-red btn-red-full btn-red-pill" style="padding:14px" onclick="trackGuestOrder()">
+              <span class="material-symbols-outlined" style="font-size:16px">search</span> Track Order
+            </button>
+          </div>
         </div>
         <div id="orders-empty" style="display:none;text-align:center;padding:48px 0">
           <span class="material-symbols-outlined" style="font-size:48px;color:var(--border);display:block;margin-bottom:16px">receipt_long</span>

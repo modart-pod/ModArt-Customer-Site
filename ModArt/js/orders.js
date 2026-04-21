@@ -354,17 +354,117 @@ export async function handleCheckoutSubmit() {
 
 /**
  * Renders the confirmation page with the real order number from sessionStorage.
+ * Falls back gracefully if sessionStorage was cleared.
  */
 export function renderConfirmationPage() {
-  const badge  = document.getElementById('confirmation-order-badge');
-  const stored = sessionStorage.getItem('modart_last_order');
-  if (!badge || !stored) return;
+  const badge   = document.getElementById('confirmation-order-badge');
+  const noteEl  = document.getElementById('confirmation-email-note');
+  const stored  = sessionStorage.getItem('modart_last_order');
+
+  if (!badge) return;
+
+  if (!stored) {
+    // sessionStorage cleared — show fallback message
+    badge.textContent = 'Your order has been placed';
+    if (noteEl) noteEl.style.display = 'block';
+    return;
+  }
+
   try {
     const { orderNumber, total, items } = JSON.parse(stored);
     const fmt = window.formatPrice ? window.formatPrice(total) : '₹' + total;
-    // Use textContent to avoid XSS
     badge.textContent = `${orderNumber} · ${items?.length||0} item${(items?.length||0)!==1?'s':''} · ${fmt}`;
-  } catch (e) { /* keep static fallback */ }
+    if (noteEl) noteEl.style.display = 'none';
+  } catch (e) {
+    badge.textContent = 'Your order has been placed';
+    if (noteEl) noteEl.style.display = 'block';
+  }
+}
+
+/**
+ * Tracks a guest order by order number + email.
+ * Queries Supabase for orders matching both fields.
+ */
+export async function trackGuestOrder() {
+  const orderNumEl = document.getElementById('guest-order-num');
+  const emailEl    = document.getElementById('guest-order-email');
+  const errEl      = document.getElementById('guest-track-error');
+  const listEl     = document.getElementById('orders-list');
+  const loggedOutEl = document.getElementById('orders-logged-out');
+
+  const orderNum = orderNumEl?.value?.trim().toUpperCase();
+  const email    = emailEl?.value?.trim().toLowerCase();
+
+  if (errEl) errEl.style.display = 'none';
+
+  if (!orderNum) {
+    if (errEl) { errEl.textContent = 'Please enter your order number.'; errEl.style.display = 'block'; }
+    orderNumEl?.focus();
+    return;
+  }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (errEl) { errEl.textContent = 'Please enter a valid email address.'; errEl.style.display = 'block'; }
+    emailEl?.focus();
+    return;
+  }
+
+  const trackBtn = document.querySelector('#orders-logged-out .btn-red-full');
+  if (trackBtn) { trackBtn.textContent = 'Searching…'; trackBtn.disabled = true; }
+
+  try {
+    const { data, error } = await supabase
+      .from('orders')
+      .select('*')
+      .eq('order_number', orderNum)
+      .eq('guest_email', email)
+      .limit(1);
+
+    if (trackBtn) { trackBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px">search</span> Track Order'; trackBtn.disabled = false; }
+
+    if (error) throw error;
+
+    if (!data || data.length === 0) {
+      if (errEl) { errEl.textContent = 'No order found with that number and email. Please check and try again.'; errEl.style.display = 'block'; }
+      return;
+    }
+
+    // Found — render the order card
+    if (loggedOutEl) loggedOutEl.style.display = 'none';
+    if (listEl) {
+      listEl.style.display = 'flex';
+      const STATUS_STEPS  = { pending:0, confirmed:1, processing:1, packed:2, dispatched:3, delivered:4 };
+      const STATUS_LABELS = { pending:'Pending', confirmed:'Confirmed', processing:'In Production', packed:'Packed', dispatched:'Dispatched', delivered:'Delivered' };
+      const STATUS_COLORS = { pending:'var(--g3)', confirmed:'#F59E0B', processing:'#F59E0B', packed:'#F59E0B', dispatched:'var(--red)', delivered:'#22C55E' };
+      const STEPS = ['Placed','Confirmed','Packed','Dispatched','Delivered'];
+
+      listEl.innerHTML = data.map(order => {
+        const items = (() => { try { return JSON.parse(order.items || '[]'); } catch { return []; } })();
+        const step  = STATUS_STEPS[order.status] ?? 0;
+        const total = window.formatPrice ? window.formatPrice(order.total_inr) : '₹' + order.total_inr;
+        const date  = new Date(order.created_at).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
+        return `<div class="order-card">
+          <div style="font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--g3);margin-bottom:8px">Guest Order</div>
+          <div class="order-card-hdr">
+            <div class="order-card-status" style="color:${STATUS_COLORS[order.status]||'var(--g2)'}">${esc(STATUS_LABELS[order.status]||order.status)}</div>
+            <div class="order-card-num">${esc(order.order_number)}</div>
+            <div class="order-card-meta">${esc(date)} · ${items.length} item${items.length!==1?'s':''} · ${esc(total)}</div>
+          </div>
+          <div class="tracking-stepper">
+            <div class="stepper-track"><div class="stepper-fill" style="width:${(step/(STEPS.length-1))*100}%"></div></div>
+            <div class="stepper-nodes">${STEPS.map((s,i)=>`<div class="stepper-node"><div class="stepper-dot ${i<step?'done':i===step?'active':''}"></div><span class="stepper-lbl ${i<step?'done':i===step?'active':''}">${esc(s)}</span></div>`).join('')}</div>
+          </div>
+          ${order.tracking_number?`<div style="padding:12px 0;font-size:12px;color:var(--g2);border-top:1px solid var(--border);margin-top:4px"><span style="font-weight:700;color:var(--black)">Tracking:</span> ${order.courier?esc(order.courier)+' — ':''}${esc(order.tracking_number)}</div>`:''}
+          <div style="display:flex;flex-wrap:wrap;gap:8px;padding:12px 0 4px;border-top:1px solid var(--border)">
+            ${items.slice(0,3).map(item=>`<div style="font-size:11px;background:var(--bg-c);padding:4px 10px;border-radius:var(--r-full);color:var(--g1);font-weight:600">${esc(item.name)} · ${esc(item.size)}</div>`).join('')}
+            ${items.length>3?`<div style="font-size:11px;color:var(--g3);padding:4px 0">+${items.length-3} more</div>`:''}
+          </div>
+        </div>`;
+      }).join('');
+    }
+  } catch (e) {
+    if (trackBtn) { trackBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px">search</span> Track Order'; trackBtn.disabled = false; }
+    if (errEl) { errEl.textContent = 'Something went wrong. Please try again.'; errEl.style.display = 'block'; }
+  }
 }
 
 if (typeof window !== 'undefined') {
@@ -375,4 +475,5 @@ if (typeof window !== 'undefined') {
   window.renderOrdersPage       = renderOrdersPage;
   window.handleCheckoutSubmit   = handleCheckoutSubmit;
   window.renderConfirmationPage = renderConfirmationPage;
+  window.trackGuestOrder        = trackGuestOrder;
 }
