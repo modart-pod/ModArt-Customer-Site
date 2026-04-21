@@ -609,13 +609,15 @@ let printAddon = 0;
 function selectPrint(btn, _name, addon) {
   document.querySelectorAll('.print-type-btn').forEach(b => b.classList.remove('sel'));
   btn.classList.add('sel');
-  
+
   printAddon = addon;
+  window._printAddon = addon; // expose so addToCart can include it in price
+
   const total = baseDetailPrice + printAddon;
-  
+
   const el = document.getElementById('detail-price');
   const btn2 = document.getElementById('detail-price-btn');
-  
+
   if (el) el.textContent = formatPrice(total);
   if (btn2) btn2.textContent = formatPrice(total);
 }

@@ -222,7 +222,7 @@ export function renderBag() {
         <div>
           <div class="bag-item-name">${esc(p.name)}</div>
           <div class="bag-item-series">${esc(p.series)}</div>
-          <div class="bag-item-meta">Size: ${esc(item.size)} &nbsp; ${formatPrice(p.price)} each</div>
+          <div class="bag-item-meta">Size: ${esc(item.size)}${item.printAddon ? ` · Print addon: ${formatPrice(item.printAddon)}` : ''} &nbsp; ${formatPrice(p.price + (item.printAddon || 0))} each</div>
           <button class="bag-item-edit" onclick="window.goTo && window.goTo('customize')">Edit Design</button>
           <div class="qty-control" role="group" aria-label="Quantity for ${esc(p.name)}">
             <button class="qty-btn" aria-label="Decrease quantity" onclick="window.cart && window.cart.updateQty('${esc(p.id)}',-1,'${esc(item.size)}')">−</button>
@@ -381,10 +381,11 @@ if (typeof window !== 'undefined') {
   // Make cart object available globally for onclick handlers
   window.cart = cart;
 
-  // addToCart shorthand used by product detail page
+  // addToCart shorthand used by product detail page — includes print addon if selected
   window.addToCart = (productId, size) => {
     const selectedSize = size || document.querySelector('.size-btn.sel')?.dataset?.size || 'M';
-    cart.add(productId, selectedSize);
+    const printAddon = window._printAddon || 0;
+    cart.add(productId, selectedSize, printAddon);
   };
 }
 

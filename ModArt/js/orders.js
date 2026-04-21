@@ -49,11 +49,12 @@ export async function createOrder(shippingAddress, paymentMethod = 'cod', shippi
     }
 
     const items = cart.items.map(item => ({
-      productId: item.productId,
-      size:      item.size,
-      qty:       item.qty,
-      price:     window._PRODUCTS?.find(p => p.id === item.productId)?.price || 0,
-      name:      window._PRODUCTS?.find(p => p.id === item.productId)?.name  || item.productId,
+      productId:  item.productId,
+      size:       item.size,
+      qty:        item.qty,
+      printAddon: item.printAddon || 0,
+      price:      (window._PRODUCTS?.find(p => p.id === item.productId)?.price || 0) + (item.printAddon || 0),
+      name:       window._PRODUCTS?.find(p => p.id === item.productId)?.name  || item.productId,
     }));
 
     const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0);
@@ -232,20 +233,51 @@ export async function renderOrdersPage() {
 
 /**
  * Validates checkout form fields.
- * Returns { valid: true } or { valid: false, message: string }
+ * Returns { valid: true } or { valid: false, field: string, message: string }
  */
-function validateCheckoutForm(fullName, email, street, city, postal) {
+function validateCheckoutForm(fullName, email, phone, street, city, postal) {
   if (!fullName || fullName.length < 2)
-    return { valid: false, message: 'Please enter your full name.' };
+    return { valid: false, field: 'name', message: 'Please enter your full name.' };
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
-    return { valid: false, message: 'Please enter a valid email address.' };
+    return { valid: false, field: 'email', message: 'Please enter a valid email address.' };
+  if (!phone || !/^\+?[\d\s\-]{8,15}$/.test(phone))
+    return { valid: false, field: 'phone', message: 'Please enter a valid phone number.' };
   if (!street || street.length < 5)
-    return { valid: false, message: 'Please enter a valid street address.' };
+    return { valid: false, field: 'street', message: 'Please enter a valid street address.' };
   if (!city || city.length < 2)
-    return { valid: false, message: 'Please enter your city.' };
+    return { valid: false, field: 'city', message: 'Please enter your city.' };
   if (!postal || !/^\d{6}$/.test(postal))
-    return { valid: false, message: 'Please enter a valid 6-digit PIN code.' };
+    return { valid: false, field: 'postal', message: 'Please enter a valid 6-digit PIN code.' };
   return { valid: true };
+}
+
+/** Shows an inline error under a checkout field */
+function showCheckoutError(field, message) {
+  // Clear all errors first
+  document.querySelectorAll('#page-checkout .field-err').forEach(el => el.remove());
+  document.querySelectorAll('#page-checkout .form-input').forEach(el => el.style.borderColor = '');
+
+  if (!field || !message) return;
+
+  const selectors = {
+    name:   '#page-checkout input[autocomplete="name"]',
+    email:  '#page-checkout input[autocomplete="email"], #page-checkout input[type="email"]',
+    phone:  '#page-checkout input[autocomplete="tel"]',
+    street: '#page-checkout input[autocomplete="street-address"]',
+    city:   '#page-checkout .form-row-2 input:first-child',
+    postal: '#page-checkout .form-row-2 input:last-child',
+  };
+
+  const input = document.querySelector(selectors[field]);
+  if (input) {
+    input.style.borderColor = 'var(--red)';
+    const err = document.createElement('div');
+    err.className = 'field-err';
+    err.style.cssText = 'font-size:11px;color:var(--red);font-weight:600;margin-top:4px;letter-spacing:.02em';
+    err.textContent = message;
+    input.parentNode.appendChild(err);
+    input.focus();
+  }
 }
 
 /**
@@ -255,40 +287,45 @@ export async function handleCheckoutSubmit() {
   const btn = document.getElementById('pay-now-btn');
   if (btn) { btn.textContent = 'Placing order…'; btn.disabled = true; }
 
-  // Use stable selectors matching the actual checkout form HTML structure
-  const allTextInputs = document.querySelectorAll('#page-checkout .form-section input[type="text"]');
+  // Clear any previous inline errors
+  showCheckoutError(null, null);
+
   const formRowInputs = document.querySelectorAll('#page-checkout .form-row-2 input[type="text"]');
 
   const fullName = document.querySelector('#page-checkout input[autocomplete="name"]')?.value?.trim();
   const email    = document.querySelector('#page-checkout input[autocomplete="email"], #page-checkout input[type="email"]')?.value?.trim();
+  const phone    = document.querySelector('#page-checkout input[autocomplete="tel"]')?.value?.trim();
   const street   = document.querySelector('#page-checkout input[autocomplete="street-address"]')?.value?.trim();
   const city     = formRowInputs[0]?.value?.trim();
   const postal   = formRowInputs[1]?.value?.trim();
   const country  = document.querySelector('#page-checkout select')?.value || 'India';
   const shippingMethod = document.querySelector('#page-checkout input[name="shipping"]:checked')?.value || 'standard';
-  const shippingCost   = shippingMethod === 'express' ? 499 : 149;
 
-  // Validate form
-  const formCheck = validateCheckoutForm(fullName, email, street, city, postal);
+  // Fix: apply free shipping threshold correctly
+  const subtotal = window.cart?.subtotal || 0;
+  const shippingCost = shippingMethod === 'express' ? 499 : (subtotal >= 2499 ? 0 : 149);
+
+  // Validate form — show inline errors instead of alert()
+  const formCheck = validateCheckoutForm(fullName, email, phone, street, city, postal);
   if (!formCheck.valid) {
-    if (btn) { btn.textContent = 'Pay Now'; btn.disabled = false; }
-    alert(formCheck.message);
+    if (btn) { btn.textContent = 'Place Order — Cash on Delivery'; btn.disabled = false; }
+    showCheckoutError(formCheck.field, formCheck.message);
     return;
   }
 
   // Validate cart is not empty
   if (cart.items.length === 0) {
-    if (btn) { btn.textContent = 'Pay Now'; btn.disabled = false; }
-    alert('Your cart is empty.');
+    if (btn) { btn.textContent = 'Place Order — Cash on Delivery'; btn.disabled = false; }
+    showCheckoutError('name', 'Your cart is empty. Please add items before checking out.');
     return;
   }
 
-  const shippingAddress = { fullName, email, street, city, postal, country, shippingMethod };
+  const shippingAddress = { fullName, email, phone, street, city, postal, country, shippingMethod };
   const { orderId, orderNumber, total, error } = await createOrder(shippingAddress, 'cod', shippingCost);
 
   if (error) {
-    if (btn) { btn.textContent = 'Pay Now'; btn.disabled = false; }
-    alert('Could not place order: ' + error);
+    if (btn) { btn.textContent = 'Place Order — Cash on Delivery'; btn.disabled = false; }
+    showCheckoutError('name', 'Could not place order: ' + error);
     return;
   }
 
@@ -297,8 +334,8 @@ export async function handleCheckoutSubmit() {
 
   const { success, error: confirmError, order } = await confirmOrder(orderId, 'COD');
   if (!success) {
-    if (btn) { btn.textContent = 'Pay Now'; btn.disabled = false; }
-    alert('Order placed but confirmation failed: ' + confirmError);
+    if (btn) { btn.textContent = 'Place Order — Cash on Delivery'; btn.disabled = false; }
+    showCheckoutError('name', 'Order placed but confirmation failed: ' + confirmError);
     return;
   }
 

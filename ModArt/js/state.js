@@ -48,9 +48,9 @@ export function toggleWishlistItem(id) {
 export const cart = {
   items: [],
 
-  add(id, size = 'M') {
-    const ex = this.items.find(i => i.productId === id && i.size === size);
-    ex ? ex.qty++ : this.items.push({ productId: id, qty: 1, size });
+  add(id, size = 'M', printAddon = 0) {
+    const ex = this.items.find(i => i.productId === id && i.size === size && (i.printAddon || 0) === printAddon);
+    ex ? ex.qty++ : this.items.push({ productId: id, qty: 1, size, printAddon });
     this.sync();
   },
 
@@ -80,7 +80,7 @@ export const cart = {
     const src = (window._PRODUCTS && window._PRODUCTS.length > 0) ? window._PRODUCTS : PRODUCTS;
     return this.items.reduce((s, i) => {
       const p = src.find(p => p.id === i.productId);
-      return s + (p ? p.price * i.qty : 0);
+      return s + (p ? (p.price + (i.printAddon || 0)) * i.qty : 0);
     }, 0);
   },
 
