@@ -67,7 +67,10 @@ export const cart = {
       ? this.items.find(i => i.productId === id && i.size === size)
       : this.items.find(i => i.productId === id);
     if (item) {
-      item.qty = Math.max(1, item.qty + delta);
+      // Cap at available stock if inventory data exists
+      const inv = window.LIVE_INVENTORY?.[id];
+      const maxStock = inv ? (inv[item.size] ?? 99) : 99;
+      item.qty = Math.min(maxStock, Math.max(1, item.qty + delta));
       this.sync();
     }
   },

@@ -424,7 +424,6 @@
           <div class="product-img-stack">
             <div style="position:relative">
               <img class="product-img-main" src="https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=900&q=85" alt="Product" id="product-main-img" loading="lazy" onclick="zoomImage(this)" style="cursor:zoom-in"/>
-              <div class="product-view-tag"><span class="material-symbols-outlined icon">view_in_ar</span> 360° View</div>
             </div>
             <div class="product-img-thumbs">
               <img class="product-img-thumb active" src="https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=200&q=80" alt="Front" loading="lazy" onclick="switchImg(this,'https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=900&q=85')"/>
@@ -466,7 +465,7 @@
               <div class="wash-row"><div class="wash-icon"><span class="material-symbols-outlined icon">local_laundry_service</span></div><span class="wash-txt">Cold wash, no tumble dry, iron inside-out · Dry flat for best shape retention</span></div>
             </div>
             <div class="size-section">
-              <div class="size-label-row"><span class="form-lbl">Select Size</span><div><button class="size-guide-link">Size Guide</button><button class="size-finder-cta" onclick="openModal('sizefinder')">Find My Size</button></div></div>
+              <div class="size-label-row"><span class="form-lbl">Select Size</span><div><button class="size-guide-link" onclick="openModal('sizefinder')">Size Guide</button><button class="size-finder-cta" onclick="openModal('sizefinder')">Find My Size</button></div></div>
               <div class="size-options" id="size-options-dynamic"><button class="size-btn sel" onclick="selSize(this)" data-size="M">M</button></div>
             </div>
             <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">

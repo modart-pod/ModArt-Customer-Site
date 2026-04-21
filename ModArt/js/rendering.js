@@ -125,13 +125,23 @@ export function renderProductDetail() {
   const mainImg = document.getElementById('product-main-img');
   if (mainImg) { mainImg.src = p.img; mainImg.alt = p.name; }
 
-  // Update thumbnails to use the product image — escape URL to prevent attribute injection
+  // Update all thumbnails to use the product image — escape URL to prevent attribute injection
   const safeImg = p.img.replace(/'/g, '%27').replace(/"/g, '%22');
   const thumbs = document.querySelectorAll('#page-product .product-img-thumb');
-  if (thumbs.length > 0) {
-    thumbs[0].src = p.img;
-    thumbs[0].setAttribute('onclick', `switchImg(this,'${safeImg}')`);
-  }
+  thumbs.forEach((thumb, i) => {
+    // All thumbs show the same product image (no multi-image support in fallback data)
+    // If product has multiple images, use them; otherwise repeat the main image
+    const imgSrc = (p.images && p.images[i]) ? p.images[i] : p.img;
+    const safeThumbImg = imgSrc.replace(/'/g, '%27').replace(/"/g, '%22');
+    const mainSrc = (p.images && p.images[i])
+      ? p.images[i].replace('w=200', 'w=900')
+      : p.img;
+    const safeMainSrc = mainSrc.replace(/'/g, '%27').replace(/"/g, '%22');
+    thumb.src = imgSrc;
+    thumb.setAttribute('onclick', `switchImg(this,'${safeMainSrc}')`);
+    if (i === 0) thumb.classList.add('active');
+    else thumb.classList.remove('active');
+  });
 
   const titleEl = document.querySelector('#page-product .product-detail-title');
   if (titleEl) titleEl.textContent = p.name;
@@ -154,18 +164,36 @@ export function renderProductDetail() {
   const descEl = document.querySelector('#page-product .product-detail-desc');
   if (descEl && p.description) descEl.textContent = p.description;
 
-  // Update fabric specs if product has them
-  if (p.specs) {
-    const specItems = document.querySelectorAll('#page-product .fabric-item');
-    const specKeys = Object.keys(p.specs);
+  // Update fabric specs from product data (Supabase fields or p.specs object)
+  const fabricData = p.specs || {
+    'GSM':             p.fabric_gsm       || null,
+    'Fabric':          p.fabric_material  || null,
+    'Shrinkage':       p.fabric_shrinkage || null,
+    'Print Durability':p.print_durability || null,
+    'Origin':          p.fabric_origin    || null,
+    'Finish':          p.fabric_finish    || null,
+  };
+  const specItems = document.querySelectorAll('#page-product .fabric-item');
+  const specKeys  = Object.keys(fabricData).filter(k => fabricData[k]);
+  const fabricSection = document.querySelector('#page-product .fabric-specs');
+
+  if (specKeys.length > 0) {
+    if (fabricSection) fabricSection.style.display = '';
     specItems.forEach((item, i) => {
-      if (specKeys[i]) {
+      const key = specKeys[i];
+      if (key) {
         const lbl = item.querySelector('.fabric-item-lbl');
         const val = item.querySelector('.fabric-item-val');
-        if (lbl) lbl.textContent = specKeys[i];
-        if (val) val.textContent = p.specs[specKeys[i]];
+        if (lbl) lbl.textContent = key;
+        if (val) val.textContent = fabricData[key];
+        item.style.display = '';
+      } else {
+        item.style.display = 'none';
       }
     });
+  } else {
+    // No fabric data — hide the section rather than show wrong data
+    if (fabricSection) fabricSection.style.display = 'none';
   }
 
   const addBagBtn = document.querySelector('#page-product .btn-black.btn-red-full');
