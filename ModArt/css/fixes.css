@@ -461,3 +461,49 @@ textarea:focus-visible {
 .stepper-lbl.active {
   color: var(--red);
 }
+
+/* ── MODAL DISPLAY FIX ─────────────────────────────────────────── */
+/* #modal uses display:none by default; JS switches to flex on open */
+/* The .open class triggers opacity/visibility transitions          */
+#modal.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+#modal .modal-card {
+  transform: translateY(20px) scale(.95);
+  transition: transform .3s ease;
+}
+
+#modal.open .modal-card {
+  transform: translateY(0) scale(1);
+}
+
+/* ── 12. SHOP FILTER BUTTONS — light mode base styles ──────────── */
+
+.shop-filter-btn {
+  padding: 8px 16px;
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  font-family: var(--font);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--g2);
+  border-radius: var(--r-full);
+  cursor: pointer;
+  transition: all var(--t);
+  white-space: nowrap;
+}
+
+.shop-filter-btn:hover {
+  border-color: var(--black);
+  color: var(--black);
+}
+
+.shop-filter-btn.active {
+  background: var(--black);
+  border-color: var(--black);
+  color: var(--white);
+}

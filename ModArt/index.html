@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -133,26 +133,27 @@
   <!-- ============================================================
        SEARCH OVERLAY
        ============================================================ -->
-  <div id="search-overlay" style="display:none;position:fixed;inset:0;z-index:1100;background:rgba(247,245,241,.97);flex-direction:column;align-items:center;padding-top:80px">
-    <div style="width:100%;max-width:600px;padding:0 24px">
-      <div style="display:flex;align-items:center;gap:12px;border-bottom:2px solid var(--black);padding-bottom:12px;margin-bottom:24px">
-        <span class="material-symbols-outlined" style="font-size:24px;color:var(--g3)">search</span>
-        <input id="search-input" type="text" placeholder="Search products…" oninput="handleSearch(this.value)"
-          style="flex:1;border:none;background:none;font-family:var(--font);font-size:18px;font-weight:500;color:var(--black);outline:none"/>
-        <button onclick="toggleSearch()" style="background:none;border:none;cursor:pointer;color:var(--g3)"><span class="material-symbols-outlined">close</span></button>
+  <div id="search-overlay" style="display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);align-items:flex-start;justify-content:center;padding-top:80px" onclick="if(event.target===this)toggleSearch()">
+    <div style="width:100%;max-width:600px;padding:0 20px">
+      <div style="position:relative">
+        <span class="material-symbols-outlined" style="position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:22px;color:var(--g3)">search</span>
+        <input id="search-input" type="search" placeholder="Search products…" autocomplete="off"
+          style="width:100%;padding:18px 18px 18px 52px;font-family:var(--font);font-size:16px;font-weight:500;background:var(--white);border:none;border-radius:var(--r-lg);outline:none;color:var(--black)"
+          oninput="handleSearchDebounced(this.value)" onkeydown="if(event.key==='Escape')toggleSearch()"/>
+        <button onclick="toggleSearch()" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--g3);display:flex;align-items:center"><span class="material-symbols-outlined" style="font-size:22px">close</span></button>
       </div>
-      <div id="search-results"></div>
+      <div id="search-results" style="margin-top:12px;background:var(--white);border-radius:var(--r-lg);overflow:hidden;max-height:60vh;overflow-y:auto"></div>
     </div>
   </div>
 
   <!-- ============================================================
        COOKIE BANNER
        ============================================================ -->
-  <div id="cookie-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:1200;background:var(--white);border-top:1px solid var(--border);padding:16px 24px;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
-    <p style="font-size:12px;color:var(--g2);margin:0;max-width:600px">We use cookies to improve your experience. By continuing, you agree to our <button onclick="goTo('privacy')" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:12px;font-weight:700;padding:0">Privacy Policy</button>.</p>
-    <div style="display:flex;gap:10px">
-      <button onclick="declineCookies()" class="btn-ghost" style="font-size:11px">Decline</button>
-      <button onclick="acceptCookies()" class="btn-red" style="padding:10px 20px;font-size:11px">Accept</button>
+  <div id="cookie-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:1500;background:var(--black);padding:16px clamp(16px,4vw,32px);align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.1)">
+    <p style="font-size:12px;color:rgba(255,255,255,.65);margin:0;max-width:600px">We use cookies to improve your experience and analyse site traffic. <button onclick="goTo('privacy')" style="background:none;border:none;color:rgba(255,255,255,.65);text-decoration:underline;cursor:pointer;font-size:12px;padding:0">Privacy Policy</button></p>
+    <div style="display:flex;gap:10px;flex-shrink:0">
+      <button onclick="declineCookies()" style="padding:8px 16px;background:none;border:1px solid rgba(255,255,255,.25);border-radius:var(--r-full);font-family:var(--font);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.55);cursor:pointer">Decline</button>
+      <button onclick="acceptCookies()" style="padding:8px 16px;background:var(--red);border:none;border-radius:var(--r-full);font-family:var(--font);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#fff;cursor:pointer">Accept</button>
     </div>
   </div>
 
@@ -347,9 +348,9 @@
             <div class="footer-brand-logo">ModArt</div>
             <p class="footer-brand-desc">Premium custom garment studio. Limited drops. No restocks. Creator-driven.</p>
             <div class="footer-social">
-              <button class="footer-social-btn" aria-label="Instagram"><span class="material-symbols-outlined icon">photo_camera</span></button>
-              <button class="footer-social-btn" aria-label="Twitter"><span class="material-symbols-outlined icon">tag</span></button>
-              <button class="footer-social-btn" aria-label="Discord"><span class="material-symbols-outlined icon">forum</span></button>
+              <button class="footer-social-btn" aria-label="Instagram" onclick="window.open('https://instagram.com/modart','_blank')"><span class="material-symbols-outlined icon">photo_camera</span></button>
+              <button class="footer-social-btn" aria-label="Twitter" onclick="window.open('https://twitter.com/modart','_blank')"><span class="material-symbols-outlined icon">tag</span></button>
+              <button class="footer-social-btn" aria-label="Discord" onclick="window.open('https://discord.gg/modart','_blank')"><span class="material-symbols-outlined icon">forum</span></button>
             </div>
           </div>
           <div>
@@ -357,8 +358,8 @@
             <div class="footer-links">
               <button class="footer-link" onclick="goTo('shop')">All Products</button>
               <button class="footer-link" onclick="goTo('shop')">New Drops</button>
-              <button class="footer-link">Sold Out Archive</button>
-              <button class="footer-link">Size Guide</button>
+              <button class="footer-link" onclick="goTo('shop');setTimeout(()=>{window.filterShop&&window.filterShop('instock',null)},100)">Sold Out Archive</button>
+              <button class="footer-link" onclick="openModal('sizefinder')">Size Guide</button>
             </div>
           </div>
           <div>
@@ -570,11 +571,10 @@
               <div id="shipping-progress-msg" style="font-size:11px;color:var(--g2);margin-bottom:6px">Add more to unlock free shipping</div>
               <div style="height:4px;background:var(--border);border-radius:2px;overflow:hidden"><div id="shipping-progress-bar" style="height:100%;background:var(--green);width:0%;transition:width .4s ease;border-radius:2px"></div></div>
             </div>
-            <div id="discount-row" style="display:none;gap:8px;margin-bottom:16px">
+            <div id="discount-row" style="display:flex;gap:8px;margin-bottom:16px">
               <input id="discount-input" class="form-input" placeholder="Promo code" style="flex:1"/>
               <button class="btn-black" style="padding:14px 16px;border-radius:var(--r-sm)" onclick="applyDiscount()">Apply</button>
             </div>
-            <button style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--red);background:none;border:none;cursor:pointer;margin-bottom:16px" onclick="document.getElementById('discount-row').style.display='flex'">+ Add Promo Code</button>
             <div class="bag-sum-row"><span style="font-size:13px;color:var(--g2)">Subtotal</span><span id="bag-subtotal" style="font-size:13px;font-weight:700">₹0</span></div>
             <div id="discount-row-display" style="display:none" class="bag-sum-row"><span style="font-size:13px;color:var(--green)">Discount (10%)</span><span id="discount-val" style="font-size:13px;font-weight:700;color:var(--green)">−₹0</span></div>
             <div class="bag-sum-row"><span style="font-size:13px;color:var(--g2)">Shipping</span><span style="font-size:13px;font-weight:700">Calculated at checkout</span></div>
@@ -602,7 +602,7 @@
           </div>
           <div class="form-section">
             <div class="form-section-title">Shipping Address</div>
-            <div class="form-group"><label class="form-label">Street Address</label><input class="form-input" type="text" placeholder="123 Street, Area"/></div>
+            <div class="form-group"><label class="form-label">Street Address</label><input class="form-input" type="text" autocomplete="street-address" placeholder="123 Street, Area"/></div>
             <div class="form-row-2">
               <div class="form-group"><label class="form-label">City</label><input class="form-input" type="text" placeholder="Mumbai"/></div>
               <div class="form-group"><label class="form-label">PIN Code</label><input class="form-input" type="text" placeholder="400001"/></div>
@@ -611,8 +611,8 @@
           </div>
           <div class="form-section">
             <div class="form-section-title">Shipping Method</div>
-            <label style="display:flex;align-items:center;gap:12px;padding:14px;border:1.5px solid var(--red);border-radius:var(--r-md);cursor:pointer;margin-bottom:8px"><input type="radio" name="shipping" value="standard" checked style="accent-color:var(--red)"/><div><div style="font-size:12px;font-weight:700">Standard — 4–6 days</div><div style="font-size:11px;color:var(--g3)">Free on orders over ₹2,499</div></div><span style="margin-left:auto;font-weight:700">₹149</span></label>
-            <label style="display:flex;align-items:center;gap:12px;padding:14px;border:1.5px solid var(--border);border-radius:var(--r-md);cursor:pointer"><input type="radio" name="shipping" value="express" style="accent-color:var(--red)"/><div><div style="font-size:12px;font-weight:700">Express — 1–2 days</div><div style="font-size:11px;color:var(--g3)">Priority production + shipping</div></div><span style="margin-left:auto;font-weight:700">₹499</span></label>
+            <label style="display:flex;align-items:center;gap:12px;padding:14px;border:1.5px solid var(--red);border-radius:var(--r-md);cursor:pointer;margin-bottom:8px"><input type="radio" name="shipping" value="standard" checked style="accent-color:var(--red)" onchange="window.populateCheckoutSummary&&window.populateCheckoutSummary()"/><div><div style="font-size:12px;font-weight:700">Standard — 4–6 days</div><div style="font-size:11px;color:var(--g3)">Free on orders over ₹2,499</div></div><span style="margin-left:auto;font-weight:700">₹149</span></label>
+            <label style="display:flex;align-items:center;gap:12px;padding:14px;border:1.5px solid var(--border);border-radius:var(--r-md);cursor:pointer"><input type="radio" name="shipping" value="express" style="accent-color:var(--red)" onchange="window.populateCheckoutSummary&&window.populateCheckoutSummary()"/><div><div style="font-size:12px;font-weight:700">Express — 1–2 days</div><div style="font-size:11px;color:var(--g3)">Priority production + shipping</div></div><span style="margin-left:auto;font-weight:700">₹499</span></label>
           </div>
           <button class="btn-red btn-red-full btn-red-pill" id="pay-now-btn" style="padding:18px;font-size:14px" onclick="handleCheckoutSubmit()">Place Order — Cash on Delivery</button>
           <div style="display:flex;justify-content:center;gap:clamp(16px,3vw,36px);margin-top:20px">
@@ -627,7 +627,7 @@
             <div id="checkout-items" style="margin-bottom:16px"></div>
             <div style="border-top:1px solid var(--border);padding-top:14px">
               <div class="bag-sum-row"><span style="font-size:13px;color:var(--g2)">Subtotal</span><span id="co-subtotal" style="font-size:13px;font-weight:700">₹0</span></div>
-              <div class="bag-sum-row"><span style="font-size:13px;color:var(--g2)">Shipping</span><span style="font-size:13px;font-weight:700">₹149</span></div>
+              <div class="bag-sum-row"><span style="font-size:13px;color:var(--g2)">Shipping</span><span id="co-shipping" style="font-size:13px;font-weight:700">₹149</span></div>
               <div style="border-top:1px solid var(--border);margin:12px 0"></div>
               <div class="bag-sum-row"><span style="font-size:15px;font-weight:800">Total</span><span id="co-total" style="font-size:18px;font-weight:900">₹0</span></div>
             </div>
@@ -804,6 +804,7 @@
             <div class="form-group"><label class="form-label">Full Name</label><input id="profile-name" class="form-input" type="text"/></div>
             <div class="form-group"><label class="form-label">Email</label><input id="profile-email" class="form-input" type="email" disabled style="opacity:.6"/></div>
             <div id="profile-success" style="display:none;color:var(--green);font-size:12px;font-weight:600;margin-bottom:12px"></div>
+            <div id="profile-error" style="display:none;color:var(--red);font-size:12px;font-weight:600;margin-bottom:12px"></div>
             <button class="btn-red btn-red-pill" onclick="saveProfile()">Save Changes</button>
           </div>
         </div>
@@ -954,18 +955,6 @@
     </div>
   </main>
 
-  <!-- SEARCH OVERLAY -->
-  <div id="search-overlay" style="display:none;position:fixed;inset:0;z-index:2000;background:rgba(247,245,241,.97);flex-direction:column;align-items:center;padding-top:clamp(60px,10vh,100px)">
-    <div style="width:100%;max-width:600px;padding:0 20px">
-      <div style="display:flex;align-items:center;gap:12px;border-bottom:2px solid var(--black);padding-bottom:12px;margin-bottom:24px">
-        <span class="material-symbols-outlined" style="font-size:24px;color:var(--g3)">search</span>
-        <input id="search-input" type="text" placeholder="Search products…" oninput="handleSearch(this.value)" style="flex:1;border:none;background:none;font-family:var(--font);font-size:18px;font-weight:500;color:var(--black);outline:none"/>
-        <button onclick="toggleSearch()" style="background:none;border:none;cursor:pointer;color:var(--g3)"><span class="material-symbols-outlined" style="font-size:24px">close</span></button>
-      </div>
-      <div id="search-results"></div>
-    </div>
-  </div>
-
   <!-- MODAL (waitlist / sizefinder / ai) -->
   <div id="modal" style="display:none;position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:20px">
     <div class="modal-card" style="position:relative;background:var(--white);border-radius:var(--r-xl);padding:clamp(24px,4vw,36px);max-width:480px;width:100%;max-height:90vh;overflow-y:auto">
@@ -997,15 +986,6 @@
         <textarea id="ai-prompt" class="form-input" rows="3" placeholder="e.g. Cyber samurai in neon Tokyo rain…" style="margin-bottom:14px"></textarea>
         <button id="ai-cta" class="btn-red btn-red-full btn-red-pill" style="padding:14px;display:flex;align-items:center;justify-content:center;gap:8px" onclick="generateAI()">Generate Artwork <span class="material-symbols-outlined icon">auto_awesome</span></button>
       </div>
-    </div>
-  </div>
-
-  <!-- COOKIE BANNER -->
-  <div id="cookie-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:1500;background:var(--white);border-top:1px solid var(--border);padding:16px clamp(16px,4vw,48px);align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;box-shadow:0 -4px 24px rgba(0,0,0,.08)">
-    <p style="font-size:13px;color:var(--g2);max-width:600px">We use cookies to improve your experience. <button class="btn-ghost" onclick="goTo('privacy')" style="font-size:13px;text-transform:none;letter-spacing:0;color:var(--red)">Learn more</button></p>
-    <div style="display:flex;gap:10px">
-      <button class="btn-outline" style="padding:10px 20px;border-radius:var(--r-full)" onclick="declineCookies()">Decline</button>
-      <button class="btn-red btn-red-pill" style="padding:10px 20px" onclick="acceptCookies()">Accept</button>
     </div>
   </div>
 
