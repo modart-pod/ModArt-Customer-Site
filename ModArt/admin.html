@@ -900,11 +900,7 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
       <div class="card">
         <div class="card-hdr"><div class="card-title">Live Activity</div><button class="card-action"><span class="material-symbols-outlined" style="font-size:13px">refresh</span>Live</button></div>
         <div class="activity-list" id="activity-feed">
-          <div class="activity-item"><div class="activity-icon order"><span class="material-symbols-outlined" style="font-size:14px">shopping_bag</span></div><div class="activity-body"><div class="activity-text"><strong>Order #MA-4821</strong>  Oversized Hoodie × 2</div><div class="activity-time">2 min ago</div></div></div>
-          <div class="activity-item"><div class="activity-icon user"><span class="material-symbols-outlined" style="font-size:14px">person_add</span></div><div class="activity-body"><div class="activity-text"><strong>New creator</strong> @nova_prints signed up</div><div class="activity-time">14 min ago</div></div></div>
-          <div class="activity-item"><div class="activity-icon drop"><span class="material-symbols-outlined" style="font-size:14px">bolt</span></div><div class="activity-body"><div class="activity-text"><strong>Drop #08</strong> "Void Edition"  28 units in 1hr</div><div class="activity-time">32 min ago</div></div></div>
-          <div class="activity-item"><div class="activity-icon custom"><span class="material-symbols-outlined" style="font-size:14px">brush</span></div><div class="activity-body"><div class="activity-text"><strong>Custom request</strong> from @rael.co  3-color</div><div class="activity-time">1 hr ago</div></div></div>
-          <div class="activity-item"><div class="activity-icon refund"><span class="material-symbols-outlined" style="font-size:14px">assignment_return</span></div><div class="activity-body"><div class="activity-text"><strong>Refund processed</strong> for order #MA-4798</div><div class="activity-time">2 hr ago</div></div></div>
+          <div style="padding:20px;text-align:center;color:var(--g3);font-size:12px"><span class="material-symbols-outlined" style="font-size:18px;vertical-align:middle;animation:spin 1s linear infinite">autorenew</span> Loading activity…</div>
         </div>
       </div>
     </div>
@@ -2322,9 +2318,13 @@ function getSB() {
   }
 }
 // ====================================================
-// LOGIN LOGIC  Supabase Auth (only modart.pod@gmail.com allowed)
+// LOGIN LOGIC  Supabase Auth (only admin emails allowed)
 // ====================================================
-const ADMIN_ALLOWED_EMAILS = ['modart.pod@gmail.com'];
+const ADMIN_ALLOWED_EMAILS = (
+  (typeof process !== 'undefined' && process.env && process.env.ADMIN_EMAILS)
+    ? process.env.ADMIN_EMAILS
+    : 'modart.pod@gmail.com'
+).split(',').map(e => e.trim().toLowerCase()).filter(Boolean);
 // ====================================================
 // THEME  single source of truth
 // ====================================================
@@ -2439,6 +2439,11 @@ function revealDashboard() {
     screen.style.display = 'none';
     wrap.style.display   = 'block';
     document.body.style.display = 'block';
+    // Load live dashboard data immediately on reveal
+    loadDashboardKPIs();
+    loadLowStock();
+    loadActivityFeed();
+    loadSidebarBadges();
   }, 360);
 }
 function adminSignOut() {
