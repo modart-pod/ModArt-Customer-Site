@@ -53,32 +53,45 @@ async function initLiveOrdersCounter() {
   const el      = document.getElementById('live-count');
   const stockEl = document.getElementById('drop-stock');
 
-  // Set placeholder immediately
   if (el) el.textContent = '—';
   if (stockEl) stockEl.textContent = '—';
 
+  // Cache result for 5 minutes — avoid hitting Supabase on every page load
+  const CACHE_KEY = 'modart_live_counter';
+  const CACHE_TTL = 5 * 60 * 1000;
   try {
-    // Dynamically import supabase to avoid circular deps
+    const cached = JSON.parse(sessionStorage.getItem(CACHE_KEY) || 'null');
+    if (cached && Date.now() - cached.ts < CACHE_TTL) {
+      if (el) el.textContent = cached.count;
+      if (stockEl) stockEl.textContent = cached.stock;
+      return;
+    }
+  } catch {}
+
+  try {
     const { supabase } = await import('./auth.js');
     if (!supabase) return;
 
-    // Count orders from last 24h
     const since = new Date(Date.now() - 86400000).toISOString();
     const { count } = await supabase
       .from('orders')
       .select('id', { count: 'exact', head: true })
       .gte('created_at', since);
 
-    if (el && count != null) el.textContent = count;
-
-    // Count total inventory for active drops
     const { data: inv } = await supabase
       .from('inventory')
       .select('stock')
       .gt('stock', 0);
     const totalStock = inv?.reduce((s, r) => s + r.stock, 0) ?? 0;
+
+    if (el && count != null) el.textContent = count;
     if (stockEl) stockEl.textContent = totalStock;
-  } catch (e) {
+
+    // Cache the result
+    try {
+      sessionStorage.setItem(CACHE_KEY, JSON.stringify({ count: count ?? '—', stock: totalStock, ts: Date.now() }));
+    } catch {}
+  } catch {
     if (el) el.textContent = '—';
     if (stockEl) stockEl.textContent = '—';
   }
@@ -135,11 +148,8 @@ async function initApplication() {
   // 7. Customizer
   initCustomizer();
 
-  // 8. Render all pages
-  renderProducts('home');
+  // 8. Render all pages — products re-rendered in step 12 after data loads
   initCarousel();
-  window._rebuildCarouselDots && window._rebuildCarouselDots();
-  renderProducts('shop');
   renderBag();
   window.renderAccountPage  && window.renderAccountPage();
   window.renderWishlistPage && window.renderWishlistPage();
@@ -150,8 +160,7 @@ async function initApplication() {
   initCountdownTimer();
   initLiveOrdersCounter();
 
-  // 10. Misc
-  injectRequiredStyles();
+  // 10. Misc — @keyframes spin is now in index.html <style>, no runtime injection needed
   window.initCookieBanner && window.initCookieBanner();
 
   // 11. Scroll fade-in
