@@ -507,3 +507,31 @@ textarea:focus-visible {
   border-color: var(--black);
   color: var(--white);
 }
+
+/* ── 13. NAV LOGO — image + text side by side ───────────────────── */
+
+/* Light nav (scrolled): dark logo + dark text */
+.nav-logo .nav-logo-img {
+  filter: brightness(0) invert(0);
+}
+
+/* Transparent hero nav: invert to white */
+.home-hero .nav-logo .nav-logo-img,
+.nav-logo[style*="rgba(255,255,255"] .nav-logo-img {
+  filter: brightness(0) invert(1);
+}
+
+/* Dark mode: always white */
+[data-theme="dark"] .nav-logo .nav-logo-img,
+[data-theme="dark"] .mobile-logo-btn .nav-logo-img {
+  filter: brightness(0) invert(1) !important;
+}
+
+/* Mobile header logo: match text color */
+.mobile-logo-btn .nav-logo-img {
+  filter: brightness(0) invert(0);
+}
+
+[data-theme="dark"] .mobile-logo-btn span[style*="color:var(--black)"] {
+  color: var(--white) !important;
+}
