@@ -510,28 +510,16 @@ textarea:focus-visible {
 
 /* ── 13. NAV LOGO — image + text side by side ───────────────────── */
 
-/* Light nav (scrolled): dark logo + dark text */
-.nav-logo .nav-logo-img {
-  filter: brightness(0) invert(0);
-}
-
-/* Transparent hero nav: invert to white */
-.home-hero .nav-logo .nav-logo-img,
-.nav-logo[style*="rgba(255,255,255"] .nav-logo-img {
-  filter: brightness(0) invert(1);
-}
-
-/* Dark mode: always white */
-[data-theme="dark"] .nav-logo .nav-logo-img,
-[data-theme="dark"] .mobile-logo-btn .nav-logo-img {
-  filter: brightness(0) invert(1) !important;
-}
-
-/* Mobile header logo: match text color */
+/* Mobile header: always black logo on light background */
 .mobile-logo-btn .nav-logo-img {
-  filter: brightness(0) invert(0);
+  content: url('assets/images/Modart black logo.png');
 }
 
-[data-theme="dark"] .mobile-logo-btn span[style*="color:var(--black)"] {
+/* Dark mode mobile header: switch to white logo */
+[data-theme="dark"] .mobile-logo-btn .nav-logo-img {
+  content: url('assets/images/Modart while logo.png');
+}
+
+[data-theme="dark"] .mobile-logo-btn span {
   color: var(--white) !important;
 }
