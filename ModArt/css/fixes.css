@@ -512,12 +512,12 @@ textarea:focus-visible {
 
 /* Mobile header: always black logo on light background */
 .mobile-logo-btn .nav-logo-img {
-  content: url('assets/images/Modart black logo.png');
+  content: url('assets/images/logo-black.png');
 }
 
 /* Dark mode mobile header: switch to white logo */
 [data-theme="dark"] .mobile-logo-btn .nav-logo-img {
-  content: url('assets/images/Modart while logo.png');
+  content: url('assets/images/logo-white.png');
 }
 
 [data-theme="dark"] .mobile-logo-btn span {

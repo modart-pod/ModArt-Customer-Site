@@ -191,8 +191,7 @@ function initNavScroll() {
       } else {
         if (logoW) logoW.style.opacity = '0';
         if (logoB) logoB.style.opacity = '1';
-      }
-    }
+      }    }
   }
 
   window.addEventListener('scroll', update, { passive: true });
