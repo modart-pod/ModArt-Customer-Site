@@ -172,8 +172,10 @@ function initNavScroll() {
       nav.style.webkitBackdropFilter = 'blur(0px)';
       nav.querySelectorAll('.nav-link, .nav-logo').forEach(l => l.style.color = 'rgba(255,255,255,0.82)');
       nav.querySelectorAll('.nav-icon-btn').forEach(i => i.style.color = 'rgba(255,255,255,0.82)');
-      const logo = nav.querySelector('.nav-logo-img');
-      if (logo) { logo.src = 'assets/images/Modart while logo.png'; logo.style.filter = ''; }
+      const logoW = document.getElementById('nav-logo-white');
+      const logoB = document.getElementById('nav-logo-black');
+      if (logoW) logoW.style.opacity = '1';
+      if (logoB) logoB.style.opacity = '0';
     } else {
       nav.style.background           = dark ? 'rgba(13,13,26,0.95)' : 'rgba(247,245,241,0.97)';
       nav.style.borderBottomColor    = dark ? 'rgba(124,58,237,0.22)' : 'rgba(226,223,216,1)';
@@ -181,8 +183,15 @@ function initNavScroll() {
       nav.style.webkitBackdropFilter = 'blur(16px)';
       nav.querySelectorAll('.nav-link, .nav-logo').forEach(l => l.style.color = '');
       nav.querySelectorAll('.nav-icon-btn').forEach(i => i.style.color = '');
-      const logo = nav.querySelector('.nav-logo-img');
-      if (logo) { logo.src = dark ? 'assets/images/Modart while logo.png' : 'assets/images/Modart black logo.png'; logo.style.filter = ''; }
+      const logoW = document.getElementById('nav-logo-white');
+      const logoB = document.getElementById('nav-logo-black');
+      if (dark) {
+        if (logoW) logoW.style.opacity = '1';
+        if (logoB) logoB.style.opacity = '0';
+      } else {
+        if (logoW) logoW.style.opacity = '0';
+        if (logoB) logoB.style.opacity = '1';
+      }
     }
   }
 
