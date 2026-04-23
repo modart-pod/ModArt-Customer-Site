@@ -35,6 +35,8 @@ import { preloadCriticalResources } from './cache-manager.js';
 import './monitoring/sentry.js';
 import './monitoring/web-vitals.js';
 import './audit-logger.js';
+// Phase 7: Nice-to-Have Features
+import { trackProductView, renderRecommendations, markCartActivity, checkReferralParam } from './recommendations.js';
 
 /* ================================================================
    COUNTDOWN TIMER
@@ -207,6 +209,32 @@ async function initApplication() {
 
   // 13. Preload critical resources for better performance
   preloadCriticalResources();
+
+  // 14. Phase 7: Check referral param, track cart activity
+  checkReferralParam();
+  markCartActivity();
+
+  // 15. Phase 7: Render personalised recommendations on product page navigation
+  const _origGoTo = window.goTo;
+  if (_origGoTo) {
+    window.goTo = function(page, ...args) {
+      _origGoTo(page, ...args);
+      if (page === 'product' && window._currentProductId) {
+        // Track view
+        trackProductView(window._currentProductId);
+        // Render recommendations (exclude current product + cart items)
+        const cartIds = (window.cart?.items || []).map(i => i.productId);
+        renderRecommendations('recommendations-grid', {
+          excludeIds: [window._currentProductId, ...cartIds],
+          seedIds:    [window._currentProductId],
+          limit: 4,
+        });
+      }
+      if (page === 'bag') {
+        markCartActivity();
+      }
+    };
+  }
 }
 
 /* ================================================================
