@@ -1,0 +1,347 @@
+/**
+ * ModArt Accessibility Styles
+ * 
+ * WCAG AA Compliance
+ * - Color contrast: 4.5:1 for normal text, 3:1 for large text
+ * - Focus indicators: Visible and clear
+ * - Skip links: Accessible navigation
+ * - Reduced motion: Respects user preferences
+ */
+
+/* =================================================================
+   FOCUS INDICATORS
+   ================================================================= */
+
+/* Enhanced focus styles for better visibility */
+*:focus {
+  outline: 2px solid var(--red, #D72638);
+  outline-offset: 2px;
+}
+
+/* Focus-visible for keyboard navigation only */
+*:focus-visible {
+  outline: 3px solid var(--red, #D72638);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Remove focus outline for mouse users */
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Button focus states */
+button:focus-visible,
+.btn:focus-visible,
+.btn-red:focus-visible,
+.btn-black:focus-visible {
+  outline: 3px solid var(--red, #D72638);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 5px rgba(215, 38, 56, 0.1);
+}
+
+/* Link focus states */
+a:focus-visible {
+  outline: 3px solid var(--red, #D72638);
+  outline-offset: 2px;
+  text-decoration: underline;
+}
+
+/* Input focus states */
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--red, #D72638);
+  outline-offset: 0;
+  border-color: var(--red, #D72638);
+  box-shadow: 0 0 0 3px rgba(215, 38, 56, 0.1);
+}
+
+/* Card/interactive element focus */
+.product-card:focus-visible,
+.order-card:focus-visible,
+.drop-row:focus-visible {
+  outline: 3px solid var(--red, #D72638);
+  outline-offset: 2px;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* =================================================================
+   SKIP LINKS
+   ================================================================= */
+
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  z-index: 10000;
+  padding: 12px 24px;
+  background: var(--black, #111);
+  color: var(--white, #fff);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  border-radius: 0 0 8px 0;
+  transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid var(--red, #D72638);
+  outline-offset: 3px;
+}
+
+/* =================================================================
+   COLOR CONTRAST IMPROVEMENTS
+   ================================================================= */
+
+/* Improve contrast for gray text */
+:root {
+  --g1-accessible: #333; /* Was #444, now 4.5:1 on white */
+  --g2-accessible: #5a5a5a; /* Was #6B6B6B, now 4.5:1 on white */
+  --g3-accessible: #767676; /* Was #9E9E9E, now 4.5:1 on white */
+}
+
+/* Apply accessible colors */
+.product-card-series,
+.product-card-meta,
+.order-card-meta,
+.bag-item-meta {
+  color: var(--g2-accessible, #5a5a5a);
+}
+
+.product-card-scarcity,
+.scarcity-pill,
+.trust-item-txt {
+  color: var(--g1-accessible, #333);
+}
+
+/* Improve link contrast */
+a:not(.btn):not(.nav-link) {
+  color: var(--red, #D72638);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+a:not(.btn):not(.nav-link):hover {
+  text-decoration-thickness: 2px;
+}
+
+/* Improve button contrast */
+.btn-outline {
+  border-width: 2px;
+  font-weight: 600;
+}
+
+/* Improve placeholder contrast */
+::placeholder {
+  color: var(--g2-accessible, #5a5a5a);
+  opacity: 1;
+}
+
+/* =================================================================
+   ARIA LIVE REGIONS
+   ================================================================= */
+
+/* Screen reader only content */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Focusable screen reader content */
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+  position: static;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* Live region for announcements */
+.aria-live-region {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* =================================================================
+   KEYBOARD NAVIGATION
+   ================================================================= */
+
+/* Visible focus for keyboard users */
+body.keyboard-nav *:focus {
+  outline: 3px solid var(--red, #D72638);
+  outline-offset: 3px;
+}
+
+/* Modal focus trap */
+.modal[aria-hidden="true"] {
+  display: none;
+}
+
+.modal[aria-hidden="false"] {
+  display: flex;
+}
+
+/* Disable pointer events when modal is open */
+body.modal-open {
+  overflow: hidden;
+}
+
+body.modal-open > *:not(.modal) {
+  pointer-events: none;
+}
+
+/* =================================================================
+   HIGH CONTRAST MODE
+   ================================================================= */
+
+@media (prefers-contrast: high) {
+  :root {
+    --border: #000;
+    --g3: #000;
+  }
+  
+  button,
+  .btn {
+    border: 2px solid currentColor;
+  }
+  
+  .product-card,
+  .order-card {
+    border: 2px solid var(--border);
+  }
+}
+
+/* =================================================================
+   REDUCED MOTION
+   ================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  .fade-in-section {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* =================================================================
+   SCREEN READER IMPROVEMENTS
+   ================================================================= */
+
+/* Better button labels */
+button[aria-label],
+a[aria-label] {
+  position: relative;
+}
+
+/* Loading state announcements */
+[aria-busy="true"] {
+  cursor: wait;
+}
+
+[aria-busy="true"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.7);
+  pointer-events: none;
+}
+
+/* Error state announcements */
+[aria-invalid="true"] {
+  border-color: var(--red, #D72638);
+  background-color: rgba(215, 38, 56, 0.05);
+}
+
+[aria-invalid="true"]:focus {
+  outline-color: var(--red, #D72638);
+  box-shadow: 0 0 0 3px rgba(215, 38, 56, 0.2);
+}
+
+/* Required field indicator */
+[aria-required="true"]::after,
+[required]::after {
+  content: " *";
+  color: var(--red, #D72638);
+  font-weight: 700;
+}
+
+/* =================================================================
+   DARK MODE ACCESSIBILITY
+   ================================================================= */
+
+[data-theme="dark"] {
+  /* Ensure sufficient contrast in dark mode */
+  --g1-accessible: #ccc;
+  --g2-accessible: #aaa;
+  --g3-accessible: #888;
+}
+
+[data-theme="dark"] .product-card-series,
+[data-theme="dark"] .product-card-meta,
+[data-theme="dark"] .order-card-meta {
+  color: var(--g2-accessible, #aaa);
+}
+
+/* =================================================================
+   MOBILE ACCESSIBILITY
+   ================================================================= */
+
+@media (max-width: 768px) {
+  /* Larger touch targets */
+  button,
+  a,
+  input,
+  select {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Larger focus indicators on mobile */
+  *:focus-visible {
+    outline-width: 4px;
+    outline-offset: 4px;
+  }
+}
+
+/* =================================================================
+   PRINT ACCESSIBILITY
+   ================================================================= */
+
+@media print {
+  /* Show link URLs */
+  a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    color: #666;
+  }
+  
+  /* Hide decorative elements */
+  .skip-link,
+  [aria-hidden="true"] {
+    display: none !important;
+  }
+}

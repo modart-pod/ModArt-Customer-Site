@@ -26,6 +26,8 @@ import './toast.js';
 import './loading-manager.js';
 import './optimistic-ui.js';
 import './error-handler.js';
+// Phase 4: Accessibility
+import './keyboard-nav.js';
 
 /* ================================================================
    COUNTDOWN TIMER
