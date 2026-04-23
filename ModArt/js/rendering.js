@@ -14,6 +14,7 @@
 import { PRODUCTS, cart, wishlist, toggleWishlistItem, discountApplied, discountPercent, setDiscountApplied } from './state.js';
 import { formatPrice } from './currency.js';
 import { getProductLoader } from './data-loader.js';
+import { optimisticRemoveFromCart, optimisticUpdateQuantity, optimisticToggleWishlist } from './optimistic-ui.js';
 
 /** Sanitize string for safe innerHTML insertion */
 function esc(str) {
@@ -272,13 +273,13 @@ export async function renderBag() {
             <div class="bag-item-meta">Size: ${esc(item.size)}${item.printAddon ? ` · Print addon: ${formatPrice(item.printAddon)}` : ''} &nbsp; ${formatPrice(p.price + (item.printAddon || 0))} each</div>
             <button class="bag-item-edit" onclick="window.goTo && window.goTo('customize')">Edit Design</button>
             <div class="qty-control" role="group" aria-label="Quantity for ${esc(p.name)}">
-              <button class="qty-btn" aria-label="Decrease quantity" onclick="window.cart && window.cart.updateQty('${esc(p.id)}',-1,'${esc(item.size)}')">−</button>
+              <button class="qty-btn" aria-label="Decrease quantity" onclick="window.updateCartQuantity && window.updateCartQuantity('${esc(p.id)}',-1,'${esc(item.size)}')">−</button>
               <span class="qty-val" aria-live="polite">${item.qty}</span>
-              <button class="qty-btn" aria-label="Increase quantity" onclick="window.cart && window.cart.updateQty('${esc(p.id)}',1,'${esc(item.size)}')">+</button>
+              <button class="qty-btn" aria-label="Increase quantity" onclick="window.updateCartQuantity && window.updateCartQuantity('${esc(p.id)}',1,'${esc(item.size)}')">+</button>
             </div>
             <div class="bag-item-price">${formatPrice(p.price * item.qty)}</div>
           </div>
-          <button class="bag-remove-btn" aria-label="Remove ${esc(p.name)}" onclick="window.cart && window.cart.remove('${esc(p.id)}','${esc(item.size)}')"><span class="material-symbols-outlined icon">close</span></button>
+          <button class="bag-remove-btn" aria-label="Remove ${esc(p.name)}" onclick="window.removeFromCart && window.removeFromCart('${esc(p.id)}','${esc(item.size)}')"><span class="material-symbols-outlined icon">close</span></button>
         </div>`;
       }).join('');
     } catch (error) {
@@ -296,13 +297,13 @@ export async function renderBag() {
             <div class="bag-item-meta">Size: ${esc(item.size)}${item.printAddon ? ` · Print addon: ${formatPrice(item.printAddon)}` : ''} &nbsp; ${formatPrice(p.price + (item.printAddon || 0))} each</div>
             <button class="bag-item-edit" onclick="window.goTo && window.goTo('customize')">Edit Design</button>
             <div class="qty-control" role="group" aria-label="Quantity for ${esc(p.name)}">
-              <button class="qty-btn" aria-label="Decrease quantity" onclick="window.cart && window.cart.updateQty('${esc(p.id)}',-1,'${esc(item.size)}')">−</button>
+              <button class="qty-btn" aria-label="Decrease quantity" onclick="window.updateCartQuantity && window.updateCartQuantity('${esc(p.id)}',-1,'${esc(item.size)}')">−</button>
               <span class="qty-val" aria-live="polite">${item.qty}</span>
-              <button class="qty-btn" aria-label="Increase quantity" onclick="window.cart && window.cart.updateQty('${esc(p.id)}',1,'${esc(item.size)}')">+</button>
+              <button class="qty-btn" aria-label="Increase quantity" onclick="window.updateCartQuantity && window.updateCartQuantity('${esc(p.id)}',1,'${esc(item.size)}')">+</button>
             </div>
             <div class="bag-item-price">${formatPrice(p.price * item.qty)}</div>
           </div>
-          <button class="bag-remove-btn" aria-label="Remove ${esc(p.name)}" onclick="window.cart && window.cart.remove('${esc(p.id)}','${esc(item.size)}')"><span class="material-symbols-outlined icon">close</span></button>
+          <button class="bag-remove-btn" aria-label="Remove ${esc(p.name)}" onclick="window.removeFromCart && window.removeFromCart('${esc(p.id)}','${esc(item.size)}')"><span class="material-symbols-outlined icon">close</span></button>
         </div>`;
       }).join('');
     }
@@ -360,7 +361,17 @@ export function updateBadges() {
  * @param {HTMLElement} btn - Wishlist button element
  */
 export function toggleWishlist(id, btn) {
-  toggleWishlistItem(id); // persists to localStorage
+  // Use optimistic UI if available
+  if (typeof optimisticToggleWishlist === 'function') {
+    optimisticToggleWishlist(id).catch(() => {
+      // Rollback already handled by optimistic UI
+    });
+  } else {
+    // Fallback to direct update
+    toggleWishlistItem(id);
+  }
+  
+  // Update UI immediately
   const isWished = wishlist.has(id);
   btn.classList.toggle('wishlisted', isWished);
   btn.querySelector('.icon').textContent = isWished ? 'favorite' : 'favorite_border';
@@ -659,4 +670,45 @@ export function renderSizeOptions(productId) {
 
 if (typeof window !== 'undefined') {
   window.renderSizeOptions = renderSizeOptions;
+}
+
+/* ================================================================
+   OPTIMISTIC CART OPERATIONS
+   ================================================================ */
+
+/**
+ * Optimistic cart quantity update wrapper
+ * @param {string} productId - Product ID
+ * @param {number} delta - Quantity change
+ * @param {string} size - Size
+ */
+export function updateCartQuantity(productId, delta, size) {
+  if (typeof optimisticUpdateQuantity === 'function') {
+    optimisticUpdateQuantity(productId, delta, size).catch(() => {
+      // Rollback already handled
+    });
+  } else {
+    cart.updateQty(productId, delta, size);
+  }
+}
+
+/**
+ * Optimistic cart remove wrapper
+ * @param {string} productId - Product ID
+ * @param {string} size - Size
+ */
+export function removeFromCart(productId, size) {
+  if (typeof optimisticRemoveFromCart === 'function') {
+    optimisticRemoveFromCart(productId, size).catch(() => {
+      // Rollback already handled
+    });
+  } else {
+    cart.remove(productId, size);
+  }
+}
+
+// Export to window for onclick handlers
+if (typeof window !== 'undefined') {
+  window.updateCartQuantity = updateCartQuantity;
+  window.removeFromCart = removeFromCart;
 }

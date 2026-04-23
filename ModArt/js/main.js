@@ -21,6 +21,11 @@ import './auth-handlers.js';
 import './account.js';
 import { initCarousel } from './utils.js';
 import './modals.js';
+// Phase 3: UX & Feedback
+import './toast.js';
+import './loading-manager.js';
+import './optimistic-ui.js';
+import './error-handler.js';
 
 /* ================================================================
    COUNTDOWN TIMER

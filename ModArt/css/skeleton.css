@@ -1,0 +1,252 @@
+/**
+ * ModArt Skeleton & Layout Shift Prevention
+ * 
+ * UX FIX: H-7 - Layout shift prevention
+ * 
+ * Prevents content jumping during load with:
+ * - Aspect ratio boxes for images
+ * - Reserved space for dynamic content
+ * - Skeleton loaders
+ */
+
+/* Aspect Ratio Boxes */
+.aspect-ratio-box {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.aspect-ratio-box::before {
+  content: '';
+  display: block;
+  padding-top: var(--aspect-ratio, 100%);
+}
+
+.aspect-ratio-box > * {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Common aspect ratios */
+.aspect-1-1 {
+  --aspect-ratio: 100%;
+}
+
+.aspect-16-9 {
+  --aspect-ratio: 56.25%;
+}
+
+.aspect-4-3 {
+  --aspect-ratio: 75%;
+}
+
+.aspect-3-2 {
+  --aspect-ratio: 66.67%;
+}
+
+.aspect-21-9 {
+  --aspect-ratio: 42.86%;
+}
+
+/* Product Card Skeleton */
+.product-card-skeleton {
+  background: var(--bg-c);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+.product-card-skeleton .skeleton-image {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: linear-gradient(
+    90deg,
+    var(--border) 0%,
+    var(--bg-b) 50%,
+    var(--border) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite;
+}
+
+.product-card-skeleton .skeleton-content {
+  padding: 16px;
+}
+
+.product-card-skeleton .skeleton-line {
+  height: 12px;
+  background: linear-gradient(
+    90deg,
+    var(--border) 0%,
+    var(--bg-b) 50%,
+    var(--border) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite;
+  border-radius: var(--r-sm);
+  margin-bottom: 8px;
+}
+
+.product-card-skeleton .skeleton-line:last-child {
+  margin-bottom: 0;
+}
+
+.skeleton-line-lg {
+  width: 80%;
+  height: 16px;
+}
+
+.skeleton-line-md {
+  width: 60%;
+  height: 12px;
+}
+
+.skeleton-line-sm {
+  width: 40%;
+  height: 10px;
+}
+
+/* Reserved Space for Dynamic Content */
+.reserved-space {
+  min-height: var(--min-height, 200px);
+}
+
+.cart-reserved {
+  min-height: 400px;
+}
+
+.orders-reserved {
+  min-height: 600px;
+}
+
+.product-grid-reserved {
+  min-height: 800px;
+}
+
+/* Image Placeholder */
+.img-placeholder {
+  background: var(--bg-c);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--g3);
+}
+
+.img-placeholder::before {
+  content: '';
+  display: inline-block;
+  width: 48px;
+  height: 48px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ccc'%3E%3Cpath d='M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+
+/* Skeleton Animations */
+@keyframes skeleton-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Font Loading - Prevent FOIT (Flash of Invisible Text) */
+@font-face {
+  font-family: 'Inter';
+  font-display: swap; /* Show fallback font immediately */
+  src: local('Inter'), url('/fonts/inter.woff2') format('woff2');
+}
+
+/* Prevent Layout Shift for Lazy Loaded Images */
+img[loading="lazy"] {
+  min-height: 200px;
+  background: var(--bg-c);
+}
+
+/* Grid Layout - Prevent Shift */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+  min-height: 600px; /* Reserve space */
+}
+
+/* Smooth Transitions */
+.fade-in {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Content Visibility - Performance Optimization */
+.below-fold {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 500px;
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .product-card-skeleton,
+  .skeleton-image,
+  .skeleton-line {
+    animation: none;
+  }
+
+  .fade-in {
+    animation: none;
+  }
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .product-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+    min-height: 400px;
+  }
+
+  .reserved-space {
+    min-height: var(--min-height-mobile, 150px);
+  }
+
+  .cart-reserved {
+    min-height: 300px;
+  }
+
+  .orders-reserved {
+    min-height: 400px;
+  }
+
+  .product-grid-reserved {
+    min-height: 600px;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .skeleton-container,
+  .product-card-skeleton,
+  .img-placeholder {
+    display: none;
+  }
+}
