@@ -1,7 +1,7 @@
 /**
  * ModArt Cache Manager
  * 
- * DATA INTEGRITY FIX: H-9 & H-10 - Stale data and cache invalidation
+ * DATA INTEGRITY FIX: H-9, H-10 - Stale data and cache invalidation
  * 
  * Provides smart caching with TTL, tags, and invalidation strategies.
  * Implements stale-while-revalidate pattern for better UX.
@@ -10,39 +10,26 @@
 /**
  * Cache entry structure
  * @typedef {Object} CacheEntry
- * @property {*} data - Cached data
- * @property {number} timestamp - When cached (ms)
- * @property {number} ttl - Time to live (ms)
- * @property {string[]} tags - Cache tags for bulk invalidation
- * @property {number} version - Cache version
+ * @property {any} data - Cached data
+ * @property {number} timestamp - When cached
+ * @property {number} ttl - Time to live in milliseconds
+ * @property {Array<string>} tags - Cache tags for invalidation
+ * @property {string} version - Cache version
  */
 
 class CacheManager {
   constructor() {
-    // Main cache storage
     this.cache = new Map();
-    
-    // Tag index: tag -> Set of keys
-    this.tagIndex = new Map();
-    
-    // Global cache version (incremented on invalidateAll)
-    this.version = 1;
-    
-    // Default TTL: 5 minutes
-    this.defaultTTL = 5 * 60 * 1000;
-    
-    // Cleanup interval
-    this.startCleanupInterval();
+    this.version = '1.0.0';
+    this.defaultTTL = 5 * 60 * 1000; // 5 minutes
   }
-  
+
   /**
-   * Gets a value from cache.
-   * Returns null if expired or not found.
-   * 
+   * Gets a value from cache
    * @param {string} key - Cache key
    * @param {Object} options - Options
    * @param {boolean} options.allowStale - Return stale data if available
-   * @returns {*} Cached value or null
+   * @returns {any|null}
    */
   get(key, options = {}) {
     const entry = this.cache.get(key);
@@ -64,6 +51,7 @@ class CacheManager {
     if (age > entry.ttl) {
       if (options.allowStale) {
         // Return stale data but mark for revalidation
+        entry.stale = true;
         return entry.data;
       }
       this.cache.delete(key);
@@ -72,256 +60,208 @@ class CacheManager {
     
     return entry.data;
   }
-  
+
   /**
-   * Sets a value in cache.
-   * 
+   * Sets a value in cache
    * @param {string} key - Cache key
-   * @param {*} data - Data to cache
+   * @param {any} data - Data to cache
    * @param {Object} options - Options
-   * @param {number} options.ttl - Time to live in ms (default: 5 minutes)
-   * @param {string[]} options.tags - Tags for bulk invalidation
+   * @param {number} options.ttl - Time to live in milliseconds
+   * @param {Array<string>} options.tags - Cache tags
    */
   set(key, data, options = {}) {
-    const ttl = options.ttl || this.defaultTTL;
-    const tags = options.tags || [];
-    
     const entry = {
       data,
       timestamp: Date.now(),
-      ttl,
-      tags,
-      version: this.version
+      ttl: options.ttl || this.defaultTTL,
+      tags: options.tags || [],
+      version: this.version,
+      stale: false
     };
     
     this.cache.set(key, entry);
-    
-    // Update tag index
-    tags.forEach(tag => {
-      if (!this.tagIndex.has(tag)) {
-        this.tagIndex.set(tag, new Set());
-      }
-      this.tagIndex.get(tag).add(key);
-    });
   }
-  
+
   /**
-   * Deletes a specific key from cache.
-   * 
+   * Checks if a key exists and is valid
+   * @param {string} key - Cache key
+   * @returns {boolean}
+   */
+  has(key) {
+    return this.get(key) !== null;
+  }
+
+  /**
+   * Deletes a key from cache
    * @param {string} key - Cache key
    */
   delete(key) {
-    const entry = this.cache.get(key);
-    
-    if (entry) {
-      // Remove from tag index
-      entry.tags.forEach(tag => {
-        const keys = this.tagIndex.get(tag);
-        if (keys) {
-          keys.delete(key);
-          if (keys.size === 0) {
-            this.tagIndex.delete(tag);
-          }
-        }
-      });
-    }
-    
     this.cache.delete(key);
   }
-  
+
   /**
-   * Invalidates all cache entries with a specific tag.
-   * 
+   * Invalidates all cache entries with a specific tag
    * @param {string} tag - Tag to invalidate
    */
   invalidateTag(tag) {
-    const keys = this.tagIndex.get(tag);
-    
-    if (keys) {
-      keys.forEach(key => this.delete(key));
-      this.tagIndex.delete(tag);
+    let count = 0;
+    for (const [key, entry] of this.cache.entries()) {
+      if (entry.tags.includes(tag)) {
+        this.cache.delete(key);
+        count++;
+      }
     }
-    
-    console.log(`✅ Invalidated cache tag: ${tag}`);
+    console.log(`✅ Invalidated ${count} cache entries with tag: ${tag}`);
   }
-  
+
   /**
-   * Invalidates multiple tags at once.
-   * 
-   * @param {string[]} tags - Tags to invalidate
+   * Invalidates multiple tags
+   * @param {Array<string>} tags - Tags to invalidate
    */
   invalidateTags(tags) {
     tags.forEach(tag => this.invalidateTag(tag));
   }
-  
+
   /**
-   * Invalidates all cache entries.
-   * Uses version increment for efficient invalidation.
+   * Clears all cache
    */
-  invalidateAll() {
-    this.version++;
+  clear() {
+    const size = this.cache.size;
     this.cache.clear();
-    this.tagIndex.clear();
-    console.log(`✅ Invalidated all cache (version: ${this.version})`);
+    console.log(`✅ Cleared ${size} cache entries`);
   }
-  
+
   /**
-   * Gets or sets a value with a factory function.
-   * Implements stale-while-revalidate pattern.
-   * 
-   * @param {string} key - Cache key
-   * @param {Function} factory - Async function to generate value
-   * @param {Object} options - Options
-   * @param {number} options.ttl - Time to live in ms
-   * @param {string[]} options.tags - Tags for bulk invalidation
-   * @param {boolean} options.staleWhileRevalidate - Return stale data while revalidating
-   * @returns {Promise<*>} Cached or fresh value
-   */
-  async getOrSet(key, factory, options = {}) {
-    const cached = this.get(key, { allowStale: options.staleWhileRevalidate });
-    
-    if (cached !== null) {
-      // If stale-while-revalidate, trigger background refresh
-      if (options.staleWhileRevalidate) {
-        const entry = this.cache.get(key);
-        const age = Date.now() - entry.timestamp;
-        
-        if (age > entry.ttl) {
-          // Stale - revalidate in background
-          this.revalidate(key, factory, options).catch(err => {
-            console.error('Background revalidation failed:', err);
-          });
-        }
-      }
-      
-      return cached;
-    }
-    
-    // Not in cache - fetch fresh data
-    const data = await factory();
-    this.set(key, data, options);
-    return data;
-  }
-  
-  /**
-   * Revalidates a cache entry in the background.
-   * @private
-   */
-  async revalidate(key, factory, options) {
-    try {
-      const data = await factory();
-      this.set(key, data, options);
-      console.log(`✅ Revalidated cache: ${key}`);
-    } catch (error) {
-      console.error(`❌ Revalidation failed for ${key}:`, error);
-    }
-  }
-  
-  /**
-   * Gets cache statistics.
-   * 
-   * @returns {Object} Cache stats
+   * Gets cache statistics
+   * @returns {Object}
    */
   getStats() {
     const now = Date.now();
-    let fresh = 0;
+    let valid = 0;
     let stale = 0;
+    let expired = 0;
     
-    this.cache.forEach(entry => {
+    for (const entry of this.cache.values()) {
       const age = now - entry.timestamp;
-      if (age <= entry.ttl) {
-        fresh++;
-      } else {
+      if (age > entry.ttl) {
+        expired++;
+      } else if (entry.stale) {
         stale++;
+      } else {
+        valid++;
       }
-    });
+    }
     
     return {
-      size: this.cache.size,
-      fresh,
+      total: this.cache.size,
+      valid,
       stale,
-      tags: this.tagIndex.size,
-      version: this.version
+      expired
     };
   }
-  
+
   /**
-   * Cleans up expired entries.
-   * Called automatically every 5 minutes.
+   * Cleans up expired entries
    */
   cleanup() {
     const now = Date.now();
     let cleaned = 0;
     
-    this.cache.forEach((entry, key) => {
+    for (const [key, entry] of this.cache.entries()) {
       const age = now - entry.timestamp;
-      if (age > entry.ttl || entry.version !== this.version) {
-        this.delete(key);
+      if (age > entry.ttl) {
+        this.cache.delete(key);
         cleaned++;
       }
-    });
+    }
     
     if (cleaned > 0) {
       console.log(`🧹 Cleaned up ${cleaned} expired cache entries`);
     }
   }
-  
+
   /**
-   * Starts automatic cleanup interval.
-   * @private
+   * Wraps a function with caching
+   * @param {string} key - Cache key
+   * @param {Function} fn - Function to wrap
+   * @param {Object} options - Cache options
+   * @returns {Promise<any>}
    */
-  startCleanupInterval() {
-    if (typeof setInterval !== 'undefined') {
-      setInterval(() => this.cleanup(), 5 * 60 * 1000); // Every 5 minutes
+  async wrap(key, fn, options = {}) {
+    // Check cache first
+    const cached = this.get(key, { allowStale: true });
+    
+    if (cached !== null) {
+      const entry = this.cache.get(key);
+      
+      // If stale, revalidate in background
+      if (entry && entry.stale) {
+        console.log(`⚠️ Returning stale data for ${key}, revalidating...`);
+        // Revalidate in background
+        fn().then(data => {
+          this.set(key, data, options);
+        }).catch(err => {
+          console.error(`Failed to revalidate ${key}:`, err);
+        });
+      }
+      
+      return cached;
+    }
+    
+    // Fetch fresh data
+    try {
+      const data = await fn();
+      this.set(key, data, options);
+      return data;
+    } catch (error) {
+      console.error(`Failed to fetch ${key}:`, error);
+      throw error;
     }
   }
 }
 
-// Singleton instance
+// Create singleton instance
 const cacheManager = new CacheManager();
 
-/**
- * Gets the global cache manager instance.
- * 
- * @returns {CacheManager} Cache manager
- */
-export function getCacheManager() {
-  return cacheManager;
+// Auto-cleanup every 5 minutes
+if (typeof setInterval !== 'undefined') {
+  setInterval(() => cacheManager.cleanup(), 5 * 60 * 1000);
 }
 
 /**
- * Convenience functions for common cache operations
+ * Product cache helpers
  */
-
-/**
- * Caches product data with 5-minute TTL.
- * 
- * @param {string} productId - Product ID
- * @param {Object} product - Product data
- */
-export function cacheProduct(productId, product) {
-  cacheManager.set(`product:${productId}`, product, {
-    ttl: 5 * 60 * 1000, // 5 minutes
-    tags: ['products', `product:${productId}`]
-  });
+export async function getCachedProducts() {
+  return cacheManager.wrap(
+    'products:all',
+    async () => {
+      if (window.fetchProducts) {
+        return await window.fetchProducts();
+      }
+      return window._PRODUCTS || [];
+    },
+    {
+      ttl: 5 * 60 * 1000, // 5 minutes
+      tags: ['products']
+    }
+  );
 }
 
-/**
- * Gets cached product data.
- * 
- * @param {string} productId - Product ID
- * @returns {Object|null} Product data or null
- */
-export function getCachedProduct(productId) {
-  return cacheManager.get(`product:${productId}`);
+export async function getCachedProduct(productId) {
+  return cacheManager.wrap(
+    `product:${productId}`,
+    async () => {
+      const products = await getCachedProducts();
+      return products.find(p => p.id === productId) || null;
+    },
+    {
+      ttl: 5 * 60 * 1000,
+      tags: ['products', `product:${productId}`]
+    }
+  );
 }
 
-/**
- * Invalidates product cache.
- * 
- * @param {string} productId - Product ID (optional, invalidates all if not provided)
- */
-export function invalidateProducts(productId = null) {
+export function invalidateProductCache(productId = null) {
   if (productId) {
     cacheManager.invalidateTag(`product:${productId}`);
   } else {
@@ -330,101 +270,78 @@ export function invalidateProducts(productId = null) {
 }
 
 /**
- * Caches inventory data with 2-minute TTL.
- * 
- * @param {string} productId - Product ID
- * @param {Object} inventory - Inventory data
+ * Inventory cache helpers
  */
-export function cacheInventory(productId, inventory) {
-  cacheManager.set(`inventory:${productId}`, inventory, {
-    ttl: 2 * 60 * 1000, // 2 minutes (shorter TTL for stock data)
-    tags: ['inventory', `inventory:${productId}`]
-  });
+export async function getCachedInventory() {
+  return cacheManager.wrap(
+    'inventory:all',
+    async () => {
+      if (window.fetchInventory) {
+        return await window.fetchInventory();
+      }
+      return window.LIVE_INVENTORY || {};
+    },
+    {
+      ttl: 2 * 60 * 1000, // 2 minutes (shorter TTL for inventory)
+      tags: ['inventory']
+    }
+  );
+}
+
+export function invalidateInventoryCache() {
+  cacheManager.invalidateTag('inventory');
 }
 
 /**
- * Gets cached inventory data.
- * 
- * @param {string} productId - Product ID
- * @returns {Object|null} Inventory data or null
+ * Order cache helpers
  */
-export function getCachedInventory(productId) {
-  return cacheManager.get(`inventory:${productId}`);
+export async function getCachedOrders() {
+  return cacheManager.wrap(
+    'orders:user',
+    async () => {
+      if (window.fetchUserOrders) {
+        const result = await window.fetchUserOrders();
+        return result.orders || result || [];
+      }
+      return [];
+    },
+    {
+      ttl: 1 * 60 * 1000, // 1 minute (short TTL for orders)
+      tags: ['orders']
+    }
+  );
+}
+
+export function invalidateOrderCache() {
+  cacheManager.invalidateTag('orders');
 }
 
 /**
- * Invalidates inventory cache.
- * 
- * @param {string} productId - Product ID (optional, invalidates all if not provided)
+ * Invalidates all caches after mutations
  */
-export function invalidateInventory(productId = null) {
-  if (productId) {
-    cacheManager.invalidateTag(`inventory:${productId}`);
-  } else {
-    cacheManager.invalidateTag('inventory');
+export function invalidateAllCaches() {
+  cacheManager.clear();
+  
+  // Also clear DataLoader caches if available
+  if (window.clearAllCaches) {
+    window.clearAllCaches();
   }
+  
+  console.log('✅ All caches invalidated');
 }
 
-/**
- * Caches order data with 10-minute TTL.
- * 
- * @param {string} orderId - Order ID
- * @param {Object} order - Order data
- */
-export function cacheOrder(orderId, order) {
-  cacheManager.set(`order:${orderId}`, order, {
-    ttl: 10 * 60 * 1000, // 10 minutes
-    tags: ['orders', `order:${orderId}`]
-  });
-}
-
-/**
- * Invalidates order cache.
- * 
- * @param {string} orderId - Order ID (optional, invalidates all if not provided)
- */
-export function invalidateOrders(orderId = null) {
-  if (orderId) {
-    cacheManager.invalidateTag(`order:${orderId}`);
-  } else {
-    cacheManager.invalidateTag('orders');
-  }
-}
+// Export singleton
+export default cacheManager;
 
 // Export for window access
 if (typeof window !== 'undefined') {
-  window.getCacheManager = getCacheManager;
-  window.cacheProduct = cacheProduct;
+  window.cacheManager = cacheManager;
+  window.getCachedProducts = getCachedProducts;
   window.getCachedProduct = getCachedProduct;
-  window.invalidateProducts = invalidateProducts;
-  window.cacheInventory = cacheInventory;
   window.getCachedInventory = getCachedInventory;
-  window.invalidateInventory = invalidateInventory;
-  window.cacheOrder = cacheOrder;
-  window.invalidateOrders = invalidateOrders;
+  window.getCachedOrders = getCachedOrders;
+  window.invalidateProductCache = invalidateProductCache;
+  window.invalidateInventoryCache = invalidateInventoryCache;
+  window.invalidateOrderCache = invalidateOrderCache;
+  window.invalidateAllCaches = invalidateAllCaches;
 }
-
-export default cacheManager;
-
-/**
- * Example usage:
- * 
- * // Cache product data
- * cacheProduct('vanta-tee', { id: 'vanta-tee', name: 'Vanta Black Tee', ... });
- * 
- * // Get cached product
- * const product = getCachedProduct('vanta-tee');
- * 
- * // Invalidate specific product
- * invalidateProducts('vanta-tee');
- * 
- * // Invalidate all products
- * invalidateProducts();
- * 
- * // Stale-while-revalidate pattern
- * const product = await cacheManager.getOrSet(
- *   'product:vanta-tee',
- *   async () => await fetchProduct('vanta-tee'),
- *   { ttl: 5 * 60 * 1000, tags: ['products'], staleWhileRevalidate: true }
- * );
- */
