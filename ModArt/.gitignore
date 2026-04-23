@@ -1,5 +1,54 @@
+# Environment variables
 .env
 .env.local
-*.py
-_temp_check.js
+.env.production
+.env.development
+.env.test
+
+# Secrets and keys
+*.key
+*.pem
+*.p12
+*.pfx
+secrets/
+credentials/
+
+# Node modules
 node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build outputs
+dist/
+build/
+.vercel/
+.output/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Coverage
+coverage/
+.nyc_output/
+
+# Cache
+.cache/
+.parcel-cache/

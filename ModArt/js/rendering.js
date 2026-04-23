@@ -366,10 +366,15 @@ export async function applyDiscount() {
   if (errEl) errEl.style.display = 'none';
 
   try {
+    // Get user email for per-user validation (from checkout form or logged-in user)
+    const userEmail = window.currentUser?.email 
+      || document.querySelector('#page-checkout input[type="email"]')?.value?.trim()
+      || null;
+
     const res = await fetch('/api/validate-coupon', {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ code }),
+      body:    JSON.stringify({ code, userEmail }),
     });
     const data = await res.json();
     if (res.ok && data.valid) {

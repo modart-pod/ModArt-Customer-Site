@@ -76,9 +76,10 @@ async function joinList() {
   let saveSuccess = false;
   try {
     // Save to Supabase waitlist table
-    const { supabase } = await import('./auth.js');
-    if (supabase) {
-      const { error } = await supabase.from('waitlist').upsert(
+    const { getSupabase } = await import('./auth.js');
+    const client = getSupabase();
+    if (client) {
+      const { error } = await client.from('waitlist').upsert(
         { email, drop_id: 'general' },
         { onConflict: 'email,drop_id' }
       );
@@ -313,9 +314,10 @@ async function notifyMe(productId, btn) {
   if (btn) { btn.textContent = 'Saving…'; btn.disabled = true; }
 
   try {
-    const { supabase } = await import('./auth.js');
-    if (supabase) {
-      await supabase.from('waitlist').upsert(
+    const { getSupabase } = await import('./auth.js');
+    const client = getSupabase();
+    if (client) {
+      await client.from('waitlist').upsert(
         { email: email.trim().toLowerCase(), drop_id: productId },
         { onConflict: 'email,drop_id' }
       );

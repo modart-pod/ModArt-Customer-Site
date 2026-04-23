@@ -14,9 +14,12 @@ import { initCurrency, getCurrencyBadge } from './currency.js';
 import { initAuth } from './auth.js';
 import { initCartPersistence, markAuthReady } from './cart-persist.js';
 import { initProducts } from './products.js';
+import { initRealtime } from './realtime.js';
+import { initDrops } from './drops.js';
 import './orders.js';
 import './auth-handlers.js';
-import './account.js';import { initCarousel } from './utils.js';
+import './account.js';
+import { initCarousel } from './utils.js';
 import './modals.js';
 
 /* ================================================================
@@ -144,6 +147,12 @@ async function initApplication() {
 
   // 6. Products + inventory
   await initProducts();
+
+  // 7. Real-time subscriptions (customer side)
+  initRealtime();
+
+  // 7b. Drops — fetch and render, then listen for live updates
+  await initDrops();
 
   // 7. Customizer
   initCustomizer();

@@ -3325,3 +3325,206 @@
   .grid-2 { grid-template-columns: 1fr; }
   .grid-3 { grid-template-columns: 1fr; }
 }
+
+/* =================================================================
+   DROP ARCHIVE CARDS — customer site
+   ================================================================= */
+.drop-archive-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.drop-archive-card {
+  background: var(--card-bg, #fff);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  transition: box-shadow var(--t);
+}
+
+.drop-archive-card:hover {
+  box-shadow: 0 8px 32px rgba(0,0,0,.12);
+}
+
+.drop-archive-cover {
+  aspect-ratio: 16/9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.drop-archive-cover-text {
+  font-size: clamp(28px, 5vw, 48px);
+  font-weight: 900;
+  font-style: italic;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.06);
+  letter-spacing: -.02em;
+  user-select: none;
+}
+
+.drop-archive-overlay {
+  position: absolute;
+  inset: 0;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.drop-archive-time {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.45);
+}
+
+.drop-archive-body {
+  padding: 16px;
+}
+
+.drop-archive-num {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--g3);
+  margin-bottom: 4px;
+}
+
+.drop-archive-name {
+  font-size: 16px;
+  font-weight: 800;
+  font-style: italic;
+  text-transform: uppercase;
+  letter-spacing: .01em;
+  margin-bottom: 6px;
+}
+
+.drop-archive-desc {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--g2);
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.drop-archive-progress {
+  margin-bottom: 12px;
+}
+
+.drop-archive-progress-hdr {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--g3);
+  margin-bottom: 5px;
+}
+
+.drop-archive-bar-wrap {
+  height: 4px;
+  background: var(--bg-c, #EDEBE6);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.drop-archive-bar {
+  height: 100%;
+  background: var(--red);
+  border-radius: 9999px;
+  transition: width .6s ease;
+}
+
+.drop-archive-cta {
+  width: 100%;
+  padding: 10px;
+  background: var(--red);
+  color: #fff;
+  font-family: var(--font);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  transition: background var(--t);
+}
+
+.drop-archive-cta:hover {
+  background: var(--red-dk, #B81F2E);
+}
+
+.drop-archive-cta-outline {
+  background: transparent;
+  color: var(--black);
+  border: 1.5px solid var(--border);
+}
+
+.drop-archive-cta-outline:hover {
+  border-color: var(--black);
+  background: transparent;
+}
+
+.drop-archive-cta-muted {
+  background: var(--bg-c, #EDEBE6);
+  color: var(--g3);
+  cursor: not-allowed;
+}
+
+.drop-archive-cta-muted:hover {
+  background: var(--bg-c, #EDEBE6);
+}
+
+/* Drop status pills */
+.drop-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 9999px;
+}
+
+.drop-pill-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.drop-pill-live {
+  background: rgba(34,197,94,.15);
+  color: #16A34A;
+}
+
+.drop-pill-live .drop-pill-dot {
+  background: #16A34A;
+  animation: blink 1.2s ease infinite;
+}
+
+.drop-pill-upcoming {
+  background: rgba(245,158,11,.15);
+  color: #D97706;
+}
+
+.drop-pill-upcoming .drop-pill-dot {
+  background: #D97706;
+}
+
+.drop-pill-ended {
+  background: var(--bg-c, #EDEBE6);
+  color: var(--g3);
+}
+
+.drop-pill-ended .drop-pill-dot {
+  background: var(--g3);
+}

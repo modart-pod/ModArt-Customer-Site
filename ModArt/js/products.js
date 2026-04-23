@@ -4,10 +4,13 @@
  * Falls back to hardcoded PRODUCTS array in state.js if fetch fails.
  */
 
-import { supabase } from './auth.js';
+import { supabase, getSupabase } from './auth.js';
 
 export let LIVE_PRODUCTS  = [];
 export let LIVE_INVENTORY = {};
+
+// Use getSupabase() for all DB calls to handle the CDN race condition
+function sb() { return getSupabase() || supabase; }
 
 /**
  * Fetches all active products from Supabase.
@@ -15,7 +18,9 @@ export let LIVE_INVENTORY = {};
  */
 export async function fetchProducts() {
   try {
-    const { data, error } = await supabase
+    const client = sb();
+    if (!client) throw new Error('Supabase not available');
+    const { data, error } = await client
       .from('products')
       .select('*')
       .eq('is_active', true)
@@ -55,7 +60,9 @@ export async function fetchProducts() {
  */
 export async function fetchInventory() {
   try {
-    const { data, error } = await supabase
+    const client = sb();
+    if (!client) throw new Error('Supabase not available');
+    const { data, error } = await client
       .from('inventory')
       .select('product_id, size, stock');
 
@@ -124,8 +131,10 @@ function _syncProductStock(productId) {
  */
 export async function decrementStock(productId, size, quantity = 1) {
   try {
+    const client = sb();
+    if (!client) return { success: false, error: 'Supabase not available' };
     // Try atomic RPC first (prevents race conditions / overselling)
-    const { data: rpcData, error: rpcErr } = await supabase.rpc('decrement_stock', {
+    const { data: rpcData, error: rpcErr } = await client.rpc('decrement_stock', {
       p_product_id: productId,
       p_size:       size,
       p_quantity:   quantity,
@@ -142,7 +151,7 @@ export async function decrementStock(productId, size, quantity = 1) {
     }
 
     // Fallback: read-then-write (less safe but works without RPC)
-    const { data: current } = await supabase
+    const { data: current } = await client
       .from('inventory')
       .select('stock')
       .eq('product_id', productId)
@@ -153,7 +162,7 @@ export async function decrementStock(productId, size, quantity = 1) {
       throw new Error(`Insufficient stock for ${productId} size ${size}`);
     }
 
-    const { error } = await supabase
+    const { error } = await client
       .from('inventory')
       .update({ stock: current.stock - quantity, updated_at: new Date().toISOString() })
       .eq('product_id', productId)
@@ -193,8 +202,7 @@ export function validateCartStock(cartItems) {
 
 /**
  * Initialises products and inventory together.
- * Also subscribes to Supabase Realtime so the customer site
- * auto-updates when admin changes products or inventory.
+ * Real-time subscriptions are handled by realtime.js to avoid duplicate channels.
  */
 export async function initProducts() {
   await fetchProducts();
@@ -203,40 +211,6 @@ export async function initProducts() {
     window._PRODUCTS      = LIVE_PRODUCTS;
     window.LIVE_INVENTORY = LIVE_INVENTORY;
   }
-
-  // Subscribe to realtime changes on products + inventory tables
-  if (supabase) {
-    supabase
-      .channel('modart-product-sync')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, async () => {
-        await fetchProducts();
-        await fetchInventory();
-        if (typeof window !== 'undefined') {
-          window._PRODUCTS      = LIVE_PRODUCTS;
-          window.LIVE_INVENTORY = LIVE_INVENTORY;
-          window.renderProducts && window.renderProducts('home');
-          window.renderProducts && window.renderProducts('shop');
-        }
-      })
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'inventory' }, async () => {
-        await fetchInventory();
-        if (typeof window !== 'undefined') {
-          window.LIVE_INVENTORY = LIVE_INVENTORY;
-          window.renderProducts && window.renderProducts('home');
-          window.renderProducts && window.renderProducts('shop');
-          // Re-render product detail if open
-          const page = window.getCurrentPage ? window.getCurrentPage() : '';
-          if (page === 'product') {
-            window.renderProductDetail && window.renderProductDetail();
-            if (window._currentProductId) {
-              window.renderSizeOptions && window.renderSizeOptions(window._currentProductId);
-            }
-          }
-        }
-      })
-      .subscribe();
-  }
-
   return LIVE_PRODUCTS;
 }
 

@@ -9,7 +9,7 @@ const rateLimitMap = new Map();
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGIN);
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
   if (req.method === 'OPTIONS') return res.status(204).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -24,6 +24,7 @@ export default async function handler(req, res) {
   if (rec.count > 10) return res.status(429).json({ error: 'Too many attempts. Please wait.' });
 
   const code = ((req.body || {}).code || '').trim().toUpperCase();
+  const userEmail = ((req.body || {}).userEmail || '').trim().toLowerCase(); // Optional: pass user email from frontend
   if (!code) return res.status(400).json({ error: 'No code provided' });
 
   if (SUPABASE_SERVICE) {
@@ -39,6 +40,24 @@ export default async function handler(req, res) {
           return res.status(200).json({ valid: false, message: 'Code expired.' });
         if (c.max_uses && c.used_count >= c.max_uses)
           return res.status(200).json({ valid: false, message: 'Code usage limit reached.' });
+        
+        // Check per-user usage if email provided
+        if (userEmail) {
+          try {
+            const usageRes = await fetch(
+              `${SUPABASE_URL}/rest/v1/coupon_uses?coupon_id=eq.${c.id}&guest_email=eq.${encodeURIComponent(userEmail)}&select=id`,
+              { headers: { 'apikey': SUPABASE_SERVICE, 'Authorization': `Bearer ${SUPABASE_SERVICE}` } }
+            );
+            const usageData = await usageRes.json();
+            if (Array.isArray(usageData) && usageData.length > 0) {
+              return res.status(200).json({ valid: false, message: 'You have already used this code.' });
+            }
+          } catch (usageErr) {
+            console.warn('Per-user coupon check failed:', usageErr.message);
+            // Continue anyway — don't block if usage check fails
+          }
+        }
+        
         // NOTE: usage count is incremented only when the order is confirmed, not here
         return res.status(200).json({ valid: true, discount: c.discount_percent || 10, couponId: c.id });
       }

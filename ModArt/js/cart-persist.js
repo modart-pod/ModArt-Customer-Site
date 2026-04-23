@@ -5,9 +5,12 @@
  * Auth-safe: sync is deferred until auth state is confirmed.
  */
 import { cart } from './state.js';
-import { supabase } from './auth.js';
+import { supabase, getSupabase } from './auth.js';
 
 const LS_KEY = 'modart_cart';
+
+// Helper: get live client
+function sb() { return getSupabase() || supabase; }
 
 // Track whether auth has resolved so we don't sync prematurely
 let _authReady = false;
@@ -38,9 +41,10 @@ export async function syncCartToSupabase() {
   // Only sync after auth has resolved and user is logged in
   if (!_authReady) return;
   const user = window.currentUser;
-  if (!user || !supabase) return;
+  const client = sb();
+  if (!user || !client) return;
   try {
-    await supabase.from('carts').upsert({
+    await client.from('carts').upsert({
       user_id:    user.id,
       items:      JSON.stringify(cart.items),
       updated_at: new Date().toISOString(),
@@ -50,9 +54,10 @@ export async function syncCartToSupabase() {
 
 export async function loadCartFromSupabase() {
   const user = window.currentUser;
-  if (!user || !supabase) return;
+  const client = sb();
+  if (!user || !client) return;
   try {
-    const { data } = await supabase
+    const { data } = await client
       .from('carts')
       .select('items')
       .eq('user_id', user.id)

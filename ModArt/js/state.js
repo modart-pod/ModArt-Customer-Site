@@ -4,14 +4,135 @@
 
 /* ================================================================
    PRODUCTS STATE — fallback data used when Supabase is unavailable
+   Synced with database seed data from supabase_setup_complete.sql
    ================================================================ */
 export const PRODUCTS = [
-  {id:'vanta-tee',     name:'Vanta Black Tee',       series:'Modart Studio',    price:9999,  img:'https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=600&q=80', stock:5,  badge:'New'},
-  {id:'elfima-hoodie', name:'Elfima Hoodie',          series:'Craftsmanship',    price:18199, img:'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=600&q=80', stock:3,  badge:'Low Stock'},
-  {id:'cargo-pants',   name:'Grid Cargo Pants',       series:'Industrial Line',  price:14599, img:'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=600&q=80', stock:8,  badge:null},
-  {id:'vanta-hoodie',  name:'Vanta Black Hoodie',     series:'Vanta Collection', price:19999, img:'https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=600&q=80', stock:7,  badge:'Drop 02'},
-  {id:'knit-sweater',  name:'Boxy Knit Sweater',      series:'Essential Knit',   price:15399, img:'https://images.unsplash.com/photo-1580657018950-c7f7d6a6d990?w=600&q=80', stock:12, badge:null},
-  {id:'neo-tee',       name:'Neo-Tokyo Tee',          series:'Cyber Core',       price:7899,  img:'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&q=80', stock:0,  badge:'Sold Out'},
+  {
+    id: 'vanta-tee',
+    name: 'Vanta Black Tee',
+    series: 'Modart Studio',
+    price: 9999,
+    img: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800',
+    images: [
+      'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800',
+      'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=800'
+    ],
+    stock: 17,
+    badge: 'New',
+    description: 'A clean, structured tee built from 220 GSM ring-spun cotton. Minimal by design, maximum in quality.',
+    fabric_gsm: '220 GSM',
+    fabric_material: '100% Ring-Spun Cotton',
+    fabric_origin: 'India',
+    fabric_shrinkage: '<2%',
+    fabric_finish: 'Matte',
+    print_durability: '50+ Washes',
+    tags: ['tee', 'minimal', 'cotton', 'black']
+  },
+  {
+    id: 'elfima-hoodie',
+    name: 'Elfima Hoodie',
+    series: 'Craftsmanship',
+    price: 18199,
+    img: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800',
+    images: [
+      'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800',
+      'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=800'
+    ],
+    stock: 8,
+    badge: 'Low Stock',
+    description: 'Heavyweight hoodie with a structured silhouette. Brushed fleece interior for warmth without bulk.',
+    fabric_gsm: '380 GSM',
+    fabric_material: '80% Cotton 20% Polyester',
+    fabric_origin: 'Portugal',
+    fabric_shrinkage: '<3%',
+    fabric_finish: 'Brushed',
+    print_durability: '50+ Washes',
+    tags: ['hoodie', 'heavyweight', 'fleece', 'winter']
+  },
+  {
+    id: 'cargo-pants',
+    name: 'Grid Cargo Pants',
+    series: 'Industrial Line',
+    price: 14599,
+    img: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=800',
+    images: [
+      'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=800',
+      'https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=800'
+    ],
+    stock: 15,
+    badge: null,
+    description: 'Utility-forward cargo pants with a relaxed fit. Reinforced seams and deep pockets built for everyday wear.',
+    fabric_gsm: '280 GSM',
+    fabric_material: '100% Cotton Twill',
+    fabric_origin: 'India',
+    fabric_shrinkage: '<2%',
+    fabric_finish: 'Washed',
+    print_durability: '60+ Washes',
+    tags: ['pants', 'cargo', 'utility', 'cotton']
+  },
+  {
+    id: 'vanta-hoodie',
+    name: 'Vanta Black Hoodie',
+    series: 'Vanta Collection',
+    price: 19999,
+    img: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800',
+    images: [
+      'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800',
+      'https://images.unsplash.com/photo-1578587018452-892bacefd3f2?w=800'
+    ],
+    stock: 22,
+    badge: 'Drop 02',
+    description: 'Engineered for the modern minimalist. Oversized silhouette crafted from rare high-density Supima cotton.',
+    fabric_gsm: '400 GSM',
+    fabric_material: '100% Supima Cotton',
+    fabric_origin: 'Portugal',
+    fabric_shrinkage: '<2%',
+    fabric_finish: 'Matte',
+    print_durability: '50+ Washes',
+    tags: ['hoodie', 'premium', 'supima', 'oversized', 'black']
+  },
+  {
+    id: 'knit-sweater',
+    name: 'Boxy Knit Sweater',
+    series: 'Essential Knit',
+    price: 15399,
+    img: 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=800',
+    images: [
+      'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=800',
+      'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=800'
+    ],
+    stock: 21,
+    badge: null,
+    description: 'A relaxed boxy knit with a dropped shoulder. Made from a premium cotton-wool blend for year-round wear.',
+    fabric_gsm: '320 GSM',
+    fabric_material: '70% Cotton 30% Wool',
+    fabric_origin: 'Portugal',
+    fabric_shrinkage: '<3%',
+    fabric_finish: 'Natural',
+    print_durability: '40+ Washes',
+    tags: ['sweater', 'knit', 'wool', 'boxy']
+  },
+  {
+    id: 'neo-tee',
+    name: 'Neo-Tokyo Tee',
+    series: 'Cyber Core',
+    price: 7899,
+    img: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800',
+    images: [
+      'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800',
+      'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=800'
+    ],
+    stock: 0,
+    badge: 'Sold Out',
+    description: 'Inspired by the neon-lit streets of Tokyo. Lightweight and breathable with a subtle texture weave.',
+    fabric_gsm: '200 GSM',
+    fabric_material: '100% Combed Cotton',
+    fabric_origin: 'India',
+    fabric_shrinkage: '<2%',
+    fabric_finish: 'Smooth',
+    print_durability: '50+ Washes',
+    tags: ['tee', 'lightweight', 'cotton', 'graphic']
+  },
 ];
 
 /* ================================================================

@@ -1,7 +1,7 @@
 /**
  * ModArt Account & Wishlist Module
  */
-import { currentUser, supabase } from './auth.js';
+import { currentUser, supabase, getSupabase } from './auth.js';
 import { PRODUCTS, wishlist, toggleWishlistItem } from './state.js';
 
 /** Sanitize for safe innerHTML */
@@ -11,14 +11,18 @@ function esc(str) {
     .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
+// Helper: get live client
+function sb() { return getSupabase() || supabase; }
+
 // ── Wishlist Supabase sync ────────────────────────────────────────
 
 export async function syncWishlistToSupabase() {
-  if (!currentUser || !supabase) return;
+  const client = sb();
+  if (!currentUser || !client) return;
   try {
     const ids = JSON.stringify([...wishlist]);
     // Persist wishlist to Supabase wishlists table for cross-device sync
-    await supabase.from('wishlists').upsert(
+    await client.from('wishlists').upsert(
       { user_id: currentUser.id, items: ids, updated_at: new Date().toISOString() },
       { onConflict: 'user_id' }
     );
@@ -34,10 +38,11 @@ export async function syncWishlistToSupabase() {
 }
 
 export async function loadWishlistFromSupabase() {
-  if (!currentUser || !supabase) return;
+  const client = sb();
+  if (!currentUser || !client) return;
   try {
     // Try Supabase first for cross-device sync
-    const { data } = await supabase
+    const { data } = await client
       .from('wishlists')
       .select('items')
       .eq('user_id', currentUser.id)
@@ -111,7 +116,7 @@ export async function saveProfile() {
   }
   if (!currentUser) return;
 
-  const { error } = await supabase.auth.updateUser({ data: { full_name: name } });
+  const { error } = await sb().auth.updateUser({ data: { full_name: name } });
   if (error) {
     if (errEl) { errEl.textContent = error.message; errEl.style.display = 'block'; }
     return;

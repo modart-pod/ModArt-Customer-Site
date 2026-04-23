@@ -3,9 +3,12 @@
  * Creates, fetches, and updates orders in Supabase.
  */
 
-import { supabase, currentUser } from './auth.js';
+import { supabase, currentUser, getSupabase } from './auth.js';
 import { cart }                  from './state.js';
 import { decrementStock, validateCartStock } from './products.js';
+
+// Helper: get live Supabase client
+function sb() { return getSupabase() || supabase; }
 
 const EMAIL_FN_URL = '/api/send-order-email';
 
@@ -79,7 +82,7 @@ export async function createOrder(shippingAddress, paymentMethod = 'cod', shippi
       payment_method:   paymentMethod,
     };
 
-    const { data, error } = await supabase.from('orders').insert(payload).select().single();
+    const { data, error } = await sb().from('orders').insert(payload).select().single();
     if (error) throw error;
     return { orderId: data.id, orderNumber: data.order_number, total, error: null };
   } catch (e) {
@@ -89,15 +92,17 @@ export async function createOrder(shippingAddress, paymentMethod = 'cod', shippi
 
 /**
  * Confirms an order after successful payment.
- * Updates status, decrements inventory, increments coupon usage, sends confirmation email.
+ * Updates status, decrements inventory, increments coupon usage, tracks drop sales, sends confirmation email.
  */
 export async function confirmOrder(orderId, paymentId = 'COD') {
   try {
-    const { data: order, error: fetchErr } = await supabase
+    const client = sb();
+    if (!client) return { success: false, error: 'Supabase not available' };
+    const { data: order, error: fetchErr } = await client
       .from('orders').select('*').eq('id', orderId).single();
     if (fetchErr) throw fetchErr;
 
-    const { error: updateErr } = await supabase
+    const { error: updateErr } = await client
       .from('orders')
       .update({ status: 'confirmed', payment_id: paymentId, updated_at: new Date().toISOString() })
       .eq('id', orderId);
@@ -108,21 +113,60 @@ export async function confirmOrder(orderId, paymentId = 'COD') {
       await decrementStock(item.productId, item.size, item.qty);
     }
 
-    // Increment coupon usage now that order is confirmed (not at validation time)
+    // Increment coupon usage via RPC (cleaner than raw fetch)
     const discountCode = window.getDiscountCode ? window.getDiscountCode() : null;
     if (discountCode && order.discount_inr > 0) {
       try {
-        const SUPABASE_URL = 'https://ddodctzzsrlgyhtclabz.supabase.co';
-        await fetch(`${SUPABASE_URL}/rest/v1/rpc/increment_coupon_usage`, {
-          method: 'POST',
-          headers: {
-            'apikey':        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRkb2RjdHp6c3JsZ3lodGNsYWJ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1MDY5MzEsImV4cCI6MjA4OTA4MjkzMX0.Wfrlocx56uR_8-5EZoBajIzHt09GX_JcrBCSeZuVqMY',
-            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRkb2RjdHp6c3JsZ3lodGNsYWJ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1MDY5MzEsImV4cCI6MjA4OTA4MjkzMX0.Wfrlocx56uR_8-5EZoBajIzHt09GX_JcrBCSeZuVqMY',
-            'Content-Type':  'application/json',
-          },
-          body: JSON.stringify({ p_code: discountCode }),
-        }).catch(() => {});
-      } catch {}
+        // First, get the coupon ID
+        const { data: couponData } = await client
+          .from('coupons')
+          .select('id')
+          .eq('code', discountCode)
+          .single();
+        
+        if (couponData) {
+          // Increment global usage count
+          await client.rpc('increment_coupon_usage', { p_code: discountCode });
+          
+          // Track per-user usage in coupon_uses table
+          await client.from('coupon_uses').insert({
+            coupon_id: couponData.id,
+            user_id: currentUser?.id || null,
+            guest_email: currentUser ? null : order.guest_email,
+            order_id: orderId,
+            used_at: new Date().toISOString()
+          });
+        }
+      } catch (couponErr) {
+        console.warn('Coupon tracking failed:', couponErr.message);
+        // Don't fail the order if coupon tracking fails
+      }
+    }
+
+    // Track drop sales — increment sold_units for any live drops containing purchased products
+    for (const item of items) {
+      try {
+        const { data: liveDrops } = await client
+          .from('drops')
+          .select('id, product_ids')
+          .eq('status', 'live')
+          .eq('is_active', true);
+        
+        if (liveDrops && liveDrops.length > 0) {
+          for (const drop of liveDrops) {
+            // Check if this product is part of the drop
+            if (drop.product_ids && drop.product_ids.includes(item.productId)) {
+              await client.rpc('increment_drop_sold_units', {
+                p_drop_id: drop.id,
+                p_quantity: item.qty
+              });
+            }
+          }
+        }
+      } catch (dropErr) {
+        console.warn('Drop sales tracking failed:', dropErr.message);
+        // Don't fail the order if drop tracking fails
+      }
     }
 
     cart.items = [];
@@ -142,7 +186,9 @@ export async function confirmOrder(orderId, paymentId = 'COD') {
 export async function fetchUserOrders() {
   if (!currentUser) return [];
   try {
-    const { data, error } = await supabase
+    const client = sb();
+    if (!client) return [];
+    const { data, error } = await client
       .from('orders')
       .select('*')
       .eq('user_id', currentUser.id)
@@ -161,14 +207,16 @@ export async function fetchUserOrders() {
  */
 export async function updateOrderStatus(orderId, status, extra = {}) {
   try {
-    const { error } = await supabase
+    const client = sb();
+    if (!client) return { success: false, error: 'Supabase not available' };
+    const { error } = await client
       .from('orders')
       .update({ status, updated_at: new Date().toISOString(), ...extra })
       .eq('id', orderId);
     if (error) throw error;
 
     if (status === 'dispatched' && extra.tracking_number) {
-      const { data: order } = await supabase
+      const { data: order } = await client
         .from('orders').select('*').eq('id', orderId).single();
       if (order) {
         // Get recipient email from guest_email or shipping address
@@ -454,7 +502,9 @@ export async function trackGuestOrder() {
   if (trackBtn) { trackBtn.textContent = 'Searching…'; trackBtn.disabled = true; }
 
   try {
-    const { data, error } = await supabase
+    const client = sb();
+    if (!client) throw new Error('Supabase not available');
+    const { data, error } = await client
       .from('orders')
       .select('*')
       .eq('order_number', orderNum)
