@@ -13,6 +13,7 @@ import { applyDesktopLayout } from './layouts/DesktopLayout.js';
 import { initCurrency, getCurrencyBadge } from './currency.js';
 import { initAuth } from './auth.js';
 import { initCartPersistence, markAuthReady } from './cart-persist.js';
+import { initCartSync } from './cart-sync.js';
 import { initProducts } from './products.js';
 import { initRealtime } from './realtime.js';
 import { initDrops } from './drops.js';
@@ -160,6 +161,7 @@ async function initApplication() {
 
   // 5. Cart — load local first, then merge with cloud
   await initCartPersistence();
+  initCartSync(); // cross-tab sync via BroadcastChannel
 
   // 6. Products + inventory
   await initProducts();

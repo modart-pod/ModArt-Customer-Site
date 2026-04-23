@@ -266,13 +266,6 @@ if (typeof window !== 'undefined') {
   window.closeCartSync = closeCartSync;
 }
 
-// Auto-initialize on load
-if (typeof window !== 'undefined' && document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initCartSync);
-} else if (typeof window !== 'undefined') {
-  initCartSync();
-}
-
 // Add CSS animations
 if (typeof document !== 'undefined') {
   const style = document.createElement('style');
