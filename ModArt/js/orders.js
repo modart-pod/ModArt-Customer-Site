@@ -62,9 +62,51 @@ export async function sendOrderEmail(payload) {
 }
 
 /**
+ * Generates a unique idempotency key for order creation.
+ * Key is stored in sessionStorage and reused on retry.
+ * 
+ * @returns {string} Idempotency key (format: idem_timestamp_random)
+ */
+function getOrCreateIdempotencyKey() {
+  const storageKey = 'modart_order_idempotency_key';
+  
+  // Check if we already have a key for this checkout session
+  let key = null;
+  try {
+    key = sessionStorage.getItem(storageKey);
+  } catch (e) {
+    console.warn('SessionStorage not available:', e);
+  }
+  
+  // Generate new key if none exists
+  if (!key) {
+    key = `idem_${Date.now()}_${Math.random().toString(36).substr(2, 16)}`;
+    try {
+      sessionStorage.setItem(storageKey, key);
+    } catch (e) {
+      console.warn('Failed to store idempotency key:', e);
+    }
+  }
+  
+  return key;
+}
+
+/**
+ * Clears the idempotency key after successful order.
+ * Allows new orders to be created.
+ */
+function clearIdempotencyKey() {
+  try {
+    sessionStorage.removeItem('modart_order_idempotency_key');
+  } catch (e) {
+    console.warn('Failed to clear idempotency key:', e);
+  }
+}
+
+/**
  * Creates a new order in Supabase from the current cart.
- * Validates stock before inserting.
- * Returns { orderId, orderNumber, total, error }
+ * Uses idempotency key to prevent duplicate orders.
+ * Returns { orderId, orderNumber, total, isDuplicate, error }
  */
 export async function createOrder(shippingAddress, paymentMethod = 'cod', shippingOverride = null) {
   try {
@@ -85,28 +127,58 @@ export async function createOrder(shippingAddress, paymentMethod = 'cod', shippi
     const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0);
     const discPct  = (window.getDiscountPercent && window.getDiscountPercent()) || 0;
     const discount = discPct ? Math.round(subtotal * discPct / 100) : 0;
-    // Use override shipping cost (express=499, standard=149) or calculate from threshold
     const shipping = shippingOverride !== null ? shippingOverride : ((subtotal - discount) >= 2499 ? 0 : 149);
     const total    = subtotal - discount + shipping;
     const orderNum = 'MA-' + Date.now().toString().slice(-8);
+    
+    // Get or create idempotency key
+    const idempotencyKey = getOrCreateIdempotencyKey();
 
-    const payload = {
-      order_number:     orderNum,
-      user_id:          currentUser?.id || null,
-      guest_email:      currentUser ? null : shippingAddress.email,
-      items:            JSON.stringify(items),
-      shipping_address: JSON.stringify(shippingAddress),
-      subtotal_inr:     subtotal,
-      discount_inr:     discount,
-      shipping_inr:     shipping,
-      total_inr:        total,
-      status:           'pending',
-      payment_method:   paymentMethod,
-    };
-
-    const { data, error } = await sb().from('orders').insert(payload).select().single();
+    // Use idempotent RPC function
+    const client = sb();
+    if (!client) return { orderId: null, orderNumber: null, total: 0, error: 'Supabase not available' };
+    
+    const { data, error } = await client.rpc('create_order_idempotent', {
+      p_idempotency_key:  idempotencyKey,
+      p_order_number:     orderNum,
+      p_user_id:          currentUser?.id || null,
+      p_guest_email:      currentUser ? null : shippingAddress.email,
+      p_items:            JSON.stringify(items),
+      p_shipping_address: JSON.stringify(shippingAddress),
+      p_subtotal_inr:     subtotal,
+      p_discount_inr:     discount,
+      p_shipping_inr:     shipping,
+      p_total_inr:        total,
+      p_payment_method:   paymentMethod,
+    });
+    
     if (error) throw error;
-    return { orderId: data.id, orderNumber: data.order_number, total, error: null };
+    
+    // Check if this was a duplicate order
+    if (data && data.length > 0) {
+      const result = data[0];
+      
+      if (result.is_duplicate) {
+        console.log('⚠️ Duplicate order detected, returning existing order:', result.order_number);
+        return { 
+          orderId: result.order_id, 
+          orderNumber: result.order_number, 
+          total, 
+          isDuplicate: true,
+          error: null 
+        };
+      }
+      
+      return { 
+        orderId: result.order_id, 
+        orderNumber: result.order_number, 
+        total, 
+        isDuplicate: false,
+        error: null 
+      };
+    }
+    
+    return { orderId: null, orderNumber: null, total: 0, error: 'Order creation failed' };
   } catch (e) {
     return { orderId: null, orderNumber: null, total: 0, error: e.message };
   }
@@ -219,6 +291,10 @@ export async function confirmOrder(orderId, paymentId = 'COD') {
     // Clear persisted discount after successful order
     try { sessionStorage.removeItem('modart_discount'); } catch {}
     if (window.setDiscountApplied) window.setDiscountApplied(false);
+    
+    // Clear idempotency key to allow new orders
+    clearIdempotencyKey();
+    
     return { success: true, order };
   } catch (e) {
     return { success: false, error: e.message };
@@ -434,11 +510,20 @@ export async function handleCheckoutSubmit() {
   }
 
   const shippingAddress = { fullName, email, phone, street, city, postal, country, shippingMethod };
-  const { orderId, orderNumber, total, error } = await createOrder(shippingAddress, 'cod', shippingCost);
+  const { orderId, orderNumber, total, isDuplicate, error } = await createOrder(shippingAddress, 'cod', shippingCost);
 
   if (error) {
     if (btn) { btn.textContent = 'Place Order — Cash on Delivery'; btn.disabled = false; }
     showCheckoutError('name', 'Could not place order: ' + error);
+    return;
+  }
+  
+  // Handle duplicate order (user clicked submit multiple times)
+  if (isDuplicate) {
+    console.log('⚠️ Duplicate order detected, proceeding with existing order:', orderNumber);
+    // Still proceed to confirmation - order already exists
+    sessionStorage.setItem('modart_last_order', JSON.stringify({ orderNumber, total, items: cart.items }));
+    window.goTo && window.goTo('confirmation');
     return;
   }
 
