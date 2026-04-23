@@ -190,14 +190,22 @@ export function handleValidationError(error, fieldErrors = {}) {
     const input = document.querySelector(`[name="${field}"]`);
     if (input) {
       input.style.borderColor = 'var(--red)';
+      input.setAttribute('aria-invalid', 'true');
       
       // Add error message
       let errorEl = input.parentNode.querySelector('.field-error');
       if (!errorEl) {
         errorEl = document.createElement('div');
         errorEl.className = 'field-error';
+        errorEl.setAttribute('role', 'alert');
+        errorEl.setAttribute('aria-live', 'polite');
         errorEl.style.cssText = 'font-size:11px;color:var(--red);font-weight:600;margin-top:4px';
         input.parentNode.appendChild(errorEl);
+        
+        // Link error to input
+        const errorId = `${field}-error`;
+        errorEl.id = errorId;
+        input.setAttribute('aria-describedby', errorId);
       }
       errorEl.textContent = message;
     }
@@ -214,6 +222,8 @@ export function clearFieldErrors(form) {
   form.querySelectorAll('.field-error').forEach(el => el.remove());
   form.querySelectorAll('input, textarea, select').forEach(el => {
     el.style.borderColor = '';
+    el.removeAttribute('aria-invalid');
+    el.removeAttribute('aria-describedby');
   });
 }
 

@@ -112,17 +112,17 @@
       </ul>
       <div class="nav-actions">
         <button class="theme-toggle-btn nav-icon-btn" aria-label="Toggle dark mode" onclick="toggleTheme()">
-          <span class="material-symbols-outlined icon icon-moon">dark_mode</span>
-          <span class="material-symbols-outlined icon icon-sun">light_mode</span>
+          <span class="material-symbols-outlined icon icon-moon" aria-hidden="true">dark_mode</span>
+          <span class="material-symbols-outlined icon icon-sun" aria-hidden="true">light_mode</span>
         </button>
-        <button class="nav-icon-btn" aria-label="Search" onclick="toggleSearch()"><span class="material-symbols-outlined icon">search</span></button>
-        <button class="nav-icon-btn" aria-label="Wishlist" onclick="goTo('wishlist')"><span class="material-symbols-outlined icon">favorite_border</span></button>
-        <button class="nav-icon-btn" aria-label="Bag" onclick="goTo('bag')" style="position:relative">
-          <span class="material-symbols-outlined icon">shopping_bag</span>
-          <span class="cart-badge" id="cart-badge-desk" style="display:none">0</span>
+        <button class="nav-icon-btn" aria-label="Search products" onclick="toggleSearch()"><span class="material-symbols-outlined icon" aria-hidden="true">search</span></button>
+        <button class="nav-icon-btn" aria-label="View wishlist" onclick="goTo('wishlist')"><span class="material-symbols-outlined icon" aria-hidden="true">favorite_border</span></button>
+        <button class="nav-icon-btn" aria-label="View shopping bag" onclick="goTo('bag')" style="position:relative">
+          <span class="material-symbols-outlined icon" aria-hidden="true">shopping_bag</span>
+          <span class="cart-badge" id="cart-badge-desk" style="display:none" aria-label="items in cart">0</span>
         </button>
-        <button class="nav-icon-btn" data-show-when="logged-out" onclick="goTo('login')" aria-label="Sign in" style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:8px 12px">Sign In</button>
-        <button class="nav-icon-btn nav-avatar-btn" data-show-when="logged-in" onclick="goTo('account')" aria-label="My account" style="display:none">
+        <button class="nav-icon-btn" data-show-when="logged-out" onclick="goTo('login')" aria-label="Sign in to your account" style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:8px 12px">Sign In</button>
+        <button class="nav-icon-btn nav-avatar-btn" data-show-when="logged-in" onclick="goTo('account')" aria-label="View account settings" style="display:none">
           <span class="nav-avatar" id="nav-avatar" aria-hidden="true"></span>
         </button>
       </div>
@@ -132,8 +132,8 @@
   <!-- ============================================================
        MOBILE HEADER
        ============================================================ -->
-  <header class="mobile-hdr" id="mobile-hdr">
-    <button class="nav-icon-btn" aria-label="Menu" onclick="toggleMobileMenu()"><span class="material-symbols-outlined icon">menu</span></button>
+  <header class="mobile-hdr" id="mobile-hdr" role="banner">
+    <button class="nav-icon-btn" aria-label="Open navigation menu" onclick="toggleMobileMenu()"><span class="material-symbols-outlined icon" aria-hidden="true">menu</span></button>
     <button class="mobile-logo-btn" onclick="goTo('home')" aria-label="ModArt home">
       <span style="display:flex;align-items:center;gap:8px">
         <img src="assets/images/logo-black.png" alt="" class="nav-logo-img" aria-hidden="true"
@@ -143,10 +143,10 @@
       </span>
     </button>
     <div class="mobile-hdr-actions">
-      <button class="nav-icon-btn" aria-label="Search" onclick="toggleSearch()"><span class="material-symbols-outlined icon">search</span></button>
-      <button class="nav-icon-btn" aria-label="Bag" onclick="goTo('bag')" style="position:relative">
-        <span class="material-symbols-outlined icon">shopping_bag</span>
-        <span class="cart-badge" id="cart-badge-mob" style="display:none">0</span>
+      <button class="nav-icon-btn" aria-label="Search products" onclick="toggleSearch()"><span class="material-symbols-outlined icon" aria-hidden="true">search</span></button>
+      <button class="nav-icon-btn" aria-label="View shopping bag" onclick="goTo('bag')" style="position:relative">
+        <span class="material-symbols-outlined icon" aria-hidden="true">shopping_bag</span>
+        <span class="cart-badge" id="cart-badge-mob" style="display:none" aria-label="items in cart">0</span>
       </button>
     </div>
   </header>
@@ -173,22 +173,22 @@
   <!-- ============================================================
        MOBILE BOTTOM NAV
        ============================================================ -->
-  <nav class="mobile-bottom-nav" id="mobile-bottom-nav" aria-label="Navigation">
-    <button class="mob-nav-item active" id="mob-nav-home" onclick="goTo('home')">
-      <span class="material-symbols-outlined icon">home</span>Home
+  <nav class="mobile-bottom-nav" id="mobile-bottom-nav" aria-label="Mobile navigation" role="navigation">
+    <button class="mob-nav-item active" id="mob-nav-home" onclick="goTo('home')" aria-label="Home page" aria-current="page">
+      <span class="material-symbols-outlined icon" aria-hidden="true">home</span>Home
     </button>
-    <button class="mob-nav-item" id="mob-nav-shop" onclick="goTo('shop')">
-      <span class="material-symbols-outlined icon">search</span>Shop
+    <button class="mob-nav-item" id="mob-nav-shop" onclick="goTo('shop')" aria-label="Shop products">
+      <span class="material-symbols-outlined icon" aria-hidden="true">search</span>Shop
     </button>
-    <button class="mob-nav-item" id="mob-nav-customize" onclick="goTo('customize')">
-      <span class="material-symbols-outlined icon">palette</span>Create
+    <button class="mob-nav-item" id="mob-nav-customize" onclick="goTo('customize')" aria-label="Create custom design">
+      <span class="material-symbols-outlined icon" aria-hidden="true">palette</span>Create
     </button>
-    <button class="mob-nav-item" id="mob-nav-bag" onclick="goTo('bag')" style="position:relative">
-      <span class="material-symbols-outlined icon">shopping_bag</span>
-      <span class="cart-badge" id="cart-badge-nav" style="display:none;top:6px;right:calc(50% - 18px)">0</span>Bag
+    <button class="mob-nav-item" id="mob-nav-bag" onclick="goTo('bag')" style="position:relative" aria-label="Shopping bag">
+      <span class="material-symbols-outlined icon" aria-hidden="true">shopping_bag</span>
+      <span class="cart-badge" id="cart-badge-nav" style="display:none;top:6px;right:calc(50% - 18px)" aria-label="items in cart">0</span>Bag
     </button>
-    <button class="mob-nav-item" id="mob-nav-account" onclick="goTo(window.currentUser?'account':'login')">
-      <span class="material-symbols-outlined icon">person</span>Account
+    <button class="mob-nav-item" id="mob-nav-account" onclick="goTo(window.currentUser?'account':'login')" aria-label="Account settings">
+      <span class="material-symbols-outlined icon" aria-hidden="true">person</span>Account
     </button>
   </nav>
 
@@ -223,31 +223,32 @@
   <!-- ============================================================
        PAGE: HOME
        ============================================================ -->
-  <main class="page active" id="page-home" aria-label="Home">
+  <main class="page active" id="page-home" role="main" aria-label="Home page content">
+    <div id="main-content"></div>
 
     <!-- HERO -->
-    <section class="home-hero">
+    <section class="home-hero" aria-labelledby="hero-title">
       <img class="home-hero-img" src="https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=1400&q=85"
         srcset="https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=800&q=80 800w, https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=1400&q=85 1400w"
-        sizes="100vw" alt="ModArt campaign" loading="eager"/>
+        sizes="100vw" alt="ModArt custom garment studio hero image showing premium streetwear" loading="eager"/>
       <div class="home-hero-overlay" aria-hidden="true"></div>
       <div class="home-hero-content">
-        <div class="hero-badge"><span class="material-symbols-outlined icon">local_fire_department</span> Drop 02 � Live Now</div>
-        <h1 class="hero-title">Custom<br>Garment<br>Studio</h1>
+        <div class="hero-badge" role="status" aria-live="polite"><span class="material-symbols-outlined icon" aria-hidden="true">local_fire_department</span> Drop 02 � Live Now</div>
+        <h1 class="hero-title" id="hero-title">Custom<br>Garment<br>Studio</h1>
         <p class="hero-sub">Design your own limited drop. Wear art that means something. Built for creators, worn by culture.</p>
         <div class="hero-actions">
-          <button class="btn-red btn-red-pill" onclick="goTo('customize')">Create Your Drop <span class="material-symbols-outlined icon" style="font-size:16px">arrow_forward</span></button>
-          <button class="btn-outline" style="color:rgba(255,255,255,.8);border-color:rgba(255,255,255,.22);border-radius:var(--r-full)" onclick="goTo('shop')">Browse Collection</button>
+          <button class="btn-red btn-red-pill" onclick="goTo('customize')" aria-label="Create your custom drop">Create Your Drop <span class="material-symbols-outlined icon" style="font-size:16px" aria-hidden="true">arrow_forward</span></button>
+          <button class="btn-outline" style="color:rgba(255,255,255,.8);border-color:rgba(255,255,255,.22);border-radius:var(--r-full)" onclick="goTo('shop')" aria-label="Browse product collection">Browse Collection</button>
         </div>
-        <div class="live-orders-ticker">
+        <div class="live-orders-ticker" role="status" aria-live="polite" aria-atomic="true">
           <strong id="live-count">27</strong> orders in the last 3 hours � Only <strong id="drop-stock">12</strong> left in this batch
         </div>
-        <div class="hero-countdown" aria-label="Drop timer">
+        <div class="hero-countdown" role="timer" aria-label="Time remaining until drop closes">
           <span class="hero-cd-label">Drop Closes</span>
-          <div class="hero-cd-timer">
-            <span class="hero-cd-unit" id="h-h">02</span><span class="hero-cd-colon">:</span>
-            <span class="hero-cd-unit" id="h-m">45</span><span class="hero-cd-colon">:</span>
-            <span class="hero-cd-unit hero-cd-unit-sec" id="h-s">18</span>
+          <div class="hero-cd-timer" aria-live="off">
+            <span class="hero-cd-unit" id="h-h" aria-label="hours">02</span><span class="hero-cd-colon" aria-hidden="true">:</span>
+            <span class="hero-cd-unit" id="h-m" aria-label="minutes">45</span><span class="hero-cd-colon" aria-hidden="true">:</span>
+            <span class="hero-cd-unit hero-cd-unit-sec" id="h-s" aria-label="seconds">18</span>
           </div>
         </div>
       </div>
