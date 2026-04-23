@@ -1,7 +1,8 @@
 {
   "rewrites": [
-    { "source": "/admin", "destination": "/admin.html" },
-    { "source": "/admin/", "destination": "/admin.html" },
+    { "source": "/admin.html", "destination": "/api/admin-auth-check" },
+    { "source": "/admin", "destination": "/api/admin-auth-check" },
+    { "source": "/admin/", "destination": "/api/admin-auth-check" },
     { "source": "/((?!api/).*)", "destination": "/index.html" }
   ],
   "headers": [
