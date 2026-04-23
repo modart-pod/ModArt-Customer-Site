@@ -31,6 +31,10 @@ import './keyboard-nav.js';
 // Phase 5: Performance & Caching
 import './sw-register.js';
 import { preloadCriticalResources } from './cache-manager.js';
+// Phase 6: Testing & Monitoring
+import './monitoring/sentry.js';
+import './monitoring/web-vitals.js';
+import './audit-logger.js';
 
 /* ================================================================
    COUNTDOWN TIMER
