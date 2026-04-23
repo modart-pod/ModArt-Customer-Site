@@ -22,6 +22,107 @@ class CacheManager {
     this.cache = new Map();
     this.version = '1.0.0';
     this.defaultTTL = 5 * 60 * 1000; // 5 minutes
+    this.warmingInProgress = false;
+    this.preloadQueue = [];
+  }
+
+  /**
+   * Warms the cache by preloading critical data
+   * @returns {Promise<void>}
+   */
+  async warmCache() {
+    if (this.warmingInProgress) {
+      console.log('⏳ Cache warming already in progress');
+      return;
+    }
+
+    this.warmingInProgress = true;
+    console.log('🔥 Warming cache...');
+
+    try {
+      // Preload products
+      if (window.fetchProducts) {
+        const products = await window.fetchProducts();
+        this.set('products:all', products, {
+          ttl: 5 * 60 * 1000,
+          tags: ['products']
+        });
+        console.log('✅ Products cached');
+      }
+
+      // Preload inventory
+      if (window.fetchInventory) {
+        const inventory = await window.fetchInventory();
+        this.set('inventory:all', inventory, {
+          ttl: 2 * 60 * 1000,
+          tags: ['inventory']
+        });
+        console.log('✅ Inventory cached');
+      }
+
+      console.log('✅ Cache warming complete');
+    } catch (error) {
+      console.error('❌ Cache warming failed:', error);
+    } finally {
+      this.warmingInProgress = false;
+    }
+  }
+
+  /**
+   * Preloads data for a specific key
+   * @param {string} key - Cache key
+   * @param {Function} loader - Function to load data
+   * @param {Object} options - Cache options
+   * @returns {Promise<void>}
+   */
+  async preload(key, loader, options = {}) {
+    // Check if already cached
+    if (this.has(key)) {
+      console.log(`✅ ${key} already cached`);
+      return;
+    }
+
+    // Add to preload queue
+    this.preloadQueue.push({ key, loader, options });
+
+    // Process queue if not already processing
+    if (this.preloadQueue.length === 1) {
+      await this.processPreloadQueue();
+    }
+  }
+
+  /**
+   * Processes the preload queue
+   * @private
+   */
+  async processPreloadQueue() {
+    while (this.preloadQueue.length > 0) {
+      const { key, loader, options } = this.preloadQueue.shift();
+
+      try {
+        console.log(`⏳ Preloading ${key}...`);
+        const data = await loader();
+        this.set(key, data, options);
+        console.log(`✅ ${key} preloaded`);
+      } catch (error) {
+        console.error(`❌ Failed to preload ${key}:`, error);
+      }
+    }
+  }
+
+  /**
+   * Prefetches data in the background
+   * @param {string} key - Cache key
+   * @param {Function} loader - Function to load data
+   * @param {Object} options - Cache options
+   */
+  prefetch(key, loader, options = {}) {
+    // Non-blocking prefetch
+    setTimeout(() => {
+      this.preload(key, loader, options).catch(err => {
+        console.error(`Prefetch failed for ${key}:`, err);
+      });
+    }, 0);
   }
 
   /**
@@ -330,6 +431,48 @@ export function invalidateAllCaches() {
   console.log('✅ All caches invalidated');
 }
 
+/**
+ * Warms cache on page load
+ */
+export async function warmCacheOnLoad() {
+  await cacheManager.warmCache();
+}
+
+/**
+ * Preloads critical resources
+ */
+export function preloadCriticalResources() {
+  // Preload products if not already cached
+  cacheManager.prefetch(
+    'products:all',
+    async () => {
+      if (window.fetchProducts) {
+        return await window.fetchProducts();
+      }
+      return window._PRODUCTS || [];
+    },
+    {
+      ttl: 5 * 60 * 1000,
+      tags: ['products']
+    }
+  );
+
+  // Preload inventory if not already cached
+  cacheManager.prefetch(
+    'inventory:all',
+    async () => {
+      if (window.fetchInventory) {
+        return await window.fetchInventory();
+      }
+      return window.LIVE_INVENTORY || {};
+    },
+    {
+      ttl: 2 * 60 * 1000,
+      tags: ['inventory']
+    }
+  );
+}
+
 // Export singleton
 export default cacheManager;
 
@@ -344,4 +487,6 @@ if (typeof window !== 'undefined') {
   window.invalidateInventoryCache = invalidateInventoryCache;
   window.invalidateOrderCache = invalidateOrderCache;
   window.invalidateAllCaches = invalidateAllCaches;
+  window.warmCacheOnLoad = warmCacheOnLoad;
+  window.preloadCriticalResources = preloadCriticalResources;
 }

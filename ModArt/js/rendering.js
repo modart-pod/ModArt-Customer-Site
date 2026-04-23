@@ -16,6 +16,70 @@ import { formatPrice } from './currency.js';
 import { getProductLoader } from './data-loader.js';
 import { optimisticRemoveFromCart, optimisticUpdateQuantity, optimisticToggleWishlist } from './optimistic-ui.js';
 
+/* ================================================================
+   SKELETON LOADER HELPERS
+   ================================================================ */
+
+/**
+ * Shows skeleton loaders for a grid
+ * @param {string} gridId - Grid element ID
+ */
+export function showSkeletonGrid(gridId) {
+  const grid = document.getElementById(gridId);
+  if (!grid) return;
+  
+  const skeletonId = `${gridId}-skeleton`;
+  const skeleton = document.getElementById(skeletonId);
+  
+  if (skeleton) {
+    skeleton.style.display = '';
+    grid.style.display = 'none';
+  }
+}
+
+/**
+ * Hides skeleton loaders for a grid
+ * @param {string} gridId - Grid element ID
+ */
+export function hideSkeletonGrid(gridId) {
+  const grid = document.getElementById(gridId);
+  if (!grid) return;
+  
+  const skeletonId = `${gridId}-skeleton`;
+  const skeleton = document.getElementById(skeletonId);
+  
+  if (skeleton) {
+    skeleton.style.display = 'none';
+    grid.style.display = '';
+  }
+}
+
+/**
+ * Shows skeleton loader for bag items
+ */
+export function showSkeletonBag() {
+  const list = document.getElementById('bag-items-list');
+  const skeleton = document.getElementById('bag-skeleton');
+  
+  if (list && skeleton) {
+    skeleton.style.display = '';
+    list.style.display = 'none';
+  }
+}
+
+/**
+ * Hides skeleton loader for bag items
+ */
+export function hideSkeletonBag() {
+  const list = document.getElementById('bag-items-list');
+  const skeleton = document.getElementById('bag-skeleton');
+  
+  if (list && skeleton) {
+    skeleton.style.display = 'none';
+    list.style.display = '';
+  }
+}
+
 /** Sanitize string for safe innerHTML insertion */
 function esc(str) {
   return String(str ?? '')
@@ -61,6 +125,9 @@ export function renderProducts(page) {
   const grid = document.getElementById(id);
   if (!grid) return;
 
+  // Show skeleton while loading
+  showSkeletonGrid(id);
+
   const productSource = (window._PRODUCTS && window._PRODUCTS.length > 0) ? window._PRODUCTS : PRODUCTS;
   const prods = page === 'home' ? productSource.slice(0, 4) : productSource;
   const isShop = page === 'shop';
@@ -99,6 +166,9 @@ export function renderProducts(page) {
       ${sold ? `<button onclick="event.stopPropagation();window.notifyMe&&window.notifyMe('${esc(p.id)}',this)" style="width:100%;margin-top:8px;padding:8px;background:none;border:1.5px solid var(--border);border-radius:var(--r-full);font-family:var(--font);font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--g3);cursor:pointer;transition:all var(--t)" onmouseover="this.style.borderColor='var(--black)';this.style.color='var(--black)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--g3)'">Notify Me</button>` : ''}
     </div>`;
   }).join('');
+
+  // Hide skeleton after rendering
+  hideSkeletonGrid(id);
 
   // Rebuild carousel dots after home cards are injected
   if (isShop === false && window._rebuildCarouselDots) {
@@ -243,9 +313,13 @@ export async function renderBag() {
   
   if (cart.items.length === 0) {
     list.innerHTML = '';
+    hideSkeletonBag();
     if (empty) empty.style.display = 'block';
   } else {
     if (empty) empty.style.display = 'none';
+    
+    // Show skeleton while loading
+    showSkeletonBag();
     
     // Use DataLoader to batch product fetches (prevents N+1 queries)
     const productLoader = getProductLoader();
@@ -282,6 +356,9 @@ export async function renderBag() {
           <button class="bag-remove-btn" aria-label="Remove ${esc(p.name)}" onclick="window.removeFromCart && window.removeFromCart('${esc(p.id)}','${esc(item.size)}')"><span class="material-symbols-outlined icon">close</span></button>
         </div>`;
       }).join('');
+      
+      // Hide skeleton after rendering
+      hideSkeletonBag();
     } catch (error) {
       console.error('Failed to load products for cart:', error);
       // Fallback to synchronous rendering
@@ -306,6 +383,9 @@ export async function renderBag() {
           <button class="bag-remove-btn" aria-label="Remove ${esc(p.name)}" onclick="window.removeFromCart && window.removeFromCart('${esc(p.id)}','${esc(item.size)}')"><span class="material-symbols-outlined icon">close</span></button>
         </div>`;
       }).join('');
+      
+      // Hide skeleton after rendering
+      hideSkeletonBag();
     }
   }
   
@@ -465,6 +545,10 @@ if (typeof window !== 'undefined') {
   window.applyDiscount = applyDiscount;
   window.openProduct = openProduct;
   window.renderProductDetail = renderProductDetail;
+  window.showSkeletonGrid = showSkeletonGrid;
+  window.hideSkeletonGrid = hideSkeletonGrid;
+  window.showSkeletonBag = showSkeletonBag;
+  window.hideSkeletonBag = hideSkeletonBag;
   
   // Make cart object available globally for onclick handlers
   window.cart = cart;

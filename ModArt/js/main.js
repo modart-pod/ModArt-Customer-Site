@@ -28,6 +28,9 @@ import './optimistic-ui.js';
 import './error-handler.js';
 // Phase 4: Accessibility
 import './keyboard-nav.js';
+// Phase 5: Performance & Caching
+import './sw-register.js';
+import { preloadCriticalResources } from './cache-manager.js';
 
 /* ================================================================
    COUNTDOWN TIMER
@@ -197,6 +200,9 @@ async function initApplication() {
     renderProducts(currentPage);
     if (currentPage === 'home') window._rebuildCarouselDots && window._rebuildCarouselDots();
   }
+
+  // 13. Preload critical resources for better performance
+  preloadCriticalResources();
 }
 
 /* ================================================================
