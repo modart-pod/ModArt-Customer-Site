@@ -46,15 +46,61 @@ export default async function handler(req, res) {
   }
 
   try {
-    const r = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${RESEND_API_KEY}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ from: `ModArt <${FROM_EMAIL}>`, to: [to], subject, html }),
+    // Retry logic: attempt up to 3 times with exponential backoff
+    let lastError;
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        const r = await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ from: `ModArt <${FROM_EMAIL}>`, to: [to], subject, html }),
+        });
+        
+        if (r.ok) {
+          const data = await r.json();
+          return res.status(200).json({ 
+            success: true, 
+            emailId: data.id,
+            attempt 
+          });
+        }
+        
+        // If not ok, store error and retry
+        const errorData = await r.json().catch(() => ({ error: 'Unknown error' }));
+        lastError = new Error(errorData.error || `HTTP ${r.status}`);
+        
+        // Don't retry on client errors (4xx)
+        if (r.status >= 400 && r.status < 500) {
+          break;
+        }
+        
+        // Wait before retry (exponential backoff: 1s, 2s, 4s)
+        if (attempt < 3) {
+          await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt - 1) * 1000));
+        }
+      } catch (fetchError) {
+        lastError = fetchError;
+        // Wait before retry
+        if (attempt < 3) {
+          await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt - 1) * 1000));
+        }
+      }
+    }
+    
+    // All retries failed
+    console.error('Email delivery failed after 3 attempts:', lastError);
+    return res.status(502).json({ 
+      error: 'Email delivery failed after multiple attempts',
+      details: lastError.message,
+      retryable: true
     });
-    if (!r.ok) return res.status(502).json({ error: 'Email delivery failed' });
-    return res.status(200).json({ success: true });
   } catch (e) {
-    return res.status(500).json({ error: e.message });
+    console.error('Email service error:', e);
+    return res.status(500).json({ 
+      error: 'Email service error',
+      details: e.message,
+      retryable: true
+    });
   }
 }
 

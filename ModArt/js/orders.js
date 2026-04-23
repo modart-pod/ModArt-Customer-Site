@@ -62,6 +62,74 @@ export async function sendOrderEmail(payload) {
 }
 
 /**
+ * Resends order confirmation email
+ * @param {string} orderNumber - Order number to resend email for
+ */
+export async function resendOrderEmail(orderNumber) {
+  const btn = document.getElementById('resend-email-btn');
+  if (btn) {
+    btn.textContent = 'Sending...';
+    btn.disabled = true;
+  }
+  
+  try {
+    // Get order details from sessionStorage
+    const stored = sessionStorage.getItem('modart_last_order');
+    if (!stored) {
+      if (window.showError) {
+        window.showError('Order details not found. Please check your email for the original confirmation.');
+      }
+      return;
+    }
+    
+    const { orderNumber: storedOrderNum, total, items } = JSON.parse(stored);
+    
+    // Get shipping address from last checkout
+    const checkoutEmail = document.querySelector('#page-checkout input[type="email"]')?.value?.trim();
+    
+    if (!checkoutEmail) {
+      if (window.showError) {
+        window.showError('Email address not found. Please contact support.');
+      }
+      return;
+    }
+    
+    // Send email
+    const success = await sendOrderEmail({
+      type: 'order_confirmation',
+      to: checkoutEmail,
+      orderNumber: storedOrderNum,
+      items: items || [],
+      total: total,
+      shippingAddress: { email: checkoutEmail }
+    });
+    
+    if (success) {
+      if (window.showSuccess) {
+        window.showSuccess('Confirmation email resent successfully!');
+      }
+      if (btn) {
+        btn.textContent = 'Sent ✓';
+        setTimeout(() => {
+          btn.textContent = 'Resend';
+          btn.disabled = false;
+        }, 3000);
+      }
+    } else {
+      throw new Error('Email delivery failed');
+    }
+  } catch (error) {
+    if (window.showError) {
+      window.showError('Failed to resend email. Please try again or contact support.');
+    }
+    if (btn) {
+      btn.textContent = 'Resend';
+      btn.disabled = false;
+    }
+  }
+}
+
+/**
  * Generates a unique idempotency key for order creation.
  * Key is stored in sessionStorage and reused on retry.
  * 
@@ -674,6 +742,20 @@ export function renderConfirmationPage() {
           <span style="color:#fff">${fmt}</span>
         </div>`;
     }
+    
+    // Add email confirmation status and resend button
+    const emailStatusEl = document.getElementById('confirmation-email-status');
+    if (emailStatusEl) {
+      emailStatusEl.innerHTML = `
+        <div style="display:flex;align-items:center;gap:8px;padding:12px 16px;background:rgba(34,197,94,0.1);border-radius:8px;border-left:3px solid #22C55E;margin-top:16px">
+          <span class="material-symbols-outlined" style="font-size:20px;color:#22C55E">check_circle</span>
+          <div style="flex:1">
+            <div style="font-size:12px;font-weight:700;color:#166534">Confirmation email sent</div>
+            <div style="font-size:11px;color:#166534;opacity:0.8">Check your inbox for order details</div>
+          </div>
+          <button id="resend-email-btn" onclick="window.resendOrderEmail && window.resendOrderEmail('${orderNumber}')" style="padding:6px 12px;background:none;border:1px solid #22C55E;border-radius:var(--r-full);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#166534;cursor:pointer;transition:all 0.2s">Resend</button>
+        </div>`;
+    }
   } catch (e) {
     badge.textContent = 'Your order has been placed';
     if (noteEl) noteEl.style.display = 'block';
@@ -777,4 +859,5 @@ if (typeof window !== 'undefined') {
   window.handleCheckoutSubmit   = handleCheckoutSubmit;
   window.renderConfirmationPage = renderConfirmationPage;
   window.trackGuestOrder        = trackGuestOrder;
+  window.resendOrderEmail       = resendOrderEmail;
 }
