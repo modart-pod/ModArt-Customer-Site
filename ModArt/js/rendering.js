@@ -13,6 +13,7 @@
 
 import { PRODUCTS, cart, wishlist, toggleWishlistItem, discountApplied, discountPercent, setDiscountApplied } from './state.js';
 import { formatPrice } from './currency.js';
+import { getProductLoader } from './data-loader.js';
 
 /** Sanitize string for safe innerHTML insertion */
 function esc(str) {
@@ -227,9 +228,10 @@ export function renderProductDetail() {
    ================================================================ */
 
 /**
- * Renders the shopping cart items, totals, and empty state
+ * Renders the shopping cart items, totals, and empty state.
+ * Uses DataLoader to prevent N+1 queries when fetching product data.
  */
-export function renderBag() {
+export async function renderBag() {
   const list = document.getElementById('bag-items-list');
   const empty = document.getElementById('bag-empty');
   const countEl = document.getElementById('bag-count');
@@ -243,27 +245,67 @@ export function renderBag() {
     if (empty) empty.style.display = 'block';
   } else {
     if (empty) empty.style.display = 'none';
-    const productSource = (window._PRODUCTS && window._PRODUCTS.length > 0) ? window._PRODUCTS : PRODUCTS;
-    list.innerHTML = cart.items.map(item => {
-      const p = productSource.find(p => p.id === item.productId);
-      if (!p) return '';
-      return `<div class="bag-item">
-        <div class="bag-img"><img src="${esc(p.img)}" alt="${esc(p.name)}" loading="lazy"/></div>
-        <div>
-          <div class="bag-item-name">${esc(p.name)}</div>
-          <div class="bag-item-series">${esc(p.series)}</div>
-          <div class="bag-item-meta">Size: ${esc(item.size)}${item.printAddon ? ` · Print addon: ${formatPrice(item.printAddon)}` : ''} &nbsp; ${formatPrice(p.price + (item.printAddon || 0))} each</div>
-          <button class="bag-item-edit" onclick="window.goTo && window.goTo('customize')">Edit Design</button>
-          <div class="qty-control" role="group" aria-label="Quantity for ${esc(p.name)}">
-            <button class="qty-btn" aria-label="Decrease quantity" onclick="window.cart && window.cart.updateQty('${esc(p.id)}',-1,'${esc(item.size)}')">−</button>
-            <span class="qty-val" aria-live="polite">${item.qty}</span>
-            <button class="qty-btn" aria-label="Increase quantity" onclick="window.cart && window.cart.updateQty('${esc(p.id)}',1,'${esc(item.size)}')">+</button>
+    
+    // Use DataLoader to batch product fetches (prevents N+1 queries)
+    const productLoader = getProductLoader();
+    const productIds = cart.items.map(item => item.productId);
+    
+    try {
+      // Batch fetch all products at once
+      const products = await productLoader.loadMany(productIds);
+      
+      // Create product map for fast lookup
+      const productMap = new Map();
+      products.forEach((p, index) => {
+        if (p) productMap.set(productIds[index], p);
+      });
+      
+      // Render cart items
+      list.innerHTML = cart.items.map(item => {
+        const p = productMap.get(item.productId);
+        if (!p) return '';
+        return `<div class="bag-item">
+          <div class="bag-img"><img src="${esc(p.img)}" alt="${esc(p.name)}" loading="lazy"/></div>
+          <div>
+            <div class="bag-item-name">${esc(p.name)}</div>
+            <div class="bag-item-series">${esc(p.series)}</div>
+            <div class="bag-item-meta">Size: ${esc(item.size)}${item.printAddon ? ` · Print addon: ${formatPrice(item.printAddon)}` : ''} &nbsp; ${formatPrice(p.price + (item.printAddon || 0))} each</div>
+            <button class="bag-item-edit" onclick="window.goTo && window.goTo('customize')">Edit Design</button>
+            <div class="qty-control" role="group" aria-label="Quantity for ${esc(p.name)}">
+              <button class="qty-btn" aria-label="Decrease quantity" onclick="window.cart && window.cart.updateQty('${esc(p.id)}',-1,'${esc(item.size)}')">−</button>
+              <span class="qty-val" aria-live="polite">${item.qty}</span>
+              <button class="qty-btn" aria-label="Increase quantity" onclick="window.cart && window.cart.updateQty('${esc(p.id)}',1,'${esc(item.size)}')">+</button>
+            </div>
+            <div class="bag-item-price">${formatPrice(p.price * item.qty)}</div>
           </div>
-          <div class="bag-item-price">${formatPrice(p.price * item.qty)}</div>
-        </div>
-        <button class="bag-remove-btn" aria-label="Remove ${esc(p.name)}" onclick="window.cart && window.cart.remove('${esc(p.id)}','${esc(item.size)}')"><span class="material-symbols-outlined icon">close</span></button>
-      </div>`;
-    }).join('');
+          <button class="bag-remove-btn" aria-label="Remove ${esc(p.name)}" onclick="window.cart && window.cart.remove('${esc(p.id)}','${esc(item.size)}')"><span class="material-symbols-outlined icon">close</span></button>
+        </div>`;
+      }).join('');
+    } catch (error) {
+      console.error('Failed to load products for cart:', error);
+      // Fallback to synchronous rendering
+      const productSource = (window._PRODUCTS && window._PRODUCTS.length > 0) ? window._PRODUCTS : PRODUCTS;
+      list.innerHTML = cart.items.map(item => {
+        const p = productSource.find(p => p.id === item.productId);
+        if (!p) return '';
+        return `<div class="bag-item">
+          <div class="bag-img"><img src="${esc(p.img)}" alt="${esc(p.name)}" loading="lazy"/></div>
+          <div>
+            <div class="bag-item-name">${esc(p.name)}</div>
+            <div class="bag-item-series">${esc(p.series)}</div>
+            <div class="bag-item-meta">Size: ${esc(item.size)}${item.printAddon ? ` · Print addon: ${formatPrice(item.printAddon)}` : ''} &nbsp; ${formatPrice(p.price + (item.printAddon || 0))} each</div>
+            <button class="bag-item-edit" onclick="window.goTo && window.goTo('customize')">Edit Design</button>
+            <div class="qty-control" role="group" aria-label="Quantity for ${esc(p.name)}">
+              <button class="qty-btn" aria-label="Decrease quantity" onclick="window.cart && window.cart.updateQty('${esc(p.id)}',-1,'${esc(item.size)}')">−</button>
+              <span class="qty-val" aria-live="polite">${item.qty}</span>
+              <button class="qty-btn" aria-label="Increase quantity" onclick="window.cart && window.cart.updateQty('${esc(p.id)}',1,'${esc(item.size)}')">+</button>
+            </div>
+            <div class="bag-item-price">${formatPrice(p.price * item.qty)}</div>
+          </div>
+          <button class="bag-remove-btn" aria-label="Remove ${esc(p.name)}" onclick="window.cart && window.cart.remove('${esc(p.id)}','${esc(item.size)}')"><span class="material-symbols-outlined icon">close</span></button>
+        </div>`;
+      }).join('');
+    }
   }
   
   // Update totals

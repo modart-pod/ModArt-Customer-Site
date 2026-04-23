@@ -302,23 +302,61 @@ export async function confirmOrder(orderId, paymentId = 'COD') {
 }
 
 /**
- * Fetches all orders for the current logged-in user.
+ * Fetches all orders for the current logged-in user with pagination.
+ * 
+ * @param {Object} options - Pagination options
+ * @param {number} options.limit - Number of orders per page (default: 20)
+ * @param {string} options.cursor - Cursor for pagination (order ID)
+ * @param {string} options.direction - 'next' or 'prev' (default: 'next')
+ * @returns {Promise<{orders: Array, hasMore: boolean, nextCursor: string|null}>}
  */
-export async function fetchUserOrders() {
-  if (!currentUser) return [];
+export async function fetchUserOrders(options = {}) {
+  if (!currentUser) return { orders: [], hasMore: false, nextCursor: null };
+  
+  const limit = options.limit || 20;
+  const cursor = options.cursor || null;
+  const direction = options.direction || 'next';
+  
   try {
     const client = sb();
-    if (!client) return [];
-    const { data, error } = await client
+    if (!client) return { orders: [], hasMore: false, nextCursor: null };
+    
+    let query = client
       .from('orders')
       .select('*')
       .eq('user_id', currentUser.id)
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false })
+      .limit(limit + 1); // Fetch one extra to check if there are more
+    
+    // Apply cursor-based pagination
+    if (cursor) {
+      if (direction === 'next') {
+        query = query.lt('created_at', cursor);
+      } else {
+        query = query.gt('created_at', cursor);
+      }
+    }
+    
+    const { data, error } = await query;
     if (error) throw error;
-    return data || [];
+    
+    const orders = data || [];
+    const hasMore = orders.length > limit;
+    
+    // Remove the extra item if we have more
+    if (hasMore) {
+      orders.pop();
+    }
+    
+    // Get next cursor (created_at of last item)
+    const nextCursor = orders.length > 0 
+      ? orders[orders.length - 1].created_at 
+      : null;
+    
+    return { orders, hasMore, nextCursor };
   } catch (e) {
     console.warn('Orders fetch failed:', e.message);
-    return [];
+    return { orders: [], hasMore: false, nextCursor: null };
   }
 }
 
@@ -363,13 +401,19 @@ export async function updateOrderStatus(orderId, status, extra = {}) {
 }
 
 /**
- * Renders the orders page with real Supabase data.
+ * Renders the orders page with real Supabase data and pagination.
+ * 
+ * @param {Object} options - Rendering options
+ * @param {boolean} options.append - Append to existing orders (for "Load More")
+ * @param {string} options.cursor - Pagination cursor
  */
-export async function renderOrdersPage() {
+export async function renderOrdersPage(options = {}) {
   const loadingEl   = document.getElementById('orders-loading');
   const emptyEl     = document.getElementById('orders-empty');
   const listEl      = document.getElementById('orders-list');
   const loggedOutEl = document.getElementById('orders-logged-out');
+  const loadMoreBtn = document.getElementById('orders-load-more');
+  
   if (!loadingEl) return;
 
   if (!currentUser) {
@@ -378,28 +422,40 @@ export async function renderOrdersPage() {
     return;
   }
 
-  const orders = await fetchUserOrders();
+  // Show loading only on initial load
+  if (!options.append) {
+    loadingEl.style.display = 'block';
+  }
+
+  const { orders, hasMore, nextCursor } = await fetchUserOrders({
+    limit: 20,
+    cursor: options.cursor || null
+  });
+  
   loadingEl.style.display = 'none';
 
-  if (orders.length === 0) {
+  if (orders.length === 0 && !options.append) {
     if (emptyEl) emptyEl.style.display = 'block';
+    if (loadMoreBtn) loadMoreBtn.style.display = 'none';
     return;
   }
 
-  if (listEl) listEl.style.display = 'flex';
-
-  const STATUS_STEPS  = { pending:0, confirmed:1, processing:1, packed:2, dispatched:3, delivered:4 };
-  const STATUS_LABELS = { pending:'Pending', confirmed:'Confirmed', processing:'In Production', packed:'Packed', dispatched:'Dispatched', delivered:'Delivered' };
-  const STATUS_COLORS = { pending:'var(--g3)', confirmed:'#F59E0B', processing:'#F59E0B', packed:'#F59E0B', dispatched:'var(--red)', delivered:'#22C55E' };
-  const STEPS         = ['Placed','Confirmed','Packed','Dispatched','Delivered'];
-
   if (listEl) {
-    listEl.innerHTML = orders.map(order => {
+    if (!options.append) {
+      listEl.style.display = 'flex';
+      listEl.innerHTML = ''; // Clear existing orders
+    }
+    
+    const STATUS_STEPS  = { pending:0, confirmed:1, processing:1, packed:2, dispatched:3, delivered:4 };
+    const STATUS_LABELS = { pending:'Pending', confirmed:'Confirmed', processing:'In Production', packed:'Packed', dispatched:'Dispatched', delivered:'Delivered' };
+    const STATUS_COLORS = { pending:'var(--g3)', confirmed:'#F59E0B', processing:'#F59E0B', packed:'#F59E0B', dispatched:'var(--red)', delivered:'#22C55E' };
+    const STEPS         = ['Placed','Confirmed','Packed','Dispatched','Delivered'];
+
+    const ordersHTML = orders.map(order => {
       const items = (() => { try { return JSON.parse(order.items || '[]'); } catch { return []; } })();
       const step  = STATUS_STEPS[order.status] ?? 0;
       const total = window.formatPrice ? window.formatPrice(order.total_inr) : '₹' + order.total_inr;
       const date  = new Date(order.created_at).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
-      // Use esc() for all user-supplied data to prevent XSS
       return `<div class="order-card">
         <div class="order-card-hdr">
           <div class="order-card-status" style="color:${STATUS_COLORS[order.status]||'var(--g2)'}">${esc(STATUS_LABELS[order.status]||order.status)}</div>
@@ -417,6 +473,29 @@ export async function renderOrdersPage() {
         </div>
       </div>`;
     }).join('');
+    
+    if (options.append) {
+      listEl.innerHTML += ordersHTML;
+    } else {
+      listEl.innerHTML = ordersHTML;
+    }
+    
+    // Show/hide "Load More" button
+    if (loadMoreBtn) {
+      if (hasMore) {
+        loadMoreBtn.style.display = 'block';
+        loadMoreBtn.onclick = () => {
+          loadMoreBtn.textContent = 'Loading...';
+          loadMoreBtn.disabled = true;
+          renderOrdersPage({ append: true, cursor: nextCursor }).then(() => {
+            loadMoreBtn.textContent = 'Load More Orders';
+            loadMoreBtn.disabled = false;
+          });
+        };
+      } else {
+        loadMoreBtn.style.display = 'none';
+      }
+    }
   }
 }
 
