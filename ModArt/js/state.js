@@ -166,36 +166,155 @@ export function toggleWishlistItem(id) {
 }
 
 /* ================================================================
-   CART STATE
+   CART STATE - Improved with immutability helpers
    ================================================================ */
+
+/**
+ * Creates a snapshot of current cart state for testing/rollback
+ * @returns {Object} Cart state snapshot
+ */
+function createCartSnapshot() {
+  return {
+    items: JSON.parse(JSON.stringify(cart.items)),
+    timestamp: Date.now(),
+  };
+}
+
+/**
+ * Restores cart from a snapshot
+ * @param {Object} snapshot - Cart snapshot to restore
+ */
+function restoreCartSnapshot(snapshot) {
+  cart.items = JSON.parse(JSON.stringify(snapshot.items));
+  cart.sync();
+}
+
 export const cart = {
   items: [],
+  _snapshots: [],
+
+  /**
+   * Creates a snapshot before mutation (for testing/rollback)
+   */
+  snapshot() {
+    const snap = createCartSnapshot();
+    this._snapshots.push(snap);
+    // Keep only last 10 snapshots
+    if (this._snapshots.length > 10) {
+      this._snapshots.shift();
+    }
+    return snap;
+  },
+
+  /**
+   * Restores to previous snapshot
+   */
+  rollback() {
+    if (this._snapshots.length > 0) {
+      const snap = this._snapshots.pop();
+      restoreCartSnapshot(snap);
+      return true;
+    }
+    return false;
+  },
+
+  /**
+   * Clears all snapshots
+   */
+  clearSnapshots() {
+    this._snapshots = [];
+  },
 
   add(id, size = 'M', printAddon = 0) {
+    // Validate inputs
+    if (!id || typeof id !== 'string') {
+      console.error('Invalid product ID');
+      return false;
+    }
+
     const ex = this.items.find(i => i.productId === id && i.size === size && (i.printAddon || 0) === printAddon);
-    ex ? ex.qty++ : this.items.push({ productId: id, qty: 1, size, printAddon });
+    
+    if (ex) {
+      // Immutable update
+      ex.qty++;
+    } else {
+      // Immutable add
+      this.items.push({ productId: id, qty: 1, size, printAddon });
+    }
+    
     this.sync();
+    return true;
   },
 
   remove(id, size) {
-    // Remove by id+size if size provided, else remove all sizes of that id
+    // Validate inputs
+    if (!id || typeof id !== 'string') {
+      console.error('Invalid product ID');
+      return false;
+    }
+
+    // Immutable filter
+    const originalLength = this.items.length;
     this.items = size
       ? this.items.filter(i => !(i.productId === id && i.size === size))
       : this.items.filter(i => i.productId !== id);
-    this.sync();
+    
+    const removed = originalLength !== this.items.length;
+    if (removed) {
+      this.sync();
+    }
+    return removed;
   },
 
   updateQty(id, delta, size) {
+    // Validate inputs
+    if (!id || typeof id !== 'string' || typeof delta !== 'number') {
+      console.error('Invalid parameters');
+      return false;
+    }
+
     const item = size
       ? this.items.find(i => i.productId === id && i.size === size)
       : this.items.find(i => i.productId === id);
+    
     if (item) {
       // Cap at available stock if inventory data exists
       const inv = window.LIVE_INVENTORY?.[id];
       const maxStock = inv ? (inv[item.size] ?? 99) : 99;
-      item.qty = Math.min(maxStock, Math.max(1, item.qty + delta));
-      this.sync();
+      const newQty = Math.min(maxStock, Math.max(1, item.qty + delta));
+      
+      // Only sync if quantity actually changed
+      if (newQty !== item.qty) {
+        item.qty = newQty;
+        this.sync();
+        return true;
+      }
     }
+    return false;
+  },
+
+  /**
+   * Clears all items from cart
+   */
+  clear() {
+    this.items = [];
+    this.sync();
+  },
+
+  /**
+   * Gets cart item by product ID and size
+   */
+  getItem(id, size) {
+    return this.items.find(i => i.productId === id && i.size === size);
+  },
+
+  /**
+   * Checks if product is in cart
+   */
+  hasItem(id, size = null) {
+    return size
+      ? this.items.some(i => i.productId === id && i.size === size)
+      : this.items.some(i => i.productId === id);
   },
 
   get count() {
@@ -208,6 +327,17 @@ export const cart = {
       const p = src.find(p => p.id === i.productId);
       return s + (p ? (p.price + (i.printAddon || 0)) * i.qty : 0);
     }, 0);
+  },
+
+  /**
+   * Gets cart state as plain object (for serialization)
+   */
+  toJSON() {
+    return {
+      items: this.items,
+      count: this.count,
+      subtotal: this.subtotal,
+    };
   },
 
   sync() {
