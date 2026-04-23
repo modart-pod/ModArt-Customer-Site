@@ -5,7 +5,7 @@
 
 import { supabase, currentUser, getSupabase } from './auth.js';
 import { cart }                  from './state.js';
-import { decrementStock, validateCartStock } from './products.js';
+import { decrementStock, rollbackStock, validateCartStock } from './products.js';
 
 // Helper: get live Supabase client
 function sb() { return getSupabase() || supabase; }
@@ -20,6 +20,28 @@ function esc(str) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
+}
+
+/**
+ * Rolls back stock for an entire order using the Supabase RPC.
+ * Used when order confirmation fails.
+ */
+async function rollbackOrderStock(orderId, reason = 'Order failed') {
+  try {
+    const client = sb();
+    if (!client) return { success: false };
+    
+    const { data, error } = await client.rpc('rollback_order_stock', {
+      p_order_id: orderId,
+      p_reason:   reason,
+    });
+    
+    if (error) throw error;
+    return { success: data !== false };
+  } catch (e) {
+    console.error('Order stock rollback failed:', e.message);
+    return { success: false };
+  }
 }
 
 /**
@@ -109,8 +131,31 @@ export async function confirmOrder(orderId, paymentId = 'COD') {
     if (updateErr) throw updateErr;
 
     const items = JSON.parse(order.items || '[]');
+    
+    // Decrement stock with order ID for audit trail
+    const stockErrors = [];
     for (const item of items) {
-      await decrementStock(item.productId, item.size, item.qty);
+      const result = await decrementStock(item.productId, item.size, item.qty, orderId);
+      if (!result.success) {
+        stockErrors.push(`${item.productId} (${item.size}): ${result.error}`);
+      }
+    }
+    
+    // If any stock decrement failed, rollback the order
+    if (stockErrors.length > 0) {
+      // Rollback order status
+      await client
+        .from('orders')
+        .update({ status: 'failed', updated_at: new Date().toISOString() })
+        .eq('id', orderId);
+      
+      // Rollback any successful stock decrements
+      await rollbackOrderStock(orderId, 'Stock decrement failed');
+      
+      return { 
+        success: false, 
+        error: `Stock decrement failed: ${stockErrors.join(', ')}` 
+      };
     }
 
     // Increment coupon usage via RPC (cleaner than raw fetch)

@@ -1,8 +1,8 @@
+import { checkRateLimit } from './utils/rate-limiter.js';
+
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const FROM_EMAIL     = process.env.FROM_EMAIL  || 'noreply@modart.store';
 const STORE_EMAIL    = process.env.STORE_EMAIL || 'modart.pod@gmail.com';
-
-const rateLimitMap = new Map();
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -12,14 +12,22 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(204).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  // Rate limit: 3 per 10 min per IP
-  const ip  = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || 'unknown';
-  const now = Date.now();
-  const rec = rateLimitMap.get(ip) || { count: 0, start: now };
-  if (now - rec.start > 600000) { rec.count = 0; rec.start = now; }
-  rec.count++;
-  rateLimitMap.set(ip, rec);
-  if (rec.count > 3) return res.status(429).json({ error: 'Too many requests. Please wait.' });
+  // Redis-based rate limit: 3 contact emails per 10 minutes per IP
+  const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || 'unknown';
+  const rateLimit = await checkRateLimit(ip, 3, 600, 'contact_email');
+  
+  // Set rate limit headers
+  res.setHeader('X-RateLimit-Limit', '3');
+  res.setHeader('X-RateLimit-Remaining', rateLimit.remaining.toString());
+  res.setHeader('X-RateLimit-Reset', rateLimit.resetIn.toString());
+  
+  if (!rateLimit.allowed) {
+    res.setHeader('Retry-After', rateLimit.retryAfter.toString());
+    return res.status(429).json({ 
+      error: 'Too many requests. Please wait before sending another message.',
+      retryAfter: rateLimit.retryAfter 
+    });
+  }
 
   const { name, email, subject, message } = req.body || {};
   if (!name || !email || !subject || !message) return res.status(400).json({ error: 'All fields required.' });

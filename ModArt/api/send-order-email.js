@@ -1,9 +1,8 @@
+import { checkRateLimit } from './utils/rate-limiter.js';
+
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const FROM_EMAIL     = process.env.FROM_EMAIL || 'orders@modart.store';
 const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || 'https://modart-print-on-demand.vercel.app';
-
-// Rate limit: 20 order emails per IP per hour
-const rateLimitMap = new Map();
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGIN);
@@ -13,14 +12,22 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(204).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  // Rate limit: 20 per IP per hour
-  const ip  = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || 'unknown';
-  const now = Date.now();
-  const rec = rateLimitMap.get(ip) || { count: 0, start: now };
-  if (now - rec.start > 3600000) { rec.count = 0; rec.start = now; }
-  rec.count++;
-  rateLimitMap.set(ip, rec);
-  if (rec.count > 20) return res.status(429).json({ error: 'Too many requests.' });
+  // Redis-based rate limit: 20 order emails per IP per hour
+  const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || 'unknown';
+  const rateLimit = await checkRateLimit(ip, 20, 3600, 'order_email');
+  
+  // Set rate limit headers
+  res.setHeader('X-RateLimit-Limit', '20');
+  res.setHeader('X-RateLimit-Remaining', rateLimit.remaining.toString());
+  res.setHeader('X-RateLimit-Reset', rateLimit.resetIn.toString());
+  
+  if (!rateLimit.allowed) {
+    res.setHeader('Retry-After', rateLimit.retryAfter.toString());
+    return res.status(429).json({ 
+      error: 'Too many requests. Please try again later.',
+      retryAfter: rateLimit.retryAfter 
+    });
+  }
 
   const { type, to, orderNumber, items, total, shippingAddress, trackingNumber, courier } = req.body || {};
   if (!to || !orderNumber || !type) return res.status(400).json({ error: 'Missing required fields' });

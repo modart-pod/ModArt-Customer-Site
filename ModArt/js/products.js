@@ -127,55 +127,88 @@ function _syncProductStock(productId) {
 
 /**
  * Atomically decrements stock using a Supabase RPC to prevent overselling.
- * Falls back to read-then-write if RPC not available.
+ * Uses row-level locking to prevent race conditions.
+ * 
+ * @param {string} productId - Product ID
+ * @param {string} size - Size (XS, S, M, L, XL, XXL)
+ * @param {number} quantity - Quantity to decrement
+ * @param {string} orderId - Optional order ID for audit trail
+ * @returns {Promise<{success: boolean, error?: string}>}
  */
-export async function decrementStock(productId, size, quantity = 1) {
+export async function decrementStock(productId, size, quantity = 1, orderId = null) {
   try {
     const client = sb();
     if (!client) return { success: false, error: 'Supabase not available' };
-    // Try atomic RPC first (prevents race conditions / overselling)
+    
+    // Use atomic RPC with row-level locking (prevents race conditions)
     const { data: rpcData, error: rpcErr } = await client.rpc('decrement_stock', {
       p_product_id: productId,
       p_size:       size,
       p_quantity:   quantity,
+      p_order_id:   orderId,
     });
 
-    if (!rpcErr) {
-      if (rpcData === false) throw new Error(`Insufficient stock for ${productId} size ${size}`);
-      if (LIVE_INVENTORY[productId]) {
-        LIVE_INVENTORY[productId][size] = Math.max(0, (LIVE_INVENTORY[productId][size] || 0) - quantity);
-      }
-      // Update total stock on the product object so UI reflects immediately
-      _syncProductStock(productId);
-      return { success: true };
+    if (rpcErr) {
+      // RPC returned an error (insufficient stock or not found)
+      throw new Error(rpcErr.message || `Failed to decrement stock for ${productId} size ${size}`);
     }
-
-    // Fallback: read-then-write (less safe but works without RPC)
-    const { data: current } = await client
-      .from('inventory')
-      .select('stock')
-      .eq('product_id', productId)
-      .eq('size', size)
-      .single();
-
-    if (!current || current.stock < quantity) {
+    
+    if (rpcData === false) {
       throw new Error(`Insufficient stock for ${productId} size ${size}`);
     }
-
-    const { error } = await client
-      .from('inventory')
-      .update({ stock: current.stock - quantity, updated_at: new Date().toISOString() })
-      .eq('product_id', productId)
-      .eq('size', size);
-
-    if (error) throw error;
-
+    
+    // Update local inventory cache
     if (LIVE_INVENTORY[productId]) {
-      LIVE_INVENTORY[productId][size] = current.stock - quantity;
+      LIVE_INVENTORY[productId][size] = Math.max(0, (LIVE_INVENTORY[productId][size] || 0) - quantity);
     }
+    
+    // Update total stock on the product object so UI reflects immediately
     _syncProductStock(productId);
+    
     return { success: true };
   } catch (e) {
+    console.error('Stock decrement failed:', e.message);
+    return { success: false, error: e.message };
+  }
+}
+
+/**
+ * Rolls back stock for a failed order.
+ * Used when payment fails or order is cancelled.
+ * 
+ * @param {string} productId - Product ID
+ * @param {string} size - Size
+ * @param {number} quantity - Quantity to restore
+ * @param {string} orderId - Order ID for audit trail
+ * @param {string} reason - Reason for rollback
+ * @returns {Promise<{success: boolean, error?: string}>}
+ */
+export async function rollbackStock(productId, size, quantity, orderId = null, reason = 'Order failed') {
+  try {
+    const client = sb();
+    if (!client) return { success: false, error: 'Supabase not available' };
+    
+    const { data: rpcData, error: rpcErr } = await client.rpc('rollback_stock', {
+      p_product_id: productId,
+      p_size:       size,
+      p_quantity:   quantity,
+      p_order_id:   orderId,
+      p_reason:     reason,
+    });
+
+    if (rpcErr) throw new Error(rpcErr.message);
+    if (rpcData === false) throw new Error('Rollback failed');
+    
+    // Update local inventory cache
+    if (LIVE_INVENTORY[productId]) {
+      LIVE_INVENTORY[productId][size] = (LIVE_INVENTORY[productId][size] || 0) + quantity;
+    }
+    
+    _syncProductStock(productId);
+    
+    return { success: true };
+  } catch (e) {
+    console.error('Stock rollback failed:', e.message);
     return { success: false, error: e.message };
   }
 }
@@ -219,6 +252,7 @@ if (typeof window !== 'undefined') {
   window.fetchInventory      = fetchInventory;
   window.getSizesForProduct  = getSizesForProduct;
   window.decrementStock      = decrementStock;
+  window.rollbackStock       = rollbackStock;
   window.validateCartStock   = validateCartStock;
   window.initProducts        = initProducts;
 }
