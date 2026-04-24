@@ -315,4 +315,4 @@ if (typeof window !== 'undefined') {
   window.validateAndRefreshToken = validateAndRefreshToken; // ✅ NEW
 }
 
-export { updateAuthUI, validateAndRefreshToken, startTokenRefreshInterval, stopTokenRefreshInterval };
+export { updateAuthUI, startTokenRefreshInterval, stopTokenRefreshInterval };
