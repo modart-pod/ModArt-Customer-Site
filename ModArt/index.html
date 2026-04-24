@@ -97,6 +97,14 @@
       <div class="nav-logo-wrap">
         <button class="nav-logo" onclick="goTo('home')" aria-label="ModArt home">
           <span style="display:flex;align-items:center;gap:8px">
+            <span style="position:relative;height:clamp(32px,3.5vw,44px);display:flex;align-items:center">
+              <img src="assets/images/White logoo.png" alt="" id="nav-logo-white"
+                   style="height:clamp(32px,3.5vw,44px);width:auto;position:absolute;left:0;top:50%;transform:translateY(-50%);opacity:1;transition:opacity .3s ease"/>
+              <img src="assets/images/logo-black.png" alt="" id="nav-logo-black"
+                   style="height:clamp(32px,3.5vw,44px);width:auto;position:absolute;left:0;top:50%;transform:translateY(-50%);opacity:0;transition:opacity .3s ease"/>
+              <img src="assets/images/logo-black.png" alt="" aria-hidden="true"
+                   style="height:clamp(32px,3.5vw,44px);width:auto;visibility:hidden"/>
+            </span>
             <span class="nav-logo-fallback" style="display:block;font-size:clamp(13px,1.4vw,16px);font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:#fff">MODART</span>
           </span>
         </button>
