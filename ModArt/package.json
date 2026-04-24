@@ -23,7 +23,8 @@
     "@vitest/coverage-v8": "^1.0.0"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.38.0"
+    "@supabase/supabase-js": "^2.38.0",
+    "@upstash/redis": "^1.28.0"
   },
   "engines": {
     "node": ">=18.0.0"
