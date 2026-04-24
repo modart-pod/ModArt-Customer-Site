@@ -172,10 +172,6 @@ function initNavScroll() {
       nav.style.webkitBackdropFilter = 'blur(0px)';
       nav.querySelectorAll('.nav-link, .nav-logo').forEach(l => l.style.color = 'rgba(255,255,255,0.82)');
       nav.querySelectorAll('.nav-icon-btn').forEach(i => i.style.color = 'rgba(255,255,255,0.82)');
-      const logoW = document.getElementById('nav-logo-white');
-      const logoB = document.getElementById('nav-logo-black');
-      if (logoW) logoW.style.opacity = '1';
-      if (logoB) logoB.style.opacity = '0';
     } else {
       // Always dark nav when scrolled or on non-home pages
       nav.style.background           = 'rgba(10,10,10,0.95)';
@@ -184,10 +180,6 @@ function initNavScroll() {
       nav.style.webkitBackdropFilter = 'blur(16px)';
       nav.querySelectorAll('.nav-link, .nav-logo').forEach(l => l.style.color = '');
       nav.querySelectorAll('.nav-icon-btn').forEach(i => i.style.color = '');
-      const logoW = document.getElementById('nav-logo-white');
-      const logoB = document.getElementById('nav-logo-black');
-      if (logoW) logoW.style.opacity = '1';
-      if (logoB) logoB.style.opacity = '0';
     }
   }
 
