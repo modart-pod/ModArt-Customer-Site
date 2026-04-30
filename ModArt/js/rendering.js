@@ -13,72 +13,6 @@
 
 import { PRODUCTS, cart, wishlist, toggleWishlistItem, discountApplied, discountPercent, setDiscountApplied } from './state.js';
 import { formatPrice } from './currency.js';
-import { getProductLoader } from './data-loader.js';
-import { optimisticRemoveFromCart, optimisticUpdateQuantity, optimisticToggleWishlist } from './optimistic-ui.js';
-
-/* ================================================================
-   SKELETON LOADER HELPERS
-   ================================================================ */
-
-/**
- * Shows skeleton loaders for a grid
- * @param {string} gridId - Grid element ID
- */
-export function showSkeletonGrid(gridId) {
-  const grid = document.getElementById(gridId);
-  if (!grid) return;
-  
-  const skeletonId = `${gridId}-skeleton`;
-  const skeleton = document.getElementById(skeletonId);
-  
-  if (skeleton) {
-    skeleton.style.display = '';
-    grid.style.display = 'none';
-  }
-}
-
-/**
- * Hides skeleton loaders for a grid
- * @param {string} gridId - Grid element ID
- */
-export function hideSkeletonGrid(gridId) {
-  const grid = document.getElementById(gridId);
-  if (!grid) return;
-  
-  const skeletonId = `${gridId}-skeleton`;
-  const skeleton = document.getElementById(skeletonId);
-  
-  if (skeleton) {
-    skeleton.style.display = 'none';
-    grid.style.display = '';
-  }
-}
-
-/**
- * Shows skeleton loader for bag items
- */
-export function showSkeletonBag() {
-  const list = document.getElementById('bag-items-list');
-  const skeleton = document.getElementById('bag-skeleton');
-  
-  if (list && skeleton) {
-    skeleton.style.display = '';
-    list.style.display = 'none';
-  }
-}
-
-/**
- * Hides skeleton loader for bag items
- */
-export function hideSkeletonBag() {
-  const list = document.getElementById('bag-items-list');
-  const skeleton = document.getElementById('bag-skeleton');
-  
-  if (list && skeleton) {
-    skeleton.style.display = 'none';
-    list.style.display = '';
-  }
-}
 
 /** Sanitize string for safe innerHTML insertion */
 function esc(str) {
@@ -97,10 +31,6 @@ function esc(str) {
 // Track currently viewed product
 let currentProductId = null;
 
-/**
- * Renders the product grid for home or shop pages
- * @param {string} page - Page type ('home' or 'shop')
- */
 // Static review data keyed by product id (display only, not editable)
 const PRODUCT_REVIEWS = {
   'vanta-tee':     { rating: 4.7, count: 128 },
@@ -119,14 +49,10 @@ function renderStars(rating) {
     + (half ? '<span class="material-symbols-outlined icon" style="font-size:12px;color:var(--amber)">star_half</span>' : '')
     + '<span class="material-symbols-outlined icon" style="font-size:12px;color:var(--border)">star</span>'.repeat(empty);
 }
-
 export function renderProducts(page) {
   const id = page === 'home' ? 'home-product-grid' : 'shop-product-grid';
   const grid = document.getElementById(id);
   if (!grid) return;
-
-  // Show skeleton while loading
-  showSkeletonGrid(id);
 
   const productSource = (window._PRODUCTS && window._PRODUCTS.length > 0) ? window._PRODUCTS : PRODUCTS;
   const prods = page === 'home' ? productSource.slice(0, 4) : productSource;
@@ -166,9 +92,6 @@ export function renderProducts(page) {
       ${sold ? `<button onclick="event.stopPropagation();window.notifyMe&&window.notifyMe('${esc(p.id)}',this)" style="width:100%;margin-top:8px;padding:8px;background:none;border:1.5px solid var(--border);border-radius:var(--r-full);font-family:var(--font);font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--g3);cursor:pointer;transition:all var(--t)" onmouseover="this.style.borderColor='var(--black)';this.style.color='var(--black)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--g3)'">Notify Me</button>` : ''}
     </div>`;
   }).join('');
-
-  // Hide skeleton after rendering
-  hideSkeletonGrid(id);
 
   // Rebuild carousel dots after home cards are injected
   if (isShop === false && window._rebuildCarouselDots) {
@@ -313,80 +236,30 @@ export async function renderBag() {
   
   if (cart.items.length === 0) {
     list.innerHTML = '';
-    hideSkeletonBag();
     if (empty) empty.style.display = 'block';
   } else {
     if (empty) empty.style.display = 'none';
-    
-    // Show skeleton while loading
-    showSkeletonBag();
-    
-    // Use DataLoader to batch product fetches (prevents N+1 queries)
-    const productLoader = getProductLoader();
-    const productIds = cart.items.map(item => item.productId);
-    
-    try {
-      // Batch fetch all products at once
-      const products = await productLoader.loadMany(productIds);
-      
-      // Create product map for fast lookup
-      const productMap = new Map();
-      products.forEach((p, index) => {
-        if (p) productMap.set(productIds[index], p);
-      });
-      
-      // Render cart items
-      list.innerHTML = cart.items.map(item => {
-        const p = productMap.get(item.productId);
-        if (!p) return '';
-        return `<div class="bag-item">
-          <div class="bag-img"><img src="${esc(p.img)}" alt="${esc(p.name)}" loading="lazy"/></div>
-          <div>
-            <div class="bag-item-name">${esc(p.name)}</div>
-            <div class="bag-item-series">${esc(p.series)}</div>
-            <div class="bag-item-meta">Size: ${esc(item.size)}${item.printAddon ? ` · Print addon: ${formatPrice(item.printAddon)}` : ''} &nbsp; ${formatPrice(p.price + (item.printAddon || 0))} each</div>
-            <button class="bag-item-edit" onclick="window.goTo && window.goTo('customize')">Edit Design</button>
-            <div class="qty-control" role="group" aria-label="Quantity for ${esc(p.name)}">
-              <button class="qty-btn" aria-label="Decrease quantity" onclick="window.updateCartQuantity && window.updateCartQuantity('${esc(p.id)}',-1,'${esc(item.size)}')">−</button>
-              <span class="qty-val" aria-live="polite">${item.qty}</span>
-              <button class="qty-btn" aria-label="Increase quantity" onclick="window.updateCartQuantity && window.updateCartQuantity('${esc(p.id)}',1,'${esc(item.size)}')">+</button>
-            </div>
-            <div class="bag-item-price">${formatPrice(p.price * item.qty)}</div>
+    const productSource = (window._PRODUCTS && window._PRODUCTS.length > 0) ? window._PRODUCTS : PRODUCTS;
+    list.innerHTML = cart.items.map(item => {
+      const p = productSource.find(p => p.id === item.productId);
+      if (!p) return '';
+      return `<div class="bag-item">
+        <div class="bag-img"><img src="${esc(p.img)}" alt="${esc(p.name)}" loading="lazy"/></div>
+        <div>
+          <div class="bag-item-name">${esc(p.name)}</div>
+          <div class="bag-item-series">${esc(p.series)}</div>
+          <div class="bag-item-meta">Size: ${esc(item.size)}${item.printAddon ? ` · Print addon: ${formatPrice(item.printAddon)}` : ''} &nbsp; ${formatPrice(p.price + (item.printAddon || 0))} each</div>
+          <button class="bag-item-edit" onclick="window.goTo && window.goTo('customize')">Edit Design</button>
+          <div class="qty-control" role="group" aria-label="Quantity for ${esc(p.name)}">
+            <button class="qty-btn" aria-label="Decrease quantity" onclick="window.cart && window.cart.updateQty('${esc(p.id)}',-1,'${esc(item.size)}')">−</button>
+            <span class="qty-val" aria-live="polite">${item.qty}</span>
+            <button class="qty-btn" aria-label="Increase quantity" onclick="window.cart && window.cart.updateQty('${esc(p.id)}',1,'${esc(item.size)}')">+</button>
           </div>
-          <button class="bag-remove-btn" aria-label="Remove ${esc(p.name)}" onclick="window.removeFromCart && window.removeFromCart('${esc(p.id)}','${esc(item.size)}')"><span class="material-symbols-outlined icon">close</span></button>
-        </div>`;
-      }).join('');
-      
-      // Hide skeleton after rendering
-      hideSkeletonBag();
-    } catch (error) {
-      console.error('Failed to load products for cart:', error);
-      // Fallback to synchronous rendering
-      const productSource = (window._PRODUCTS && window._PRODUCTS.length > 0) ? window._PRODUCTS : PRODUCTS;
-      list.innerHTML = cart.items.map(item => {
-        const p = productSource.find(p => p.id === item.productId);
-        if (!p) return '';
-        return `<div class="bag-item">
-          <div class="bag-img"><img src="${esc(p.img)}" alt="${esc(p.name)}" loading="lazy"/></div>
-          <div>
-            <div class="bag-item-name">${esc(p.name)}</div>
-            <div class="bag-item-series">${esc(p.series)}</div>
-            <div class="bag-item-meta">Size: ${esc(item.size)}${item.printAddon ? ` · Print addon: ${formatPrice(item.printAddon)}` : ''} &nbsp; ${formatPrice(p.price + (item.printAddon || 0))} each</div>
-            <button class="bag-item-edit" onclick="window.goTo && window.goTo('customize')">Edit Design</button>
-            <div class="qty-control" role="group" aria-label="Quantity for ${esc(p.name)}">
-              <button class="qty-btn" aria-label="Decrease quantity" onclick="window.updateCartQuantity && window.updateCartQuantity('${esc(p.id)}',-1,'${esc(item.size)}')">−</button>
-              <span class="qty-val" aria-live="polite">${item.qty}</span>
-              <button class="qty-btn" aria-label="Increase quantity" onclick="window.updateCartQuantity && window.updateCartQuantity('${esc(p.id)}',1,'${esc(item.size)}')">+</button>
-            </div>
-            <div class="bag-item-price">${formatPrice(p.price * item.qty)}</div>
-          </div>
-          <button class="bag-remove-btn" aria-label="Remove ${esc(p.name)}" onclick="window.removeFromCart && window.removeFromCart('${esc(p.id)}','${esc(item.size)}')"><span class="material-symbols-outlined icon">close</span></button>
-        </div>`;
-      }).join('');
-      
-      // Hide skeleton after rendering
-      hideSkeletonBag();
-    }
+          <div class="bag-item-price">${formatPrice(p.price * item.qty)}</div>
+        </div>
+        <button class="bag-remove-btn" aria-label="Remove ${esc(p.name)}" onclick="window.cart && window.cart.remove('${esc(p.id)}','${esc(item.size)}')"><span class="material-symbols-outlined icon">close</span></button>
+      </div>`;
+    }).join('');
   }
   
   // Update totals
@@ -441,17 +314,7 @@ export function updateBadges() {
  * @param {HTMLElement} btn - Wishlist button element
  */
 export function toggleWishlist(id, btn) {
-  // Use optimistic UI if available
-  if (typeof optimisticToggleWishlist === 'function') {
-    optimisticToggleWishlist(id).catch(() => {
-      // Rollback already handled by optimistic UI
-    });
-  } else {
-    // Fallback to direct update
-    toggleWishlistItem(id);
-  }
-  
-  // Update UI immediately
+  toggleWishlistItem(id);
   const isWished = wishlist.has(id);
   btn.classList.toggle('wishlisted', isWished);
   btn.querySelector('.icon').textContent = isWished ? 'favorite' : 'favorite_border';
@@ -545,10 +408,6 @@ if (typeof window !== 'undefined') {
   window.applyDiscount = applyDiscount;
   window.openProduct = openProduct;
   window.renderProductDetail = renderProductDetail;
-  window.showSkeletonGrid = showSkeletonGrid;
-  window.hideSkeletonGrid = hideSkeletonGrid;
-  window.showSkeletonBag = showSkeletonBag;
-  window.hideSkeletonBag = hideSkeletonBag;
   
   // Make cart object available globally for onclick handlers
   window.cart = cart;
@@ -761,34 +620,17 @@ if (typeof window !== 'undefined') {
    ================================================================ */
 
 /**
- * Optimistic cart quantity update wrapper
- * @param {string} productId - Product ID
- * @param {number} delta - Quantity change
- * @param {string} size - Size
+ * Direct cart quantity update
  */
 export function updateCartQuantity(productId, delta, size) {
-  if (typeof optimisticUpdateQuantity === 'function') {
-    optimisticUpdateQuantity(productId, delta, size).catch(() => {
-      // Rollback already handled
-    });
-  } else {
-    cart.updateQty(productId, delta, size);
-  }
+  cart.updateQty(productId, delta, size);
 }
 
 /**
- * Optimistic cart remove wrapper
- * @param {string} productId - Product ID
- * @param {string} size - Size
+ * Direct cart remove
  */
 export function removeFromCart(productId, size) {
-  if (typeof optimisticRemoveFromCart === 'function') {
-    optimisticRemoveFromCart(productId, size).catch(() => {
-      // Rollback already handled
-    });
-  } else {
-    cart.remove(productId, size);
-  }
+  cart.remove(productId, size);
 }
 
 // Export to window for onclick handlers

@@ -24,6 +24,18 @@
   <!-- Preload hero image ∩┐╜ improves LCP score -->
   <link rel="preload" as="image" href="https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=1400&q=85" fetchpriority="high">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Inject Supabase credentials from server at runtime (no hardcoded keys) -->
+  <script>
+    (function(){
+      fetch('/api/config')
+        .then(function(r){ return r.json(); })
+        .then(function(c){
+          window.__SUPABASE_URL__      = c.supabaseUrl;
+          window.__SUPABASE_ANON_KEY__ = c.supabaseAnonKey;
+        })
+        .catch(function(){ console.error('Failed to load config'); });
+    })();
+  </script>
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/layout.css">
   <link rel="stylesheet" href="css/components.css">

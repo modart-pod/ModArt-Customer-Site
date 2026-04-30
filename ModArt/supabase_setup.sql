@@ -5,6 +5,50 @@
 
 -- ── 1. CREATE ALL TABLES ─────────────────────────────────────────
 
+-- Profiles table — stores role flag for admin identification
+CREATE TABLE IF NOT EXISTS profiles (
+  id         UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  role       TEXT NOT NULL DEFAULT 'customer',  -- 'customer' | 'admin' | 'staff'
+  full_name  TEXT,
+  phone      TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- Auto-create profile on signup
+CREATE OR REPLACE FUNCTION handle_new_user()
+RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER AS $$
+BEGIN
+  INSERT INTO profiles (id, full_name)
+  VALUES (NEW.id, NEW.raw_user_meta_data->>'full_name')
+  ON CONFLICT (id) DO NOTHING;
+  RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION handle_new_user();
+
+-- Addresses table — saved addresses reused at checkout
+CREATE TABLE IF NOT EXISTS addresses (
+  id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id      UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  full_name    TEXT NOT NULL,
+  phone        TEXT NOT NULL,
+  street       TEXT NOT NULL,
+  city         TEXT NOT NULL,
+  state        TEXT,
+  postal       TEXT NOT NULL,
+  country      TEXT NOT NULL DEFAULT 'India',
+  is_default   BOOLEAN NOT NULL DEFAULT FALSE,
+  created_at   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_addresses_user_id ON addresses(user_id);
+
 CREATE TABLE IF NOT EXISTS products (
   id               TEXT PRIMARY KEY,
   name             TEXT NOT NULL,
@@ -55,9 +99,24 @@ CREATE TABLE IF NOT EXISTS orders (
   updated_at       TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+-- Order items — proper relational table (also stored as JSON in orders.items for speed)
+CREATE TABLE IF NOT EXISTS order_items (
+  id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  order_id     UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+  product_id   TEXT REFERENCES products(id) ON DELETE SET NULL,
+  product_name TEXT NOT NULL,
+  size         TEXT NOT NULL,
+  qty          INT NOT NULL DEFAULT 1,
+  unit_price   INT NOT NULL DEFAULT 0,
+  print_addon  INT NOT NULL DEFAULT 0,
+  line_total   INT GENERATED ALWAYS AS ((unit_price + print_addon) * qty) STORED,
+  created_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_order_items_order_id   ON order_items(order_id);
+CREATE INDEX IF NOT EXISTS idx_order_items_product_id ON order_items(product_id);
+
 CREATE TABLE IF NOT EXISTS carts (
-  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id    UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   items      TEXT NOT NULL DEFAULT '[]',
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   UNIQUE(user_id)
@@ -484,6 +543,33 @@ CREATE POLICY "wishlists_admin_read" ON wishlists FOR SELECT USING (is_admin());
 -- Drops policies
 CREATE POLICY "drops_read"         ON drops     FOR SELECT USING (is_active = TRUE OR is_admin());
 CREATE POLICY "drops_admin_all"    ON drops     FOR ALL    USING (is_admin()) WITH CHECK (is_admin());
+
+-- Profiles policies
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "profiles_self"      ON profiles;
+DROP POLICY IF EXISTS "profiles_admin_all" ON profiles;
+CREATE POLICY "profiles_self"      ON profiles FOR ALL    USING (auth.uid() = id) WITH CHECK (auth.uid() = id);
+CREATE POLICY "profiles_admin_all" ON profiles FOR ALL    USING (is_admin()) WITH CHECK (is_admin());
+
+-- Addresses policies
+ALTER TABLE addresses ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "addresses_user_all"   ON addresses;
+DROP POLICY IF EXISTS "addresses_admin_read" ON addresses;
+CREATE POLICY "addresses_user_all"   ON addresses FOR ALL    USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "addresses_admin_read" ON addresses FOR SELECT USING (is_admin());
+
+-- Order items policies
+ALTER TABLE order_items ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "order_items_user_read"  ON order_items;
+DROP POLICY IF EXISTS "order_items_user_insert" ON order_items;
+DROP POLICY IF EXISTS "order_items_admin_all"  ON order_items;
+CREATE POLICY "order_items_user_read"   ON order_items FOR SELECT USING (
+  EXISTS (SELECT 1 FROM orders o WHERE o.id = order_id AND (o.user_id = auth.uid() OR is_admin()))
+);
+CREATE POLICY "order_items_user_insert" ON order_items FOR INSERT WITH CHECK (
+  EXISTS (SELECT 1 FROM orders o WHERE o.id = order_id AND (o.user_id = auth.uid() OR o.user_id IS NULL))
+);
+CREATE POLICY "order_items_admin_all"   ON order_items FOR ALL USING (is_admin()) WITH CHECK (is_admin());
 
 -- ── 16. ENABLE SUPABASE REALTIME ─────────────────────────────────
 

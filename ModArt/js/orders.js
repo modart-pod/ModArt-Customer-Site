@@ -618,8 +618,16 @@ function showCheckoutError(field, message) {
 
 /**
  * Handles checkout form submission and creates a real COD order.
+ * Redirects to login if user is not authenticated.
  */
 export async function handleCheckoutSubmit() {
+  // ✅ Require login before checkout
+  if (!currentUser) {
+    sessionStorage.setItem('modart_checkout_redirect', '1');
+    if (window.goTo) window.goTo('login');
+    return;
+  }
+
   const btn = document.getElementById('pay-now-btn');
   if (btn) { btn.textContent = 'Placing order…'; btn.disabled = true; }
 
@@ -850,6 +858,44 @@ export async function trackGuestOrder() {
   }
 }
 
+/**
+ * Allows a user to cancel their own order — only if status is still 'pending'.
+ * @param {string} orderId
+ * @returns {Promise<{success: boolean, error?: string}>}
+ */
+export async function cancelOrder(orderId) {
+  if (!currentUser) return { success: false, error: 'Not logged in' };
+
+  try {
+    const client = sb();
+    if (!client) return { success: false, error: 'Supabase not available' };
+
+    // Fetch order and verify ownership + status
+    const { data: order, error: fetchErr } = await client
+      .from('orders')
+      .select('id, status, user_id')
+      .eq('id', orderId)
+      .single();
+
+    if (fetchErr || !order) return { success: false, error: 'Order not found' };
+    if (order.user_id !== currentUser.id) return { success: false, error: 'Unauthorized' };
+    if (order.status !== 'pending') {
+      return { success: false, error: `Cannot cancel — order is already "${order.status}"` };
+    }
+
+    const { error: updateErr } = await client
+      .from('orders')
+      .update({ status: 'cancelled', updated_at: new Date().toISOString() })
+      .eq('id', orderId);
+
+    if (updateErr) throw updateErr;
+
+    return { success: true };
+  } catch (e) {
+    return { success: false, error: e.message };
+  }
+}
+
 if (typeof window !== 'undefined') {
   window.createOrder            = createOrder;
   window.confirmOrder           = confirmOrder;
@@ -860,4 +906,5 @@ if (typeof window !== 'undefined') {
   window.renderConfirmationPage = renderConfirmationPage;
   window.trackGuestOrder        = trackGuestOrder;
   window.resendOrderEmail       = resendOrderEmail;
+  window.cancelOrder            = cancelOrder;
 }

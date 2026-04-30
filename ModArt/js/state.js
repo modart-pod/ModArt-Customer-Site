@@ -2,8 +2,6 @@
    STATE MANAGEMENT MODULE
    ================================================================ */
 
-import { optimisticAddToCart, optimisticRemoveFromCart, optimisticUpdateQuantity } from './optimistic-ui.js';
-
 /* ================================================================
    PRODUCTS STATE — fallback data used when Supabase is unavailable
    Synced with database seed data from supabase_setup_complete.sql
@@ -390,14 +388,7 @@ if (typeof window !== 'undefined') {
    CART HELPER FUNCTIONS
    ================================================================ */
 export function addToCart(id, size = 'M') {
-  // Use optimistic UI if available, fallback to direct cart update
-  if (typeof optimisticAddToCart === 'function') {
-    optimisticAddToCart(id, size, 0).catch(() => {
-      // Fallback already handled by optimistic UI
-    });
-  } else {
-    cart.add(id, size);
-  }
+  cart.add(id, size);
 }
 
 /**

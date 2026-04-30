@@ -199,6 +199,15 @@ export async function initAuth() {
       currentUser = session?.user ?? null;
       window.currentUser = currentUser;
       updateAuthUI();
+
+      // If user just logged in and was redirected from checkout, go back
+      if (event === 'SIGNED_IN') {
+        const checkoutRedirect = sessionStorage.getItem('modart_checkout_redirect');
+        if (checkoutRedirect) {
+          sessionStorage.removeItem('modart_checkout_redirect');
+          if (window.goTo) window.goTo('checkout');
+        }
+      }
       
       // Manage refresh interval based on auth state
       if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {

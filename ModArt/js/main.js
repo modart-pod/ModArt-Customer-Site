@@ -13,7 +13,6 @@ import { applyDesktopLayout } from './layouts/DesktopLayout.js';
 import { initCurrency, getCurrencyBadge } from './currency.js';
 import { initAuth } from './auth.js';
 import { initCartPersistence, markAuthReady } from './cart-persist.js';
-import { initCartSync } from './cart-sync.js';
 import { initProducts } from './products.js';
 import { initRealtime } from './realtime.js';
 import { initDrops } from './drops.js';
@@ -22,22 +21,6 @@ import './auth-handlers.js';
 import './account.js';
 import { initCarousel } from './utils.js';
 import './modals.js';
-// Phase 3: UX & Feedback
-import './toast.js';
-import './loading-manager.js';
-import './optimistic-ui.js';
-import './error-handler.js';
-// Phase 4: Accessibility
-import './keyboard-nav.js';
-// Phase 5: Performance & Caching
-import './sw-register.js';
-import { preloadCriticalResources } from './cache-manager.js';
-// Phase 6: Testing & Monitoring
-import './monitoring/sentry.js';
-import './monitoring/web-vitals.js';
-import './audit-logger.js';
-// Phase 7: Nice-to-Have Features
-import { trackProductView, renderRecommendations, markCartActivity, checkReferralParam } from './recommendations.js';
 
 /* ================================================================
    COUNTDOWN TIMER
@@ -161,7 +144,6 @@ async function initApplication() {
 
   // 5. Cart — load local first, then merge with cloud
   await initCartPersistence();
-  initCartSync(); // cross-tab sync via BroadcastChannel
 
   // 6. Products + inventory
   await initProducts();
@@ -187,10 +169,8 @@ async function initApplication() {
   initCountdownTimer();
   initLiveOrdersCounter();
 
-  // 10. Misc — @keyframes spin is now in index.html <style>, no runtime injection needed
+  // 10. Misc
   window.initCookieBanner && window.initCookieBanner();
-
-  // 11. Scroll fade-in
   const fadeObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -207,35 +187,6 @@ async function initApplication() {
   if (currentPage === 'home' || currentPage === 'shop') {
     renderProducts(currentPage);
     if (currentPage === 'home') window._rebuildCarouselDots && window._rebuildCarouselDots();
-  }
-
-  // 13. Preload critical resources for better performance
-  preloadCriticalResources();
-
-  // 14. Phase 7: Check referral param, track cart activity
-  checkReferralParam();
-  markCartActivity();
-
-  // 15. Phase 7: Render personalised recommendations on product page navigation
-  const _origGoTo = window.goTo;
-  if (_origGoTo) {
-    window.goTo = function(page, ...args) {
-      _origGoTo(page, ...args);
-      if (page === 'product' && window._currentProductId) {
-        // Track view
-        trackProductView(window._currentProductId);
-        // Render recommendations (exclude current product + cart items)
-        const cartIds = (window.cart?.items || []).map(i => i.productId);
-        renderRecommendations('recommendations-grid', {
-          excludeIds: [window._currentProductId, ...cartIds],
-          seedIds:    [window._currentProductId],
-          limit: 4,
-        });
-      }
-      if (page === 'bag') {
-        markCartActivity();
-      }
-    };
   }
 }
 
