@@ -2961,24 +2961,28 @@ function handleAdminLogin() {
     resetSessionTimeout();
     
     var u = r.data.user;
+    var accessToken  = r.data.access_token;
+    var refreshToken = r.data.refresh_token || r.data.access_token;
     var session = JSON.stringify({ email: u.email, name: u.name, role: u.role, initials: u.initials });
+
     if (document.getElementById('remember-me').checked) {
-      localStorage.setItem('ma_admin_auth', session);
+      localStorage.setItem('ma_admin_auth',     session);
       localStorage.setItem('ma_admin_explicit', '1');
-      if (r.data.access_token) {
-        localStorage.setItem('ma_admin_token', r.data.access_token);
-        var sb = getSB();
-        if (sb) sb.auth.setSession({ access_token: r.data.access_token, refresh_token: r.data.access_token }).catch(function(){});
-      }
+      localStorage.setItem('ma_admin_token',    accessToken);
+      localStorage.setItem('ma_admin_refresh',  refreshToken);
     } else {
-      sessionStorage.setItem('ma_admin_auth', session);
+      sessionStorage.setItem('ma_admin_auth',     session);
       sessionStorage.setItem('ma_admin_explicit', '1');
-      if (r.data.access_token) {
-        sessionStorage.setItem('ma_admin_token', r.data.access_token);
-        var sb = getSB();
-        if (sb) sb.auth.setSession({ access_token: r.data.access_token, refresh_token: r.data.access_token }).catch(function(){});
-      }
+      sessionStorage.setItem('ma_admin_token',    accessToken);
+      sessionStorage.setItem('ma_admin_refresh',  refreshToken);
     }
+
+    // Set Supabase session so RLS-protected queries work immediately
+    var sb = getSB();
+    if (sb && accessToken) {
+      sb.auth.setSession({ access_token: accessToken, refresh_token: refreshToken }).catch(function(){});
+    }
+
     revealDashboard();
   })
   .catch(function(e) {
@@ -3003,8 +3007,8 @@ function revealDashboard() {
     } catch(e) {}
   }
   // Restore Supabase session from stored token so RLS-protected queries work after reload
-  // CRITICAL FIX: await session restoration before loading any data — otherwise RLS rejects all queries
-  const storedToken = localStorage.getItem('ma_admin_token') || sessionStorage.getItem('ma_admin_token');
+  const storedToken   = localStorage.getItem('ma_admin_token')   || sessionStorage.getItem('ma_admin_token');
+  const storedRefresh = localStorage.getItem('ma_admin_refresh')  || sessionStorage.getItem('ma_admin_refresh') || storedToken;
   const screen = document.getElementById('admin-login-screen');
   const wrap   = document.getElementById('admin-dashboard-wrap');
   screen.classList.add('hiding');
@@ -3014,19 +3018,17 @@ function revealDashboard() {
       const sb = getSB();
       if (sb) {
         try {
-          await sb.auth.setSession({ access_token: storedToken, refresh_token: storedToken });
+          await sb.auth.setSession({ access_token: storedToken, refresh_token: storedRefresh });
         } catch(e) { /* session may be expired — data loads will still work with anon key */ }
       }
     }
     screen.style.display = 'none';
     wrap.style.display   = 'block';
     document.body.style.display = 'block';
-    // Load live dashboard data after session is established
     loadDashboardKPIs();
     loadLowStock();
     loadActivityFeed();
     loadSidebarBadges();
-    // Start real-time subscriptions for admin panel
     initAdminRealtime();
   }
 
@@ -3040,14 +3042,11 @@ function adminSignOut() {
   }
   
   const sb = getSB(); if (sb) sb.auth.signOut().catch(() => {});
-  // Tear down real-time subscriptions on sign-out
   _destroyAdminRealtime();
-  localStorage.removeItem('ma_admin_auth');
-  localStorage.removeItem('ma_admin_token');
-  localStorage.removeItem('ma_admin_explicit');
-  sessionStorage.removeItem('ma_admin_auth');
-  sessionStorage.removeItem('ma_admin_token');
-  sessionStorage.removeItem('ma_admin_explicit');
+  ['ma_admin_auth','ma_admin_token','ma_admin_refresh','ma_admin_explicit'].forEach(k => {
+    localStorage.removeItem(k);
+    sessionStorage.removeItem(k);
+  });
   const screen = document.getElementById('admin-login-screen');
   const wrap   = document.getElementById('admin-dashboard-wrap');
   wrap.style.display   = 'none';
@@ -3104,32 +3103,36 @@ document.addEventListener('keydown', e => {
 (function checkAutoLogin() {
   const sb = getSB();
   if (!sb) return;
-  // Only auto-skip login if user explicitly logged in through the admin panel
-  const adminExplicit = localStorage.getItem('ma_admin_explicit') || sessionStorage.getItem('ma_admin_explicit');
-  const stored = localStorage.getItem('ma_admin_auth') || sessionStorage.getItem('ma_admin_auth');
-  const storedToken = localStorage.getItem('ma_admin_token') || sessionStorage.getItem('ma_admin_token');
-  if (!adminExplicit || !stored || !storedToken) {
-    // No explicit admin login — always show login screen
-    return;
-  }
-  // Verify the Supabase session is still valid
-  sb.auth.getSession().then(({ data: { session } }) => {
-    if (!session?.user) {
-      // Session expired — clear everything and show login
-      localStorage.removeItem('ma_admin_auth');
-      localStorage.removeItem('ma_admin_token');
-      localStorage.removeItem('ma_admin_explicit');
-      sessionStorage.removeItem('ma_admin_auth');
-      sessionStorage.removeItem('ma_admin_token');
-      sessionStorage.removeItem('ma_admin_explicit');
-      return;
-    }
-    const userEmail = session.user.email || '';
-    if (!ADMIN_ALLOWED_EMAILS.includes(userEmail)) { sb.auth.signOut(); return; }
-    // Restore Supabase session for RLS queries
-    sb.auth.setSession({ access_token: storedToken, refresh_token: storedToken }).catch(() => {});
-    revealDashboard();
-  });
+  const adminExplicit  = localStorage.getItem('ma_admin_explicit')  || sessionStorage.getItem('ma_admin_explicit');
+  const stored         = localStorage.getItem('ma_admin_auth')       || sessionStorage.getItem('ma_admin_auth');
+  const storedToken    = localStorage.getItem('ma_admin_token')      || sessionStorage.getItem('ma_admin_token');
+  const storedRefresh  = localStorage.getItem('ma_admin_refresh')    || sessionStorage.getItem('ma_admin_refresh') || storedToken;
+
+  if (!adminExplicit || !stored || !storedToken) return;
+
+  // Try to restore session first, then verify
+  sb.auth.setSession({ access_token: storedToken, refresh_token: storedRefresh })
+    .then(({ data, error }) => {
+      if (error || !data?.session?.user) {
+        // Session expired — clear and show login
+        ['ma_admin_auth','ma_admin_token','ma_admin_refresh','ma_admin_explicit'].forEach(k => {
+          localStorage.removeItem(k); sessionStorage.removeItem(k);
+        });
+        return;
+      }
+      const userEmail = data.session.user.email || '';
+      if (!ADMIN_ALLOWED_EMAILS.includes(userEmail)) { sb.auth.signOut(); return; }
+      revealDashboard();
+    })
+    .catch(() => {
+      // setSession failed — fall back to checking existing session
+      sb.auth.getSession().then(({ data: { session } }) => {
+        if (!session?.user) return;
+        const userEmail = session.user.email || '';
+        if (!ADMIN_ALLOWED_EMAILS.includes(userEmail)) { sb.auth.signOut(); return; }
+        revealDashboard();
+      });
+    });
 })();
 // ====================================================
 // PAGE NAVIGATION
@@ -6051,22 +6054,19 @@ function _destroyAdminRealtime() {
 // AUTO-RESTORE SESSION ON PAGE LOAD (for "Remember Me")
 // ====================================================
 (function autoRestoreSession() {
-  const raw   = localStorage.getItem('ma_admin_auth') || sessionStorage.getItem('ma_admin_auth');
-  const token = localStorage.getItem('ma_admin_token') || sessionStorage.getItem('ma_admin_token');
+  const raw     = localStorage.getItem('ma_admin_auth')    || sessionStorage.getItem('ma_admin_auth');
+  const token   = localStorage.getItem('ma_admin_token')   || sessionStorage.getItem('ma_admin_token');
+  const refresh = localStorage.getItem('ma_admin_refresh') || sessionStorage.getItem('ma_admin_refresh') || token;
   const explicit = localStorage.getItem('ma_admin_explicit') || sessionStorage.getItem('ma_admin_explicit');
-  if (!raw || !explicit) return;
+  if (!raw || !explicit || !token) return;
 
-  // Restore session then reveal dashboard
   async function restore() {
-    if (token) {
-      const sb = getSB();
-      if (sb) {
-        try {
-          await sb.auth.setSession({ access_token: token, refresh_token: token });
-        } catch(e) { /* expired — will use anon key */ }
-      }
+    const sb = getSB();
+    if (sb && token) {
+      try {
+        await sb.auth.setSession({ access_token: token, refresh_token: refresh });
+      } catch(e) { /* expired — will use anon key */ }
     }
-    // Apply profile to sidebar
     try {
       const s = JSON.parse(raw);
       const nameEl   = document.getElementById('sidebar-admin-name');
