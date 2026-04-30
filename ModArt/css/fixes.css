@@ -1,9 +1,9 @@
-/* =================================================================
-   MODART FIXES — Accessibility, Touch Targets, Contrast, Mobile
+﻿/* =================================================================
+   MODART FIXES ΓÇö Accessibility, Touch Targets, Contrast, Mobile
    Applied on top of existing styles
    ================================================================= */
 
-/* ── 1. TOUCH TARGETS — minimum 44×44px (iOS/WCAG guideline) ─── */
+/* ΓöÇΓöÇ 1. TOUCH TARGETS ΓÇö minimum 44├ù44px (iOS/WCAG guideline) ΓöÇΓöÇΓöÇ */
 
 .wishlist-icon-btn {
   width: 44px;
@@ -76,9 +76,9 @@
   height: 44px;
 }
 
-/* ── 2. COLOR CONTRAST — fix low-contrast text ─────────────────── */
+/* ΓöÇΓöÇ 2. COLOR CONTRAST ΓÇö fix low-contrast text ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 
-/* --g3 (#9E9E9E) on white fails WCAG AA — bump to #767676 minimum */
+/* --g3 (#9E9E9E) on white fails WCAG AA ΓÇö bump to #767676 minimum */
 :root {
   --g3: #767676;
 }
@@ -87,7 +87,7 @@
   --g3: #9A9690;
 }
 
-/* Subtitle / meta text — was too light */
+/* Subtitle / meta text ΓÇö was too light */
 .product-card-series,
 .bag-item-series,
 .creator-handle,
@@ -99,7 +99,7 @@
   color: var(--g2);
 }
 
-/* Hero subtitle — was rgba(255,255,255,.55) which can fail on some images */
+/* Hero subtitle ΓÇö was rgba(255,255,255,.55) which can fail on some images */
 .hero-sub {
   color: rgba(255,255,255,.75);
   text-shadow: 0 1px 3px rgba(0,0,0,.4);
@@ -110,7 +110,7 @@
   color: rgba(255,255,255,.75);
 }
 
-/* ── 3. MOBILE CUSTOMIZER — make it usable on phones ───────────── */
+/* ΓöÇΓöÇ 3. MOBILE CUSTOMIZER ΓÇö make it usable on phones ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 
 @media (max-width: 767px) {
   /* Stack customizer vertically on mobile */
@@ -176,7 +176,7 @@
   }
 }
 
-/* ── 4. HORIZONTAL OVERFLOW FIX ────────────────────────────────── */
+/* ΓöÇΓöÇ 4. HORIZONTAL OVERFLOW FIX ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 
 body {
   overflow-x: hidden;
@@ -192,7 +192,7 @@ body {
   -webkit-overflow-scrolling: touch;
 }
 
-/* ── 5. FOCUS STYLES — keyboard navigation ──────────────────────── */
+/* ΓöÇΓöÇ 5. FOCUS STYLES ΓÇö keyboard navigation ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 
 /* Visible focus ring for keyboard users */
 :focus-visible {
@@ -215,7 +215,7 @@ textarea:focus-visible {
   outline: none;
 }
 
-/* ── 6. SKIP LINK — accessibility ───────────────────────────────── */
+/* ΓöÇΓöÇ 6. SKIP LINK ΓÇö accessibility ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 
 .skip-link {
   position: absolute;
@@ -238,7 +238,7 @@ textarea:focus-visible {
   top: 0;
 }
 
-/* ── 7. LOADING STATES ──────────────────────────────────────────── */
+/* ΓöÇΓöÇ 7. LOADING STATES ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 
 .btn-loading {
   position: relative;
@@ -260,7 +260,7 @@ textarea:focus-visible {
   animation: spin .7s linear infinite;
 }
 
-/* ── 8. ERROR / SUCCESS STATES ──────────────────────────────────── */
+/* ΓöÇΓöÇ 8. ERROR / SUCCESS STATES ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 
 .field-error-msg {
   font-size: 11px;
@@ -278,7 +278,7 @@ textarea:focus-visible {
   letter-spacing: .04em;
 }
 
-/* ── 9. DARK MODE FIXES ─────────────────────────────────────────── */
+/* ΓöÇΓöÇ 9. DARK MODE FIXES ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 
 [data-theme="dark"] .mobile-bottom-nav {
   background: rgba(17,17,17,.97);
@@ -314,7 +314,7 @@ textarea:focus-visible {
   border-color: var(--border);
 }
 
-/* ── 10. SEARCH OVERLAY IMPROVEMENTS ───────────────────────────── */
+/* ΓöÇΓöÇ 10. SEARCH OVERLAY IMPROVEMENTS ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 
 #search-overlay {
   position: fixed;
@@ -359,7 +359,7 @@ textarea:focus-visible {
   overflow-y: auto;
 }
 
-/* ── 11. ORDER CARD IMPROVEMENTS ───────────────────────────────── */
+/* ΓöÇΓöÇ 11. ORDER CARD IMPROVEMENTS ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 
 .order-card {
   background: var(--white);
@@ -462,7 +462,7 @@ textarea:focus-visible {
   color: var(--red);
 }
 
-/* ── MODAL DISPLAY FIX ─────────────────────────────────────────── */
+/* ΓöÇΓöÇ MODAL DISPLAY FIX ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 /* #modal uses display:none by default; JS switches to flex on open */
 /* The .open class triggers opacity/visibility transitions          */
 #modal.open {
@@ -479,7 +479,7 @@ textarea:focus-visible {
   transform: translateY(0) scale(1);
 }
 
-/* ── 12. SHOP FILTER BUTTONS — light mode base styles ──────────── */
+/* ΓöÇΓöÇ 12. SHOP FILTER BUTTONS ΓÇö light mode base styles ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 
 .shop-filter-btn {
   padding: 8px 16px;
@@ -508,7 +508,7 @@ textarea:focus-visible {
   color: var(--white);
 }
 
-/* ── 13. NAV LOGO — image + text side by side ───────────────────── */
+/* ΓöÇΓöÇ 13. NAV LOGO ΓÇö image + text side by side ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 
 /* Mobile header: always black logo on light background */
 .mobile-logo-btn .nav-logo-img {

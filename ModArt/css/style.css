@@ -1,4 +1,4 @@
-/* =================================================================
+﻿/* =================================================================
    MODART DESIGN SYSTEM - STYLE.CSS
    Design tokens, reset styles, base elements, and typography
    ================================================================= */
@@ -253,10 +253,10 @@ a {
 /* =================================================================
    DARK THEME
    Activated via [data-theme="dark"] on <html>
-   Deep navy · Purple accent · Glowing borders
+   Deep navy ┬╖ Purple accent ┬╖ Glowing borders
    ================================================================= */
 
-/* ── 1. Token overrides ── */
+/* ΓöÇΓöÇ 1. Token overrides ΓöÇΓöÇ */
 [data-theme="dark"] {
   color-scheme: dark;
 
@@ -264,7 +264,7 @@ a {
   --bg-c:  #13131f;
   --bg-d:  #1c1c2e;
 
-  /* Semantic text — keep --black as the primary text colour */
+  /* Semantic text ΓÇö keep --black as the primary text colour */
   --black: #eeeef8;
   --dark:  #c8c8e0;
   --white: #ffffff;
@@ -274,7 +274,7 @@ a {
   --g2: #7878a0;
   --g3: #4e4e72;
 
-  /* Borders — subtle purple tint */
+  /* Borders ΓÇö subtle purple tint */
   --border: rgba(124, 58, 237, 0.2);
 
   /* Purple accent */
@@ -289,7 +289,7 @@ a {
   --sh-lg: 0 16px 56px rgba(0,0,0,.75);
 }
 
-/* ── 2. Base ── */
+/* ΓöÇΓöÇ 2. Base ΓöÇΓöÇ */
 [data-theme="dark"] body {
   background: var(--bg);
   color: var(--black);
@@ -300,12 +300,12 @@ body {
   transition: background-color .3s ease, color .3s ease;
 }
 
-/* ── 3. Focus ring ── */
+/* ΓöÇΓöÇ 3. Focus ring ΓöÇΓöÇ */
 [data-theme="dark"] :focus-visible {
   outline-color: var(--accent);
 }
 
-/* ── 4. Navigation ── */
+/* ΓöÇΓöÇ 4. Navigation ΓöÇΓöÇ */
 [data-theme="dark"] .desktop-nav {
   background: rgba(13,13,26,0.94);
   border-bottom-color: var(--border);
@@ -330,7 +330,7 @@ body {
   border-color: var(--accent);
 }
 
-/* Logo — always white in dark mode (nav scroll JS handles transparent state) */
+/* Logo ΓÇö always white in dark mode (nav scroll JS handles transparent state) */
 [data-theme="dark"] .nav-logo-img,
 [data-theme="dark"] .mobile-logo-btn .nav-logo-img {
   filter: brightness(0) invert(1);
@@ -356,7 +356,7 @@ body {
 [data-theme="dark"] .theme-toggle-btn .icon-moon { display: none;  }
 [data-theme="dark"] .theme-toggle-btn .icon-sun  { display: block; }
 
-/* ── 5. Buttons ── */
+/* ΓöÇΓöÇ 5. Buttons ΓöÇΓöÇ */
 [data-theme="dark"] .btn-black {
   background: var(--accent);
   color: #fff;
@@ -375,7 +375,7 @@ body {
 [data-theme="dark"] .btn-ghost { color: var(--g2); }
 [data-theme="dark"] .btn-ghost:hover { color: var(--white); }
 
-/* ── 6. Hero ── */
+/* ΓöÇΓöÇ 6. Hero ΓöÇΓöÇ */
 [data-theme="dark"] .home-hero { background: #07070f; }
 
 /* Purple radial glow */
@@ -402,13 +402,13 @@ body {
   color: var(--white);
 }
 
-/* ── 7. Ticker / trust strip — already dark, no change needed ── */
+/* ΓöÇΓöÇ 7. Ticker / trust strip ΓÇö already dark, no change needed ΓöÇΓöÇ */
 
-/* ── 8. Section headings ── */
+/* ΓöÇΓöÇ 8. Section headings ΓöÇΓöÇ */
 [data-theme="dark"] .section-title { color: var(--white); }
 [data-theme="dark"] .eyebrow-muted { color: var(--g2); }
 
-/* ── 9. Product cards ── */
+/* ΓöÇΓöÇ 9. Product cards ΓöÇΓöÇ */
 [data-theme="dark"] .product-card-img {
   background: var(--bg-d);
   border-radius: var(--r-md);
@@ -421,13 +421,13 @@ body {
 [data-theme="dark"] .product-card-series { color: var(--g2); }
 [data-theme="dark"] .product-card-price { color: var(--white); }
 
-/* Sold-out badge — keep dark bg readable */
+/* Sold-out badge ΓÇö keep dark bg readable */
 [data-theme="dark"] .badge-sold {
   background: #2a2a3e;
   color: var(--g1);
 }
 
-/* ── 10. Shop filter bar ── */
+/* ΓöÇΓöÇ 10. Shop filter bar ΓöÇΓöÇ */
 [data-theme="dark"] .shop-filter-btn {
   color: var(--g2);
   border-color: rgba(124,58,237,0.25);
@@ -445,11 +445,11 @@ body {
   border-color: rgba(124,58,237,0.25);
 }
 
-/* ── 11. Manifesto — already dark bg, enhance glow ── */
+/* ΓöÇΓöÇ 11. Manifesto ΓÇö already dark bg, enhance glow ΓöÇΓöÇ */
 [data-theme="dark"] .manifesto { background: #07070f; }
 [data-theme="dark"] .manifesto-bg-txt { color: rgba(124,58,237,0.04); }
 
-/* ── 12. Community / creator cards ── */
+/* ΓöÇΓöÇ 12. Community / creator cards ΓöÇΓöÇ */
 [data-theme="dark"] .community { background: var(--bg); }
 [data-theme="dark"] .creator-card {
   background: var(--bg-c);
@@ -472,7 +472,7 @@ body {
   color: #fff;
 }
 
-/* ── 13. Drop archive ── */
+/* ΓöÇΓöÇ 13. Drop archive ΓöÇΓöÇ */
 [data-theme="dark"] .drop-archive { background: #0a0a16; }
 [data-theme="dark"] .drop-row { border-bottom-color: var(--border); }
 [data-theme="dark"] .drop-row:first-child { border-top-color: var(--border); }
@@ -489,7 +489,7 @@ body {
   color: var(--g2);
 }
 
-/* ── 14. Reviews ── */
+/* ΓöÇΓöÇ 14. Reviews ΓöÇΓöÇ */
 [data-theme="dark"] .reviews-section { background: transparent; }
 [data-theme="dark"] .review-card {
   background: var(--bg-c);
@@ -500,13 +500,13 @@ body {
 [data-theme="dark"] .review-date { color: var(--g2); }
 [data-theme="dark"] .review-avatar { background: var(--bg-d); }
 
-/* ── 15. Early access — already dark bg ── */
+/* ΓöÇΓöÇ 15. Early access ΓÇö already dark bg ΓöÇΓöÇ */
 [data-theme="dark"] .early-access { background: #07070f; }
 
-/* ── 16. Footer — already dark, just deepen ── */
+/* ΓöÇΓöÇ 16. Footer ΓÇö already dark, just deepen ΓöÇΓöÇ */
 [data-theme="dark"] .site-footer { background: #050510; }
 
-/* ── 17. Forms ── */
+/* ΓöÇΓöÇ 17. Forms ΓöÇΓöÇ */
 [data-theme="dark"] .form-input,
 [data-theme="dark"] .modal-input,
 [data-theme="dark"] .modal-select {
@@ -526,7 +526,7 @@ body {
 [data-theme="dark"] .form-lbl { color: var(--g1); }
 [data-theme="dark"] .form-section-title { color: var(--white); }
 
-/* ── 18. Modals ── */
+/* ΓöÇΓöÇ 18. Modals ΓöÇΓöÇ */
 [data-theme="dark"] .modal-overlay { background: rgba(0,0,0,0.8); }
 [data-theme="dark"] .modal-card {
   background: var(--bg-c);
@@ -553,7 +553,7 @@ body {
   border: 1px solid var(--border);
 }
 
-/* ── 19. Product detail ── */
+/* ΓöÇΓöÇ 19. Product detail ΓöÇΓöÇ */
 [data-theme="dark"] .product-detail-title { color: var(--white); }
 [data-theme="dark"] .product-detail-subtitle { color: var(--g2); }
 [data-theme="dark"] .product-detail-price { color: var(--white); }
@@ -632,7 +632,7 @@ body {
 [data-theme="dark"] .acc-hdr { color: var(--white); }
 [data-theme="dark"] .acc-body { color: var(--g1); }
 
-/* ── 20. Bag page ── */
+/* ΓöÇΓöÇ 20. Bag page ΓöÇΓöÇ */
 [data-theme="dark"] .bag-item { border-bottom-color: var(--border); }
 [data-theme="dark"] .bag-item-name { color: var(--white); }
 [data-theme="dark"] .bag-item-series,
@@ -659,7 +659,7 @@ body {
 [data-theme="dark"] .shipping-bar-track { background: rgba(124,58,237,0.12); }
 [data-theme="dark"] .shipping-bar-fill { background: var(--accent); }
 
-/* ── 21. Checkout ── */
+/* ΓöÇΓöÇ 21. Checkout ΓöÇΓöÇ */
 [data-theme="dark"] .co-step-icon {
   background: var(--bg-d);
   border-color: var(--border);
@@ -673,7 +673,7 @@ body {
 }
 [data-theme="dark"] .co-step::after { background: var(--border); }
 
-/* ── 22. Auth pages ── */
+/* ΓöÇΓöÇ 22. Auth pages ΓöÇΓöÇ */
 [data-theme="dark"] .auth-card {
   background: var(--bg-c);
   border-color: var(--border);
@@ -688,7 +688,7 @@ body {
   color: #6ee7b7;
 }
 
-/* ── 23. Orders page ── */
+/* ΓöÇΓöÇ 23. Orders page ΓöÇΓöÇ */
 [data-theme="dark"] .order-card {
   background: var(--bg-c);
   border-color: var(--border);
@@ -705,14 +705,14 @@ body {
 [data-theme="dark"] .stepper-lbl.active { color: var(--accent-lt); }
 [data-theme="dark"] .stepper-lbl.done { color: var(--g1); }
 
-/* ── 24. Account page ── */
+/* ΓöÇΓöÇ 24. Account page ΓöÇΓöÇ */
 [data-theme="dark"] .account-avatar-wrap { border-color: var(--border); }
 [data-theme="dark"] #account-avatar {
   background: rgba(124,58,237,0.25);
   color: var(--white);
 }
 
-/* ── 25. Community / leaderboard ── */
+/* ΓöÇΓöÇ 25. Community / leaderboard ΓöÇΓöÇ */
 [data-theme="dark"] .leaderboard-item {
   background: var(--bg-c);
   border-bottom-color: var(--border);
@@ -721,12 +721,12 @@ body {
 [data-theme="dark"] .lb-name { color: var(--white); }
 [data-theme="dark"] .lb-handle { color: var(--g2); }
 
-/* ── 26. Info pages (about, contact, faq, privacy, terms) ── */
+/* ΓöÇΓöÇ 26. Info pages (about, contact, faq, privacy, terms) ΓöÇΓöÇ */
 [data-theme="dark"] .faq-item { border-color: var(--border); }
 [data-theme="dark"] .faq-q { color: var(--white); }
 [data-theme="dark"] .faq-a { color: var(--g1); }
 
-/* ── 27. Confirmation page ── */
+/* ΓöÇΓöÇ 27. Confirmation page ΓöÇΓöÇ */
 [data-theme="dark"] .confirmation-hero { background: #07070f; }
 [data-theme="dark"] .confirmation-icon {
   background: rgba(124,58,237,0.15);
@@ -739,7 +739,7 @@ body {
   color: var(--g2);
 }
 
-/* ── 28. Customizer ── */
+/* ΓöÇΓöÇ 28. Customizer ΓöÇΓöÇ */
 [data-theme="dark"] .customizer-topbar {
   background: #0a0a16;
   border-bottom-color: var(--border);
@@ -785,7 +785,7 @@ body {
 [data-theme="dark"] .layer-item.active { border-color: var(--accent); }
 [data-theme="dark"] .layer-item-name { color: var(--white); }
 
-/* ── 29. Search overlay ── */
+/* ΓöÇΓöÇ 29. Search overlay ΓöÇΓöÇ */
 [data-theme="dark"] .search-overlay { background: rgba(7,7,15,0.97); }
 [data-theme="dark"] #search-input {
   background: var(--bg-c);
@@ -795,20 +795,20 @@ body {
 [data-theme="dark"] #search-input:focus { border-color: var(--accent); }
 [data-theme="dark"] .search-result-item:hover { background: var(--bg-d) !important; }
 
-/* ── 30. Cookie banner ── */
+/* ΓöÇΓöÇ 30. Cookie banner ΓöÇΓöÇ */
 [data-theme="dark"] #cookie-banner {
   background: var(--bg-c);
   border-top-color: var(--border);
   color: var(--g1);
 }
 
-/* ── 31. Scarcity pill ── */
+/* ΓöÇΓöÇ 31. Scarcity pill ΓöÇΓöÇ */
 [data-theme="dark"] .scarcity-pill {
   background: rgba(215,38,56,0.1);
   border-color: rgba(215,38,56,0.25);
 }
 
-/* ── 32. Scrollbar (webkit) ── */
+/* ΓöÇΓöÇ 32. Scrollbar (webkit) ΓöÇΓöÇ */
 [data-theme="dark"] ::-webkit-scrollbar { width: 6px; height: 6px; }
 [data-theme="dark"] ::-webkit-scrollbar-track { background: var(--bg-c); }
 [data-theme="dark"] ::-webkit-scrollbar-thumb {
@@ -817,19 +817,19 @@ body {
 }
 [data-theme="dark"] ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
-/* ── 33. Selection highlight ── */
+/* ΓöÇΓöÇ 33. Selection highlight ΓöÇΓöÇ */
 [data-theme="dark"] ::selection {
   background: rgba(124,58,237,0.4);
   color: #fff;
 }
 
 /* =================================================================
-   SHOP PAGE — COMPACT GRID (Amazon-style)
+   SHOP PAGE ΓÇö COMPACT GRID (Amazon-style)
    Overrides the default large product-grid inside #page-shop only.
-   Product data/descriptions are untouched — only visual sizing changes.
+   Product data/descriptions are untouched ΓÇö only visual sizing changes.
    ================================================================= */
 
-/* ── Grid: more columns, tighter gap ── */
+/* ΓöÇΓöÇ Grid: more columns, tighter gap ΓöÇΓöÇ */
 .shop-grid {
   grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
   gap: 12px;
@@ -840,7 +840,7 @@ body {
 @media (min-width: 1024px) { .shop-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; } }
 @media (min-width: 1280px) { .shop-grid { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 18px; } }
 
-/* ── Card: white box with border, no hover lift ── */
+/* ΓöÇΓöÇ Card: white box with border, no hover lift ΓöÇΓöÇ */
 .shop-grid .product-card {
   background: var(--white);
   border: 1px solid var(--border);
@@ -856,7 +856,7 @@ body {
   border-color: var(--g3);
 }
 
-/* ── Image: square aspect, no bottom margin ── */
+/* ΓöÇΓöÇ Image: square aspect, no bottom margin ΓöÇΓöÇ */
 .shop-grid .product-card-img {
   aspect-ratio: 1 / 1;
   border-radius: 0;
@@ -864,7 +864,7 @@ body {
   background: var(--bg-d);
 }
 
-/* ── Info block: tight padding ── */
+/* ΓöÇΓöÇ Info block: tight padding ΓöÇΓöÇ */
 .shop-grid .product-card-series,
 .shop-grid .product-card-name,
 .shop-grid .product-card-footer {
@@ -931,7 +931,7 @@ body {
   padding: 5px 10px;
 }
 
-/* Star rating row — shown in shop compact cards */
+/* Star rating row ΓÇö shown in shop compact cards */
 .shop-grid .card-stars {
   display: flex;
   align-items: center;
@@ -950,7 +950,7 @@ body {
   margin-left: 2px;
 }
 
-/* ── Dark mode overrides ── */
+/* ΓöÇΓöÇ Dark mode overrides ΓöÇΓöÇ */
 [data-theme="dark"] .shop-grid .product-card {
   background: var(--bg-c);
   border-color: var(--border);
@@ -1029,7 +1029,7 @@ body {
 .carousel-btn-prev { left: -20px; }
 .carousel-btn-next { right: -20px; }
 
-/* Hide arrows on mobile — swipe is enough */
+/* Hide arrows on mobile ΓÇö swipe is enough */
 @media (max-width: 767px) {
   .carousel-btn { display: none; }
 }
@@ -1067,7 +1067,7 @@ body {
 [data-theme="dark"] .carousel-dot.active { background: var(--accent); }
 
 /* =================================================================
-   SHOP GRID — SHORTER CARDS
+   SHOP GRID ΓÇö SHORTER CARDS
    (replaces previous aspect-ratio: 1/1 with 4/5)
    ================================================================= */
 .shop-grid .product-card-img {

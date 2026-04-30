@@ -1,4 +1,4 @@
-/* =================================================================
+﻿/* =================================================================
    MODART COMPONENTS - COMPONENTS.CSS
    All component-specific styles organized by hierarchy
    ================================================================= */
@@ -14,24 +14,16 @@
   left: 0;
   right: 0;
   z-index: 1000;
-  background: transparent;
-  backdrop-filter: none;
-  border-bottom: 1px solid transparent;
+  background: rgba(247, 245, 241, .96);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
   height: var(--nav-h);
-  transition: background .3s ease, border-color .3s ease;
   /* display controlled by responsive.css / layout body classes */
 }
 
-/* Solid dark nav once user scrolls past hero */
-.desktop-nav.scrolled {
-  background: rgba(10, 10, 10, .95);
-  backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(255,255,255,.08);
-}
+/* .desktop-nav-inner is legacy ΓÇö nav uses .nav-inner-grid (3-col grid) */
 
-/* .desktop-nav-inner is legacy — nav uses .nav-inner-grid (3-col grid) */
-
-/* .nav-logo base styles live in layout.css — only add non-conflicting props here */
+/* .nav-logo base styles live in layout.css ΓÇö only add non-conflicting props here */
 .nav-logo {
   background: none;
   border: none;
@@ -51,7 +43,7 @@
   font-weight: 700;
   letter-spacing: .15em;
   text-transform: uppercase;
-  color: rgba(255,255,255,.7);
+  color: var(--g3);
   background: none;
   border: none;
   padding: 4px 0;
@@ -73,7 +65,7 @@
 
 .nav-link:hover,
 .nav-link.active {
-  color: #fff;
+  color: var(--black);
 }
 
 .nav-link:hover::after,
@@ -96,14 +88,13 @@
   justify-content: center;
   background: none;
   border: none;
-  color: rgba(255,255,255,.8);
+  color: var(--black);
   border-radius: 50%;
-  transition: background var(--t), color var(--t);
+  transition: background var(--t);
 }
 
 .nav-icon-btn:hover {
-  background: rgba(255,255,255,.1);
-  color: #fff;
+  background: var(--bg-c);
 }
 
 .nav-icon-btn .icon {
@@ -3336,7 +3327,7 @@
 }
 
 /* =================================================================
-   DROP ARCHIVE CARDS — customer site
+   DROP ARCHIVE CARDS ΓÇö customer site
    ================================================================= */
 .drop-archive-grid {
   display: grid;
