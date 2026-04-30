@@ -1,23 +1,16 @@
 /**
  * ModArt Admin Configuration
  *
- * Static site — no build step, so import.meta.env is NOT available.
- * Supabase credentials are injected by the Supabase JS CDN client
- * directly in index.html / admin.html via window globals set in a
- * <script> block that reads from Vercel environment variables at
- * request time (via a tiny /api/config endpoint).
- *
- * For local dev: set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY
- * in .env and they are read by the /api/config serverless function.
+ * Static site — no build step.
+ * The anon key is safe to include here — it is public by design and
+ * protected by Supabase Row Level Security policies.
+ * The service role key is NEVER placed here (server-side only).
  */
 
-// Read from window globals injected by /api/config at runtime
-export const SUPABASE_URL     = window.__SUPABASE_URL__     || '';
-export const SUPABASE_ANON_KEY = window.__SUPABASE_ANON_KEY__ || '';
-
-if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-  console.error('❌ Supabase credentials not injected. Check /api/config endpoint.');
-}
+// Use window globals if injected by /api/config, otherwise fall back to
+// the hardcoded public anon key (safe — protected by RLS).
+export const SUPABASE_URL      = window.__SUPABASE_URL__      || 'https://ddodctzzsrlgyhtclabz.supabase.co';
+export const SUPABASE_ANON_KEY = window.__SUPABASE_ANON_KEY__ || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRkb2RjdHp6c3JsZ3lodGNsYWJ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1MDY5MzEsImV4cCI6MjA4OTA4MjkzMX0.Wfrlocx56uR_8-5EZoBajIzHt09GX_JcrBCSeZuVqMY';
 
 export const ADMIN_CONFIG = {
   SESSION_TIMEOUT:           30 * 60 * 1000,
@@ -31,7 +24,8 @@ export const ADMIN_CONFIG = {
   ALLOWED_IMAGE_TYPES:       ['image/jpeg', 'image/png', 'image/webp'],
 };
 
-export const ADMIN_EMAIL = window.__ADMIN_EMAIL__ || '';
+// Admin email — used for ADMIN_ALLOWED_EMAILS check in admin.html
+export const ADMIN_EMAIL = window.__ADMIN_EMAIL__ || 'modart.pod@gmail.com';
 
 export const API_ENDPOINTS = {
   ADMIN_LOGIN:      '/api/admin-login',
