@@ -3059,10 +3059,15 @@ function adminSignOut() {
   btn.disabled = false;
   btn.innerHTML = '<span class="icon material-symbols-outlined" style="font-size:16px">lock</span> Sign In';
 }
-window.adminSignOut = adminSignOut; // Make available globally
-
-// Create logout alias for session timeout
-window.logout = adminSignOut;
+// Expose all login-screen functions to window so onclick handlers work
+// (ES module scope does not auto-expose to global)
+window.handleAdminLogin     = handleAdminLogin;
+window.adminSignOut         = adminSignOut;
+window.logout               = adminSignOut;
+window.togglePwVisibility   = togglePwVisibility;
+window.sendForgotPassword   = sendForgotPassword;
+window.closeForgotPwModal   = closeForgotPwModal;
+window.submitForgotPw       = submitForgotPw;
 function togglePwVisibility() {
   const input = document.getElementById('login-password');
   const icon  = document.getElementById('pw-toggle-icon');

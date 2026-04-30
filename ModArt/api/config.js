@@ -17,16 +17,10 @@ export default function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
   res.setHeader('Content-Type', 'application/json');
 
-  const supabaseUrl     = process.env.SUPABASE_URL      || process.env.VITE_SUPABASE_URL      || '';
-  const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || '';
+  // Fall back to hardcoded public anon key if env vars not set
+  // The anon key is safe to expose — protected by Supabase RLS policies
+  const supabaseUrl     = process.env.SUPABASE_URL      || process.env.VITE_SUPABASE_URL      || 'https://ddodctzzsrlgyhtclabz.supabase.co';
+  const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRkb2RjdHp6c3JsZ3lodGNsYWJ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1MDY5MzEsImV4cCI6MjA4OTA4MjkzMX0.Wfrlocx56uR_8-5EZoBajIzHt09GX_JcrBCSeZuVqMY';
 
-  if (!supabaseUrl || !supabaseAnonKey) {
-    return res.status(500).json({ error: 'Server not configured' });
-  }
-
-  return res.status(200).json({
-    supabaseUrl,
-    supabaseAnonKey,
-    // Never include service role key here
-  });
+  return res.status(200).json({ supabaseUrl, supabaseAnonKey });
 }
