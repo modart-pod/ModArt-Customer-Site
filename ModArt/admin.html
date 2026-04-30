@@ -6198,6 +6198,74 @@ function _destroyAdminRealtime() {
 // Data: ✓ Export, bulk actions, pagination, caching
 // Polish: ✓ Offline detection, undo, optimizations
 // ====================================================
+// ====================================================
+// GLOBAL WINDOW EXPORTS
+// All functions used in onclick/oninput/onchange attributes
+// must be explicitly assigned to window inside ES modules
+// ====================================================
+window.showPage               = showPage;
+window.toggleSidebar          = toggleSidebar;
+window.closeSidebar           = closeSidebar;
+window.toggleDark             = toggleDark;
+window.exportCSV              = exportCSV;
+window.switchRevChart         = switchRevChart;
+window.syncChartToPeriod      = syncChartToPeriod;
+window.updateDashStats        = updateDashStats;
+window.openOrderDrawer        = openOrderDrawer;
+window.closeOrderDrawer       = closeOrderDrawer;
+window.updateOrderStatus      = updateOrderStatus;
+window.openModal              = openModal;
+window.closeModal             = closeModal;
+window.openProductModal       = openProductModal;
+window.submitProductModal     = submitProductModal;
+window.openDropModal_legacy   = openDropModal_legacy;
+window.switchGeoView          = switchGeoView;
+window.updatePLMonth          = updatePLMonth;
+window.confirmAction          = confirmAction;
+window.showToast              = showToast;
+window.performUndo            = performUndo;
+window.showLoadingOverlay     = showLoadingOverlay;
+window.hideLoadingOverlay     = hideLoadingOverlay;
+window.showKeyboardShortcutsHelp = showKeyboardShortcutsHelp;
+window.filterTable            = filterTable;
+window.filterByStatus         = filterByStatus;
+window.globalSearch           = globalSearch;
+window.markAllRead            = markAllRead;
+window.toggleBulkActionMode   = toggleBulkActionMode;
+window.approveCreator         = approveCreator;
+window.rejectCreator          = rejectCreator;
+window.saveTrackingNumber     = saveTrackingNumber;
+window.createCoupon           = createCoupon;
+window.toggleCoupon           = toggleCoupon;
+window.openDropModal          = openDropModal;
+window.saveDropModal          = submitDropModal;   // alias — HTML uses saveDropModal
+window.submitDropModal        = submitDropModal;
+window.toggleDropStatus       = typeof toggleDropStatus !== 'undefined' ? toggleDropStatus : function(id, status) { confirmAction('Change drop status?', 'This will update the drop status.', 'Confirm', async () => { const sb = getSB(); if (!sb) return; await sb.from('drops').update({ status, updated_at: new Date().toISOString() }).eq('id', id); loadAdminDrops(); showToast('Drop status updated', 'order'); }); };
+window.logAuditEvent          = logAuditEvent;
+window.loadAdminOrders        = loadAdminOrders;
+window.loadAdminProducts      = loadAdminProducts;
+window.loadAdminInventory     = loadAdminInventory;
+window.loadAdminCustomers     = loadAdminCustomers;
+window.loadAdminCoupons       = loadAdminCoupons;
+window.loadAdminDrops         = loadAdminDrops;
+window.loadAdminReturns       = loadAdminReturns;
+window.loadAnalytics          = loadAnalytics;
+window.loadDashboardKPIs      = loadDashboardKPIs;
+window.loadLowStock           = loadLowStock;
+window.loadActivityFeed       = loadActivityFeed;
+window.loadSidebarBadges      = loadSidebarBadges;
+window.loadOrderStatusCounts  = loadOrderStatusCounts;
+window.loadInventoryStats     = loadInventoryStats;
+window.initAdminRealtime      = initAdminRealtime;
+window.revealDashboard        = revealDashboard;
+window.setStatCardByLabel     = setStatCardByLabel;
+window.addToUndoStack         = addToUndoStack;
+window.showUndoToast          = showUndoToast;
+window.highlightInvalidField  = highlightInvalidField;
+window.validateEmail          = validateEmail;
+window.validateRequired       = validateRequired;
+window.validateNumber         = validateNumber;
+// ====================================================
 </script>
 </div><!-- /admin-dashboard-wrap -->
 </body>
