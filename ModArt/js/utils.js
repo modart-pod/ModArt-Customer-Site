@@ -299,21 +299,9 @@ if (typeof window !== 'undefined') {
   window.toggleMobileMenu = toggleMobileMenu;
 }
 
-// GöÇGöÇ Dark / Light theme toggle GöÇGöÇGöÇGöÇGöÇGöÇGöÇGöÇGöÇGöÇGöÇGöÇGöÇGöÇGöÇGöÇGöÇGöÇGöÇGöÇGöÇGöÇGöÇGöÇGöÇGöÇGöÇGöÇGöÇGöÇGöÇGöÇGöÇGöÇGöÇGöÇGöÇGöÇ
-export function toggleTheme() {
-  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-  const next = isDark ? 'light' : 'dark';
-  document.documentElement.setAttribute('data-theme', next);
-  try { localStorage.setItem('modart-theme', next); } catch(e) {}
-}
-
-// Apply saved theme on load (call this as early as possible)
-export function applyStoredTheme() {
-  try {
-    const saved = localStorage.getItem('modart-theme');
-    if (saved === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
-  } catch(e) {}
-}
+// Dark theme removed from customer site â€” these are no-ops kept for compatibility
+export function toggleTheme() {}
+export function applyStoredTheme() {}
 
 if (typeof window !== 'undefined') {
   window.toggleTheme = toggleTheme;

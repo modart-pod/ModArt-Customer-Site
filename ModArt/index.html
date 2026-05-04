@@ -41,7 +41,6 @@
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/responsive.css">
   <link rel="stylesheet" href="css/fixes.css">
-  <script>try{var t=localStorage.getItem('modart-theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}</script>
   <style>
     .fade-in-section{opacity:0;transform:translateY(20px);transition:opacity .55s ease,transform .55s ease}
     .fade-in-section.visible{opacity:1;transform:translateY(0)}
@@ -80,10 +79,6 @@
         <li><button class="nav-link" id="nl-customize" onclick="goTo('customize')">Customize</button></li>
       </ul>
       <div class="nav-actions">
-        <button class="theme-toggle-btn nav-icon-btn" aria-label="Toggle dark mode" onclick="toggleTheme()">
-          <span class="material-symbols-outlined icon icon-moon">dark_mode</span>
-          <span class="material-symbols-outlined icon icon-sun">light_mode</span>
-        </button>
         <button class="nav-icon-btn" aria-label="Search" onclick="toggleSearch()"><span class="material-symbols-outlined icon">search</span></button>
         <button class="nav-icon-btn" aria-label="Wishlist" onclick="goTo('wishlist')"><span class="material-symbols-outlined icon">favorite_border</span></button>
         <button class="nav-icon-btn" aria-label="Bag" onclick="goTo('bag')" style="position:relative">

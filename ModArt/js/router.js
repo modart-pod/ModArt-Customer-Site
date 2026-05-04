@@ -175,7 +175,6 @@ function initNavScroll() {
     const currentPage = window.getCurrentPage ? window.getCurrentPage() : 'home';
     const onHome      = currentPage === 'home';
     const transparent = onHome && window.scrollY < 80;
-    const dark        = document.documentElement.getAttribute('data-theme') === 'dark';
 
     if (transparent) {
       // Transparent over hero — white text
@@ -196,20 +195,15 @@ function initNavScroll() {
       if (logoWhite) logoWhite.style.opacity = '1';
       if (logoBlack) logoBlack.style.opacity = '0';
     } else {
-      // Solid nav — light or dark theme
-      if (dark) {
-        nav.style.background        = 'rgba(13,13,26,0.96)';
-        nav.style.borderBottomColor = 'rgba(124,58,237,0.2)';
-      } else {
-        nav.style.background        = 'rgba(255,255,255,0.97)';
-        nav.style.borderBottomColor = 'rgba(0,0,0,0.08)';
-      }
+      // Solid white nav — light theme only
+      nav.style.background           = 'rgba(255,255,255,0.97)';
+      nav.style.borderBottomColor    = 'rgba(0,0,0,0.08)';
       nav.style.backdropFilter       = 'blur(16px)';
       nav.style.webkitBackdropFilter = 'blur(16px)';
       nav.style.boxShadow            = '0 1px 12px rgba(0,0,0,0.08)';
       nav.querySelectorAll('.nav-link, .nav-logo').forEach(l => l.style.color = '');
       nav.querySelectorAll('.nav-icon-btn').forEach(i => i.style.color = '');
-      // Black logo on light nav
+      // Black logo on white nav
       const logoWhite = document.getElementById('nav-logo-white');
       const logoBlack = document.getElementById('nav-logo-black');
       if (logoWhite) logoWhite.style.opacity = '0';
@@ -217,17 +211,13 @@ function initNavScroll() {
     }
   }
 
-  // Re-run on scroll, page change, and theme change
+  // Re-run on scroll and page changes
   window.addEventListener('scroll', update, { passive: true });
   window.addEventListener('popstate', () => setTimeout(update, 30));
   // Watch for page changes via the router (goTo sets data-page on body)
   new MutationObserver(update).observe(document.body, {
     attributes: true,
     attributeFilter: ['data-page', 'class']
-  });
-  new MutationObserver(update).observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ['data-theme']
   });
 
   // Expose so router can call it after page transitions
