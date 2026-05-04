@@ -31,6 +31,13 @@ function pathToPage(pathname) {
   return PAGES[clean] ? clean : 'home';
 }
 
+// Track current page in memory (SPA — pathname is always /)
+let _currentPage = 'home';
+
+export function getCurrentPage() {
+  return _currentPage;
+}
+
 /** Navigate to a page using pushState */
 export function goTo(pageName) {
   const page = pageName || 'home';
@@ -54,8 +61,15 @@ export function showPage(pageName) {
     window.scrollTo(0, 0);
   }
 
+  // Track current page on body so nav scroll can detect it
+  document.body.setAttribute('data-page', pageName);
+  _currentPage = pageName;
+
   updateNavState(pageName);
   triggerPageRender(pageName);
+
+  // Update nav appearance immediately after page change
+  if (window._updateNavScroll) window._updateNavScroll();
 }
 
 function triggerPageRender(pageName) {
@@ -113,10 +127,6 @@ function updateNavState(pageName) {
   if (mobileNav) mobileNav.style.display = hideChrome ? 'none' : '';
 }
 
-export function getCurrentPage() {
-  return pathToPage(window.location.pathname);
-}
-
 export function initRouter() {
   // Handle browser back/forward
   window.addEventListener('popstate', (e) => {
@@ -161,31 +171,67 @@ function initNavScroll() {
   if (!nav) return;
 
   function update() {
-    const onHome = window.location.pathname === '/' || window.location.pathname === '/home';
+    // SPA — use the router's current page, not the URL pathname
+    const currentPage = window.getCurrentPage ? window.getCurrentPage() : 'home';
+    const onHome      = currentPage === 'home';
     const transparent = onHome && window.scrollY < 80;
-    const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const dark        = document.documentElement.getAttribute('data-theme') === 'dark';
 
     if (transparent) {
-      nav.style.background           = 'rgba(0,0,0,0)';
-      nav.style.borderBottomColor    = 'rgba(255,255,255,0)';
-      nav.style.backdropFilter       = 'blur(0px)';
-      nav.style.webkitBackdropFilter = 'blur(0px)';
-      nav.querySelectorAll('.nav-link, .nav-logo').forEach(l => l.style.color = 'rgba(255,255,255,0.82)');
-      nav.querySelectorAll('.nav-icon-btn').forEach(i => i.style.color = 'rgba(255,255,255,0.82)');
+      // Transparent over hero — white text
+      nav.style.background           = 'transparent';
+      nav.style.borderBottomColor    = 'transparent';
+      nav.style.backdropFilter       = 'none';
+      nav.style.webkitBackdropFilter = 'none';
+      nav.style.boxShadow            = 'none';
+      nav.querySelectorAll('.nav-link, .nav-logo').forEach(l => {
+        l.style.color = 'rgba(255,255,255,0.9)';
+      });
+      nav.querySelectorAll('.nav-icon-btn').forEach(i => {
+        i.style.color = 'rgba(255,255,255,0.9)';
+      });
+      // White logo on dark hero
+      const logoWhite = document.getElementById('nav-logo-white');
+      const logoBlack = document.getElementById('nav-logo-black');
+      if (logoWhite) logoWhite.style.opacity = '1';
+      if (logoBlack) logoBlack.style.opacity = '0';
     } else {
-      // Always dark nav when scrolled or on non-home pages
-      nav.style.background           = 'rgba(10,10,10,0.95)';
-      nav.style.borderBottomColor    = 'rgba(255,255,255,0.08)';
+      // Solid nav — light or dark theme
+      if (dark) {
+        nav.style.background        = 'rgba(13,13,26,0.96)';
+        nav.style.borderBottomColor = 'rgba(124,58,237,0.2)';
+      } else {
+        nav.style.background        = 'rgba(255,255,255,0.97)';
+        nav.style.borderBottomColor = 'rgba(0,0,0,0.08)';
+      }
       nav.style.backdropFilter       = 'blur(16px)';
       nav.style.webkitBackdropFilter = 'blur(16px)';
+      nav.style.boxShadow            = '0 1px 12px rgba(0,0,0,0.08)';
       nav.querySelectorAll('.nav-link, .nav-logo').forEach(l => l.style.color = '');
       nav.querySelectorAll('.nav-icon-btn').forEach(i => i.style.color = '');
+      // Black logo on light nav
+      const logoWhite = document.getElementById('nav-logo-white');
+      const logoBlack = document.getElementById('nav-logo-black');
+      if (logoWhite) logoWhite.style.opacity = '0';
+      if (logoBlack) logoBlack.style.opacity = '1';
     }
   }
 
+  // Re-run on scroll, page change, and theme change
   window.addEventListener('scroll', update, { passive: true });
   window.addEventListener('popstate', () => setTimeout(update, 30));
-  new MutationObserver(update).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  // Watch for page changes via the router (goTo sets data-page on body)
+  new MutationObserver(update).observe(document.body, {
+    attributes: true,
+    attributeFilter: ['data-page', 'class']
+  });
+  new MutationObserver(update).observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['data-theme']
+  });
+
+  // Expose so router can call it after page transitions
+  window._updateNavScroll = update;
   update();
 }
 
