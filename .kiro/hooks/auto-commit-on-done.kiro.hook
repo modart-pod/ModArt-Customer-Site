@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Auto Commit After Task",
+  "description": "Automatically stages and commits all changes after Kiro finishes a task",
+  "version": "1",
+  "when": {
+    "type": "agentStop"
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "cd \"c:\\Users\\Praveen kanna\\OneDrive\\Documents\\ModArt Customer Site\\ModArt\" && git add -A && git diff --cached --quiet || git commit -m \"chore: auto-commit after Kiro task\""
+  }
+}
