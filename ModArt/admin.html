@@ -692,7 +692,7 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
   .form-row{grid-template-columns:1fr;}
 }
 </style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <!-- Inject Supabase credentials from server at runtime (no hardcoded keys) -->
 <script>
   (function(){
@@ -784,6 +784,13 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
      DASHBOARD (hidden until login)
      ============================================================ -->
 <div id="admin-dashboard-wrap" style="display:none;width:100%;min-height:100vh;flex:1">
+
+<!-- Tracking Prevention warning banner — shown if Supabase SDK blocked -->
+<div id="tracking-warning" style="display:none;position:fixed;top:0;left:0;right:0;z-index:9999;background:#B45309;color:#fff;padding:10px 20px;font-size:12px;font-weight:600;text-align:center;letter-spacing:.02em">
+  ⚠️ Browser Tracking Prevention is blocking Supabase. Admin data won't load.
+  <strong>Fix:</strong> In Edge → Settings → Privacy → Tracking Prevention → Exceptions → Add this site.
+  <button onclick="document.getElementById('tracking-warning').style.display='none'" style="margin-left:16px;background:rgba(255,255,255,.2);border:none;color:#fff;padding:3px 10px;border-radius:4px;cursor:pointer;font-size:11px">Dismiss</button>
+</div>
 <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
 <!-- ============================================================
      SIDEBAR
@@ -2405,11 +2412,19 @@ function getSB() {
   if (_sb) return _sb;
   const { createClient } = window.supabase || {};
   if (!createClient) {
-    console.error('Supabase SDK not loaded - check CDN script tag');
+    // SDK not loaded — likely blocked by browser tracking prevention
+    // Show a one-time warning instead of spamming console
+    if (!getSB._warned) {
+      getSB._warned = true;
+      console.warn('⚠️ Supabase SDK not loaded. If using Edge/Brave, disable Tracking Prevention for this site: Settings → Privacy → Tracking Prevention → Exceptions');
+    }
     return null;
   }
   try {
-    _sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    _sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      realtime: { params: { eventsPerSecond: 10 } },
+      auth: { autoRefreshToken: true, persistSession: true }
+    });
     return _sb;
   } catch(e) {
     console.error('Supabase createClient failed:', e.message);
@@ -2626,17 +2641,15 @@ function isMobileDevice() {
 // Optimize tables for mobile
 function optimizeTablesForMobile() {
   if (!isMobileDevice()) return;
-  
-  const tables = document.querySelectorAll('.table-wrap table');
-  tables.forEach(table => {
-    // Add horizontal scroll hint
+  document.querySelectorAll('.table-wrap table').forEach(table => {
     const wrap = table.closest('.table-wrap');
     if (wrap && !wrap.querySelector('.scroll-hint')) {
       const hint = document.createElement('div');
       hint.className = 'scroll-hint';
       hint.style.cssText = 'text-align:center;padding:8px;font-size:10px;color:var(--g3);background:var(--bg-d);border-radius:var(--r-sm);margin-bottom:8px;';
       hint.innerHTML = '<span class="material-symbols-outlined" style="font-size:12px;vertical-align:middle;">swipe</span> Swipe to see more';
-      wrap.insertBefore(hint, table.parentElement);
+      // ✅ Fix: insert before the table itself (which IS a child of wrap)
+      wrap.insertBefore(hint, table);
     }
   });
 }
@@ -3107,6 +3120,11 @@ function revealDashboard() {
     screen.style.display = 'none';
     wrap.style.display   = 'block';
     document.body.style.display = 'block';
+    // Show tracking prevention warning if Supabase SDK not available
+    if (!getSB()) {
+      const warn = document.getElementById('tracking-warning');
+      if (warn) warn.style.display = 'block';
+    }
     loadDashboardKPIs();
     loadLowStock();
     loadActivityFeed();
@@ -5469,18 +5487,20 @@ async function loadDashboardKPIs() {
       yLabels.innerHTML = '<span>₹'+top+'</span><span>₹'+mid+'</span><span>₹'+(maxRev>=100000?(maxRev/400000).toFixed(1)+'L':(maxRev/4000).toFixed(0)+'k')+'</span><span>₹'+(maxRev>=100000?(maxRev/800000).toFixed(1)+'L':(maxRev/8000).toFixed(0)+'k')+'</span><span>₹0</span>';
     }
 
-    // ── 9. CSV export ──────────────────────────────────────────
-    csvData['orders'] = 'Order ID,Customer,Email,Items,Total,Payment,Status,Date\n'
-      + orders.map(function(o) {
-          var addr  = (function(){ try { return JSON.parse(o.shipping_address||'{}'); } catch(e){ return {}; } })();
-          var items = (function(){ try { return JSON.parse(o.items||'[]'); } catch(e){ return []; } })();
-          var email = o.guest_email || addr.email || '';
-          var name  = (addr.fullName || email || 'Guest').replace(/,/g,' ');
-          var itemStr = '"' + items.map(function(i){ return (i.name||i.productId)+' x'+i.qty; }).join(', ') + '"';
-          var date  = new Date(o.created_at).toLocaleDateString('en-IN');
-          return [o.order_number, name, email, itemStr, '₹'+(o.total_inr||0), o.payment_method||'COD', o.status||'pending', date].join(',');
-        }).join('\n');
-    csvData['dashboard'] = 'Dashboard Export\nPeriod,Revenue,Orders,Avg Order\nLast ' + days + ' Days,₹' + total.toLocaleString('en-IN') + ',' + count + ',₹' + avg.toLocaleString('en-IN');
+    // ── 9. CSV export — guard against csvData not being defined ──
+    if (typeof csvData !== 'undefined') {
+      csvData['orders'] = 'Order ID,Customer,Email,Items,Total,Payment,Status,Date\n'
+        + orders.map(function(o) {
+            var addr  = (function(){ try { return JSON.parse(o.shipping_address||'{}'); } catch(e){ return {}; } })();
+            var items = (function(){ try { return JSON.parse(o.items||'[]'); } catch(e){ return []; } })();
+            var email = o.guest_email || addr.email || '';
+            var name  = (addr.fullName || email || 'Guest').replace(/,/g,' ');
+            var itemStr = '"' + items.map(function(i){ return (i.name||i.productId)+' x'+i.qty; }).join(', ') + '"';
+            var date  = new Date(o.created_at).toLocaleDateString('en-IN');
+            return [o.order_number, name, email, itemStr, '₹'+(o.total_inr||0), o.payment_method||'COD', o.status||'pending', date].join(',');
+          }).join('\n');
+      csvData['dashboard'] = 'Dashboard Export\nPeriod,Revenue,Orders,Avg Order\nLast ' + days + ' Days,₹' + total.toLocaleString('en-IN') + ',' + count + ',₹' + avg.toLocaleString('en-IN');
+    }
 
   } catch (e) { console.warn('Dashboard KPI load failed:', e.message); }
 }
