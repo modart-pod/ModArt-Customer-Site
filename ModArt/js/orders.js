@@ -683,7 +683,7 @@ export async function handleCheckoutSubmit() {
   }
 
   // Save order to sessionStorage BEFORE clearing cart
-  sessionStorage.setItem('modart_last_order', JSON.stringify({ orderNumber, total, items: cart.items }));
+  sessionStorage.setItem('modart_last_order', JSON.stringify({ orderNumber, total, items: cart.items, shippingAddress }));
 
   const { success, error: confirmError, order } = await confirmOrder(orderId, 'COD');
   if (!success) {
@@ -717,19 +717,18 @@ export function renderConfirmationPage() {
   if (!badge) return;
 
   if (!stored) {
-    // sessionStorage cleared — show fallback message
     badge.textContent = 'Your order has been placed';
     if (noteEl) noteEl.style.display = 'block';
     return;
   }
 
   try {
-    const { orderNumber, total, items } = JSON.parse(stored);
+    const { orderNumber, total, items, shippingAddress } = JSON.parse(stored);
     const fmt = window.formatPrice ? window.formatPrice(total) : '₹' + total;
     badge.textContent = `${orderNumber} · ${items?.length||0} item${(items?.length||0)!==1?'s':''} · ${fmt}`;
     if (noteEl) noteEl.style.display = 'none';
 
-    // Populate order summary
+    // Order summary
     const itemsEl = document.getElementById('confirmation-items');
     if (itemsEl && items && items.length > 0) {
       const src = (window._PRODUCTS && window._PRODUCTS.length > 0) ? window._PRODUCTS : [];
@@ -741,7 +740,7 @@ export function renderConfirmationPage() {
           const name = p ? p.name : (item.productId || 'Item');
           const lineTotal = window.formatPrice ? window.formatPrice((item.price || 0) * item.qty) : '₹' + ((item.price || 0) * item.qty);
           return `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.07);font-size:12px">
-            <span style="color:rgba(255,255,255,.75)">${name} <span style="color:rgba(255,255,255,.35)">× ${item.qty} (${item.size})</span></span>
+            <span style="color:rgba(255,255,255,.75)">${esc(name)} <span style="color:rgba(255,255,255,.35)">× ${item.qty} (${esc(item.size)})</span></span>
             <span style="font-weight:700;color:#fff">${lineTotal}</span>
           </div>`;
         }).join('')}
@@ -750,18 +749,50 @@ export function renderConfirmationPage() {
           <span style="color:#fff">${fmt}</span>
         </div>`;
     }
-    
-    // Add email confirmation status and resend button
+
+    // Delivery address + estimated date
+    const deliveryEl = document.getElementById('confirmation-delivery');
+    const addrEl     = document.getElementById('conf-address');
+    const dateEl     = document.getElementById('conf-delivery-date');
+    const addr = shippingAddress || {};
+    if (deliveryEl && (addr.fullName || addr.street)) {
+      deliveryEl.style.display = 'block';
+      if (addrEl) {
+        addrEl.innerHTML = [
+          addr.fullName ? `<strong style="color:#fff">${esc(addr.fullName)}</strong>` : '',
+          addr.street   ? esc(addr.street) : '',
+          [addr.city, addr.postal].filter(Boolean).map(esc).join(' – '),
+          addr.country  ? esc(addr.country) : '',
+        ].filter(Boolean).join('<br>');
+      }
+      if (dateEl) {
+        // Estimated delivery: today + 6 business days
+        const est = new Date();
+        let days = 0, added = 0;
+        while (added < 6) {
+          est.setDate(est.getDate() + 1);
+          days++;
+          const dow = est.getDay();
+          if (dow !== 0 && dow !== 6) added++; // skip weekends
+        }
+        dateEl.textContent = est.toLocaleDateString('en-IN', { weekday:'short', day:'numeric', month:'short', year:'numeric' });
+      }
+    }
+
+    // Email status + resend
     const emailStatusEl = document.getElementById('confirmation-email-status');
     if (emailStatusEl) {
       emailStatusEl.innerHTML = `
-        <div style="display:flex;align-items:center;gap:8px;padding:12px 16px;background:rgba(34,197,94,0.1);border-radius:8px;border-left:3px solid #22C55E;margin-top:16px">
-          <span class="material-symbols-outlined" style="font-size:20px;color:#22C55E">check_circle</span>
+        <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:rgba(34,197,94,.08);border-radius:var(--r-md);border:1px solid rgba(34,197,94,.2)">
+          <span class="material-symbols-outlined" style="font-size:20px;color:#22C55E;flex-shrink:0">mark_email_read</span>
           <div style="flex:1">
-            <div style="font-size:12px;font-weight:700;color:#166534">Confirmation email sent</div>
-            <div style="font-size:11px;color:#166534;opacity:0.8">Check your inbox for order details</div>
+            <div style="font-size:12px;font-weight:700;color:#22C55E">Confirmation email sent</div>
+            <div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:2px">Check your inbox for order details</div>
           </div>
-          <button id="resend-email-btn" onclick="window.resendOrderEmail && window.resendOrderEmail('${orderNumber}')" style="padding:6px 12px;background:none;border:1px solid #22C55E;border-radius:var(--r-full);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#166534;cursor:pointer;transition:all 0.2s">Resend</button>
+          <button id="resend-email-btn" onclick="window.resendOrderEmail && window.resendOrderEmail('${esc(orderNumber)}')"
+            style="padding:5px 12px;background:none;border:1px solid rgba(34,197,94,.4);border-radius:var(--r-full);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#22C55E;cursor:pointer">
+            Resend
+          </button>
         </div>`;
     }
   } catch (e) {

@@ -210,18 +210,13 @@
     <div class="nav-inner-grid">
       <div class="nav-logo-wrap">
         <button class="nav-logo" onclick="goTo('home')" aria-label="ModArt home">
-          <span style="display:flex;align-items:center;gap:8px">
-            <!-- Two logos stacked — crossfade via opacity on scroll -->
-            <span style="position:relative;height:clamp(32px,3.5vw,44px);display:flex;align-items:center">
-              <img src="assets/images/White logoo.png" alt="" id="nav-logo-white"
-                   style="height:clamp(32px,3.5vw,44px);width:auto;position:absolute;left:0;top:50%;transform:translateY(-50%);opacity:1;transition:opacity .3s ease"/>
-              <img src="assets/images/logo-black.png" alt="" id="nav-logo-black"
-                   style="height:clamp(32px,3.5vw,44px);width:auto;position:absolute;left:0;top:50%;transform:translateY(-50%);opacity:0;transition:opacity .3s ease"/>
-              <!-- Spacer to reserve width -->
-              <img src="assets/images/logo-black.png" alt="" aria-hidden="true"
-                   style="height:clamp(32px,3.5vw,44px);width:auto;visibility:hidden"/>
-            </span>
-            <span class="nav-logo-fallback" style="display:block;font-size:clamp(13px,1.4vw,16px);font-weight:900;letter-spacing:.18em;text-transform:uppercase">MODART</span>
+          <span style="position:relative;height:clamp(32px,3.5vw,44px);display:flex;align-items:center">
+            <img src="assets/images/White logoo.png" alt="ModArt" id="nav-logo-white"
+                 style="height:clamp(32px,3.5vw,44px);width:auto;position:absolute;left:0;top:50%;transform:translateY(-50%);opacity:1;transition:opacity .3s ease"/>
+            <img src="assets/images/logo-black.png" alt="" id="nav-logo-black"
+                 style="height:clamp(32px,3.5vw,44px);width:auto;position:absolute;left:0;top:50%;transform:translateY(-50%);opacity:0;transition:opacity .3s ease"/>
+            <img src="assets/images/logo-black.png" alt="" aria-hidden="true"
+                 style="height:clamp(32px,3.5vw,44px);width:auto;visibility:hidden"/>
           </span>
         </button>
       </div>
@@ -253,17 +248,16 @@
        MOBILE HEADER
        ============================================================ -->
   <header class="mobile-hdr" id="mobile-hdr">
-    <button class="nav-icon-btn" aria-label="Menu" onclick="toggleMobileMenu()"><span class="material-symbols-outlined icon">menu</span></button>
     <button class="mobile-logo-btn" onclick="goTo('home')" aria-label="ModArt home">
-      <span style="display:flex;align-items:center;gap:8px">
-        <img src="assets/images/logo-black.png" alt="" class="nav-logo-img" aria-hidden="true"
-             style="height:28px;width:auto"
-             onerror="this.style.display='none'"/>
-        <span style="font-size:14px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:var(--black)">MODART</span>
-      </span>
+      <img src="assets/images/logo-black.png" alt="ModArt" class="nav-logo-img"
+           style="height:28px;width:auto" onerror="this.style.display='none'"/>
     </button>
     <div class="mobile-hdr-actions">
       <button class="nav-icon-btn" aria-label="Search" onclick="toggleSearch()"><span class="material-symbols-outlined icon">search</span></button>
+      <button class="nav-icon-btn" aria-label="Wishlist" onclick="goTo('wishlist')" style="position:relative">
+        <span class="material-symbols-outlined icon" style="font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24">favorite</span>
+        <span class="cart-badge" id="wishlist-badge-mob-hdr" style="display:none">0</span>
+      </button>
       <button class="nav-icon-btn" aria-label="Bag" onclick="goTo('bag')" style="position:relative">
         <span class="material-symbols-outlined icon">shopping_bag</span>
         <span class="cart-badge" id="cart-badge-mob" style="display:none">0</span>
@@ -398,26 +392,6 @@
         <span class="ticker-item">Culture-First Streetwear<span class="ticker-dot"></span></span>
       </div>
     </div>
-
-    <!-- ESSENTIAL PIECES CAROUSEL -->
-    <section class="section">
-      <div class="container">
-        <div class="section-hdr">
-          <div><div class="eyebrow eyebrow-red" style="margin-bottom:6px">Craftsmanship Series</div><h2 class="section-title">Essential Pieces</h2></div>
-          <button class="section-link" onclick="goTo('shop')">View All <span class="material-symbols-outlined icon">arrow_forward</span></button>
-        </div>
-        <div class="home-carousel" id="home-carousel">
-          <div class="home-carousel-track" id="home-product-grid"></div>
-          <button class="carousel-btn carousel-btn-prev" aria-label="Previous" onclick="scrollCarousel(-1)">
-            <span class="material-symbols-outlined">chevron_left</span>
-          </button>
-          <button class="carousel-btn carousel-btn-next" aria-label="Next" onclick="scrollCarousel(1)">
-            <span class="material-symbols-outlined">chevron_right</span>
-          </button>
-        </div>
-        <div class="carousel-dots" id="carousel-dots"></div>
-      </div>
-    </section>
 
     <!-- CUSTOMIZER CTA BANNER -->
     <section style="background:var(--red);padding:clamp(36px,6vw,64px) 0">
@@ -717,58 +691,138 @@
   <!-- PAGE: CUSTOMIZE -->
   <main class="page" id="page-customize" aria-label="Design studio">
     <div class="customizer-page" style="min-height:100vh;display:flex;flex-direction:column;background:var(--bg-d)">
-      <div class="customizer-topbar" style="background:var(--bg);border-bottom:1px solid var(--border);padding:12px clamp(16px,3vw,32px);display:flex;align-items:center;justify-content:space-between;gap:16px">
-        <div style="display:flex;align-items:center;gap:16px">
-          <button class="btn-ghost" onclick="goTo('shop')" style="display:flex;align-items:center;gap:6px"><span class="material-symbols-outlined icon" style="font-size:18px">arrow_back</span> Back</button>
-          <select onchange="changeCustProduct(this.value)" style="font-size:11px;font-weight:700;padding:8px 12px;border:1.5px solid var(--border);border-radius:var(--r-sm);background:var(--bg);font-family:var(--font);color:var(--black)">
+
+      <!-- Top bar -->
+      <div class="customizer-topbar" style="background:var(--bg);border-bottom:1px solid var(--border);padding:0 clamp(12px,3vw,24px);height:56px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:10">
+        <div style="display:flex;align-items:center;gap:12px">
+          <button class="btn-ghost" onclick="goTo('shop')" style="display:flex;align-items:center;gap:4px;font-size:11px">
+            <span class="material-symbols-outlined icon" style="font-size:18px">arrow_back</span>
+          </button>
+          <div style="width:1px;height:24px;background:var(--border)"></div>
+          <select onchange="changeCustProduct(this.value)" style="font-size:11px;font-weight:700;padding:6px 10px;border:1.5px solid var(--border);border-radius:var(--r-sm);background:var(--bg);font-family:var(--font);color:var(--black);cursor:pointer">
             <option value="hoodie">Hoodie</option>
             <option value="tee">T-Shirt</option>
             <option value="cargo">Cargo Pants</option>
           </select>
         </div>
-        <div style="font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase">Design Studio</div>
-        <div style="display:flex;align-items:center;gap:8px">
-          <button class="btn-ghost" onclick="undoLayer()"><span class="material-symbols-outlined icon">undo</span></button>
-          <button class="btn-ghost" onclick="redoLayer()"><span class="material-symbols-outlined icon">redo</span></button>
-          <button class="btn-red btn-red-pill" style="padding:10px 20px" onclick="goTo('bag')">Add to Bag</button>
+        <div style="font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--black)">Design Studio</div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <button class="btn-ghost" onclick="undoLayer()" title="Undo" style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:var(--r-sm)">
+            <span class="material-symbols-outlined icon" style="font-size:18px">undo</span>
+          </button>
+          <button class="btn-ghost" onclick="redoLayer()" title="Redo" style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:var(--r-sm)">
+            <span class="material-symbols-outlined icon" style="font-size:18px">redo</span>
+          </button>
+          <button class="btn-red btn-red-pill" style="padding:9px 18px;font-size:11px" onclick="addCustToCart()">
+            <span class="material-symbols-outlined icon" style="font-size:15px">shopping_bag</span> Add to Bag
+          </button>
         </div>
       </div>
+
+      <!-- Body -->
       <div class="customizer-body" style="flex:1;display:flex;overflow:hidden">
-        <div class="customizer-tools-col" style="width:clamp(200px,22vw,260px);border-right:1px solid var(--border);padding:16px;overflow-y:auto;background:var(--bg)">
-          <div style="font-size:9px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--g3);margin-bottom:12px">Tools</div>
-          <div class="tool-btns-row" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px">
-            <button class="tool-btn active" onclick="this.closest('.tool-btns-row').querySelectorAll('.tool-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active')" style="flex:1;min-width:60px;padding:10px 6px;border:1.5px solid var(--border);border-radius:var(--r-md);background:var(--bg-c);font-family:var(--font);font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--black);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px"><span class="material-symbols-outlined icon" style="font-size:20px">palette</span>Colors</button>
-            <button class="tool-btn" onclick="this.closest('.tool-btns-row').querySelectorAll('.tool-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active')" style="flex:1;min-width:60px;padding:10px 6px;border:1.5px solid var(--border);border-radius:var(--r-md);background:var(--bg-c);font-family:var(--font);font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--black);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px"><span class="material-symbols-outlined icon" style="font-size:20px">image</span>Graphics</button>
-            <button class="tool-btn" onclick="this.closest('.tool-btns-row').querySelectorAll('.tool-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active')" style="flex:1;min-width:60px;padding:10px 6px;border:1.5px solid var(--border);border-radius:var(--r-md);background:var(--bg-c);font-family:var(--font);font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--black);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px"><span class="material-symbols-outlined icon" style="font-size:20px">title</span>Text</button>
+
+        <!-- Left: Tools panel -->
+        <div class="customizer-tools-col" style="width:clamp(200px,22vw,260px);border-right:1px solid var(--border);overflow-y:auto;background:var(--bg)">
+
+          <!-- Tool tabs -->
+          <div style="display:flex;border-bottom:1px solid var(--border)">
+            <button class="cust-tab active" id="tab-colors" onclick="switchCustTab('colors')" style="flex:1;padding:12px 4px;font-size:9px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;background:none;border:none;border-bottom:2px solid var(--red);color:var(--black);cursor:pointer">Colors</button>
+            <button class="cust-tab" id="tab-graphics" onclick="switchCustTab('graphics')" style="flex:1;padding:12px 4px;font-size:9px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;background:none;border:none;border-bottom:2px solid transparent;color:var(--g3);cursor:pointer">Graphics</button>
+            <button class="cust-tab" id="tab-text" onclick="switchCustTab('text')" style="flex:1;padding:12px 4px;font-size:9px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;background:none;border:none;border-bottom:2px solid transparent;color:var(--g3);cursor:pointer">Text</button>
           </div>
-          <div style="font-size:9px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--g3);margin-bottom:10px">Garment Color</div>
-          <div class="color-swatches" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px">
-            <button class="color-swatch" onclick="selectColour(this,'#111','https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=600&q=80')" style="width:28px;height:28px;border-radius:50%;background:#111;border:2px solid var(--border);cursor:pointer" title="Black"></button>
-            <button class="color-swatch" onclick="selectColour(this,'#fff','https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=600&q=80')" style="width:28px;height:28px;border-radius:50%;background:#fff;border:2px solid var(--border);cursor:pointer" title="White"></button>
-            <button class="color-swatch" onclick="selectColour(this,'#1e3a5f','https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=600&q=80')" style="width:28px;height:28px;border-radius:50%;background:#1e3a5f;border:2px solid var(--border);cursor:pointer" title="Navy"></button>
-            <button class="color-swatch" onclick="selectColour(this,'#D72638','https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&q=80')" style="width:28px;height:28px;border-radius:50%;background:#D72638;border:2px solid var(--border);cursor:pointer" title="Red"></button>
+
+          <!-- Colors tab -->
+          <div id="cust-panel-colors" style="padding:16px">
+            <div style="font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--g3);margin-bottom:10px">Garment Color</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px">
+              <button class="color-swatch" onclick="selectColour(this,'#111','https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=600&q=80')" style="width:32px;height:32px;border-radius:50%;background:#111;border:2px solid transparent;cursor:pointer;transition:border-color .2s" title="Black"></button>
+              <button class="color-swatch" onclick="selectColour(this,'#fff','https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=600&q=80')" style="width:32px;height:32px;border-radius:50%;background:#fff;border:2px solid var(--border);cursor:pointer;transition:border-color .2s" title="White"></button>
+              <button class="color-swatch" onclick="selectColour(this,'#1e3a5f','https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=600&q=80')" style="width:32px;height:32px;border-radius:50%;background:#1e3a5f;border:2px solid transparent;cursor:pointer;transition:border-color .2s" title="Navy"></button>
+              <button class="color-swatch" onclick="selectColour(this,'#D72638','https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&q=80')" style="width:32px;height:32px;border-radius:50%;background:#D72638;border:2px solid transparent;cursor:pointer;transition:border-color .2s" title="Red"></button>
+              <button class="color-swatch" onclick="selectColour(this,'#4a4a4a','')" style="width:32px;height:32px;border-radius:50%;background:#4a4a4a;border:2px solid transparent;cursor:pointer" title="Charcoal"></button>
+              <button class="color-swatch" onclick="selectColour(this,'#c8a96e','')" style="width:32px;height:32px;border-radius:50%;background:#c8a96e;border:2px solid transparent;cursor:pointer" title="Beige"></button>
+            </div>
+            <div style="font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--g3);margin-bottom:10px">Print Zone</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <button class="zone-btn active" onclick="selectZone(this,'front')" style="flex:1;min-width:60px;padding:8px 4px;border:1.5px solid var(--red);border-radius:var(--r-sm);background:rgba(215,38,56,.06);font-family:var(--font);font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--red);cursor:pointer">Front</button>
+              <button class="zone-btn" onclick="selectZone(this,'back')" style="flex:1;min-width:60px;padding:8px 4px;border:1.5px solid var(--border);border-radius:var(--r-sm);background:none;font-family:var(--font);font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g2);cursor:pointer">Back</button>
+              <button class="zone-btn" onclick="selectZone(this,'sleeve')" style="flex:1;min-width:60px;padding:8px 4px;border:1.5px solid var(--border);border-radius:var(--r-sm);background:none;font-family:var(--font);font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g2);cursor:pointer">Sleeve</button>
+            </div>
           </div>
-          <div style="font-size:9px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--g3);margin-bottom:10px">Upload Design</div>
-          <label style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;border:1.5px dashed var(--border);border-radius:var(--r-md);cursor:pointer;font-size:11px;font-weight:600;color:var(--g2);margin-bottom:16px">
-            <span class="material-symbols-outlined icon" style="font-size:20px">upload</span> Upload File
-            <input type="file" accept="image/*" style="display:none" onchange="uploadDesign(this)"/>
-          </label>
-          <button class="btn-outline" style="width:100%;margin-bottom:8px" onclick="openModal('ai')"><span class="material-symbols-outlined icon" style="font-size:16px">auto_awesome</span> AI Generate</button>
-          <button class="btn-outline" style="width:100%" onclick="addTextLayer()"><span class="material-symbols-outlined icon" style="font-size:16px">title</span> Add Text</button>
+
+          <!-- Graphics tab -->
+          <div id="cust-panel-graphics" style="padding:16px;display:none">
+            <div style="font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--g3);margin-bottom:10px">Upload Design</div>
+            <label style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:20px;border:1.5px dashed var(--border);border-radius:var(--r-md);cursor:pointer;transition:border-color .2s;margin-bottom:12px" onmouseover="this.style.borderColor='var(--red)'" onmouseout="this.style.borderColor='var(--border)'">
+              <span class="material-symbols-outlined" style="font-size:28px;color:var(--g3)">upload_file</span>
+              <span style="font-size:11px;font-weight:600;color:var(--g2)">Click to upload</span>
+              <span style="font-size:10px;color:var(--g3)">PNG, JPG, SVG · Max 8MB</span>
+              <input type="file" accept="image/*" style="display:none" onchange="uploadDesign(this)"/>
+            </label>
+            <button class="btn-outline" style="width:100%;margin-bottom:8px;gap:8px" onclick="openModal('ai')">
+              <span class="material-symbols-outlined icon" style="font-size:16px">auto_awesome</span> AI Generate
+            </button>
+          </div>
+
+          <!-- Text tab -->
+          <div id="cust-panel-text" style="padding:16px;display:none">
+            <div style="font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--g3);margin-bottom:10px">Add Text</div>
+            <input id="cust-text-input" type="text" placeholder="Your text here" class="form-input" style="margin-bottom:10px;font-size:13px"/>
+            <button class="btn-red btn-red-full btn-red-pill" style="padding:10px;font-size:11px;margin-bottom:16px" onclick="addTextLayer()">
+              <span class="material-symbols-outlined icon" style="font-size:15px">add</span> Add to Design
+            </button>
+            <div style="font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--g3);margin-bottom:8px">Font Style</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <button style="flex:1;padding:8px;border:1.5px solid var(--border);border-radius:var(--r-sm);background:none;font-family:var(--font);font-size:11px;font-weight:900;font-style:italic;cursor:pointer;color:var(--black)">Bold</button>
+              <button style="flex:1;padding:8px;border:1.5px solid var(--border);border-radius:var(--r-sm);background:none;font-family:serif;font-size:11px;cursor:pointer;color:var(--black)">Serif</button>
+              <button style="flex:1;padding:8px;border:1.5px solid var(--border);border-radius:var(--r-sm);background:none;font-family:monospace;font-size:11px;cursor:pointer;color:var(--black)">Mono</button>
+            </div>
+          </div>
         </div>
-        <div class="customizer-canvas-col" style="flex:1;display:flex;align-items:center;justify-content:center;padding:clamp(16px,3vw,32px)">
-          <div class="canvas-wrap" style="position:relative;width:clamp(260px,40vw,440px);height:clamp(320px,50vw,540px)">
-            <img id="cust-product-img" src="https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=600&q=80" alt="Garment" style="width:100%;height:100%;object-fit:contain;border-radius:var(--r-lg)"/>
-            <div id="design-canvas" style="position:absolute;inset:0;border-radius:var(--r-lg)"></div>
+
+        <!-- Centre: Canvas -->
+        <div class="customizer-canvas-col" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:clamp(16px,3vw,32px);gap:16px">
+          <div class="canvas-wrap" style="position:relative;width:clamp(240px,38vw,420px);height:clamp(300px,48vw,520px);border-radius:var(--r-lg);overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.12)">
+            <img id="cust-product-img" src="https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=600&q=80" alt="Garment" style="width:100%;height:100%;object-fit:contain"/>
+            <div id="design-canvas" style="position:absolute;inset:0"></div>
+          </div>
+          <!-- Size selector under canvas -->
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--g3)">Size:</span>
+            <div id="size-options-dynamic" style="display:flex;gap:6px"></div>
           </div>
         </div>
+
+        <!-- Right: Layer properties -->
         <div class="customizer-layers-col" style="width:clamp(180px,20vw,220px);border-left:1px solid var(--border);padding:16px;overflow-y:auto;background:var(--bg)">
-          <div style="font-size:9px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--g3);margin-bottom:12px">Layer Properties</div>
-          <div style="margin-bottom:12px"><div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g2);margin-bottom:6px;display:flex;justify-content:space-between">Opacity<span id="opacity-val" style="color:var(--g3)">100%</span></div><input type="range" id="opacity-slider" min="0" max="100" value="100" style="width:100%;accent-color:var(--red)"/></div>
-          <div style="margin-bottom:16px"><div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g2);margin-bottom:6px;display:flex;justify-content:space-between">Scale<span id="scale-val" style="color:var(--g3)">100%</span></div><input type="range" id="scale-slider" min="20" max="200" value="100" style="width:100%;accent-color:var(--red)"/></div>
-          <div style="margin-bottom:16px"><div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g2);margin-bottom:6px;display:flex;justify-content:space-between">Rotation<span id="rot-val" style="color:var(--g3)">0—</span></div><input type="range" id="rot-slider" min="-180" max="180" value="0" style="width:100%;accent-color:var(--red)"/></div>
-          <button class="btn-outline" style="width:100%;margin-bottom:8px" onclick="centerLayer()">Center</button>
-          <button class="btn-outline" style="width:100%;margin-bottom:8px" onclick="deleteLayer(window._selectedLayerId)">Delete Layer</button>
+          <div style="font-size:10px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--g3);margin-bottom:14px">Layer Properties</div>
+          <div style="margin-bottom:14px">
+            <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g2);margin-bottom:6px;display:flex;justify-content:space-between">Opacity <span id="opacity-val" style="color:var(--g3)">100%</span></div>
+            <input type="range" id="opacity-slider" min="0" max="100" value="100" style="width:100%;accent-color:var(--red)"/>
+          </div>
+          <div style="margin-bottom:14px">
+            <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g2);margin-bottom:6px;display:flex;justify-content:space-between">Scale <span id="scale-val" style="color:var(--g3)">100%</span></div>
+            <input type="range" id="scale-slider" min="20" max="200" value="100" style="width:100%;accent-color:var(--red)"/>
+          </div>
+          <div style="margin-bottom:16px">
+            <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g2);margin-bottom:6px;display:flex;justify-content:space-between">Rotation <span id="rot-val" style="color:var(--g3)">0°</span></div>
+            <input type="range" id="rot-slider" min="-180" max="180" value="0" style="width:100%;accent-color:var(--red)"/>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <button class="btn-outline" style="width:100%;padding:8px;font-size:10px" onclick="centerLayer()">
+              <span class="material-symbols-outlined icon" style="font-size:14px">center_focus_strong</span> Center
+            </button>
+            <button class="btn-outline" style="width:100%;padding:8px;font-size:10px;color:var(--red);border-color:rgba(215,38,56,.3)" onclick="deleteLayer(window._selectedLayerId)">
+              <span class="material-symbols-outlined icon" style="font-size:14px">delete</span> Delete Layer
+            </button>
+          </div>
+          <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
+            <div style="font-size:10px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--g3);margin-bottom:10px">Layers</div>
+            <div id="layers-list" style="display:flex;flex-direction:column;gap:4px">
+              <div style="font-size:11px;color:var(--g3);text-align:center;padding:12px 0">No layers yet</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -881,13 +935,35 @@
         <div class="eyebrow eyebrow-white" style="margin-bottom:12px">Order Confirmed</div>
         <h1 style="font-size:clamp(28px,5vw,52px);font-weight:900;font-style:italic;text-transform:uppercase;color:#fff;line-height:.93;margin-bottom:16px">You're In The Drop.</h1>
         <div id="confirmation-order-badge" style="display:inline-block;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);padding:8px 20px;border-radius:var(--r-full);font-size:12px;font-weight:700;color:rgba(255,255,255,.7);margin-bottom:16px">Order placed successfully</div>
-        <div id="confirmation-email-note" style="display:none;font-size:12px;color:rgba(255,255,255,.5);margin-top:0;margin-bottom:24px">Check your email for your order details and confirmation number.</div>
-        <!-- Order summary from sessionStorage -->
-        <div id="confirmation-items" style="display:none;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:var(--r-lg);padding:16px 20px;max-width:420px;margin:0 auto 32px;text-align:left"></div>
-        <div style="display:flex;flex-direction:column;gap:16px;max-width:480px;margin:0 auto 32px">
+        <div id="confirmation-email-note" style="display:none;font-size:12px;color:rgba(255,255,255,.5);margin-bottom:24px">Check your email for your order details and confirmation number.</div>
+
+        <!-- Order summary -->
+        <div id="confirmation-items" style="display:none;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:var(--r-lg);padding:16px 20px;max-width:480px;margin:0 auto 24px;text-align:left"></div>
+
+        <!-- Delivery address + estimate -->
+        <div id="confirmation-delivery" style="display:none;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:var(--r-lg);padding:16px 20px;max-width:480px;margin:0 auto 24px;text-align:left">
+          <div style="font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:12px">Delivery Details</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+            <div>
+              <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:4px">Delivering To</div>
+              <div id="conf-address" style="font-size:12px;color:rgba(255,255,255,.75);line-height:1.6"></div>
+            </div>
+            <div>
+              <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:4px">Expected Delivery</div>
+              <div id="conf-delivery-date" style="font-size:13px;font-weight:700;color:var(--green)"></div>
+              <div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:2px">4–6 business days</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Email status -->
+        <div id="confirmation-email-status" style="max-width:480px;margin:0 auto 24px"></div>
+
+        <!-- Steps -->
+        <div style="display:flex;flex-direction:column;gap:12px;max-width:480px;margin:0 auto 32px">
           <div class="confirmation-step" style="display:flex;align-items:flex-start;gap:16px;text-align:left">
-            <div style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0"><span class="material-symbols-outlined" style="font-size:18px;color:rgba(255,255,255,.6)">email</span></div>
-            <div><div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:3px">Confirmation Email Sent</div><div style="font-size:11px;color:rgba(255,255,255,.45)">Check your inbox for order details</div></div>
+            <div style="width:36px;height:36px;border-radius:50%;background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0"><span class="material-symbols-outlined" style="font-size:18px;color:var(--green)">email</span></div>
+            <div><div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:3px">Confirmation Email Sent</div><div style="font-size:11px;color:rgba(255,255,255,.45)">Check your inbox for order details and receipt</div></div>
           </div>
           <div class="confirmation-step" style="display:flex;align-items:flex-start;gap:16px;text-align:left">
             <div style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0"><span class="material-symbols-outlined" style="font-size:18px;color:rgba(255,255,255,.6)">manufacturing</span></div>
@@ -895,9 +971,14 @@
           </div>
           <div class="confirmation-step" style="display:flex;align-items:flex-start;gap:16px;text-align:left">
             <div style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0"><span class="material-symbols-outlined" style="font-size:18px;color:rgba(255,255,255,.6)">local_shipping</span></div>
-            <div><div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:3px">Ships in 4—6 Days</div><div style="font-size:11px;color:rgba(255,255,255,.45)">Tracking link sent when dispatched</div></div>
+            <div><div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:3px">Ships in 4–6 Business Days</div><div style="font-size:11px;color:rgba(255,255,255,.45)">Tracking link sent via email when dispatched</div></div>
+          </div>
+          <div class="confirmation-step" style="display:flex;align-items:flex-start;gap:16px;text-align:left">
+            <div style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0"><span class="material-symbols-outlined" style="font-size:18px;color:rgba(255,255,255,.6)">payments</span></div>
+            <div><div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:3px">Cash on Delivery</div><div style="font-size:11px;color:rgba(255,255,255,.45)">Pay when your order arrives at your door</div></div>
           </div>
         </div>
+
         <div style="display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap">
           <button class="btn-red btn-red-pill" onclick="goTo('orders')">Track My Order</button>
           <button class="btn-outline" style="color:rgba(255,255,255,.8);border-color:rgba(255,255,255,.2)" onclick="goTo('shop')">Continue Shopping</button>

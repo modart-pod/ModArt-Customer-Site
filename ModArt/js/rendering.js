@@ -88,7 +88,10 @@ export function renderProducts(page) {
         <img src="${esc(p.img)}" alt="${esc(p.name)}" loading="lazy"/>
         ${p.badge ? `<div class="product-card-badge${sold ? ' badge-sold' : low ? ' badge-low' : ''}">${esc(p.badge)}</div>` : ''}
         <div class="product-card-overlay">
-          <button class="card-quick-cta" onclick="event.stopPropagation();window.goTo && window.goTo('customize')">Customize</button>
+          ${sold
+            ? `<button class="card-quick-cta" style="opacity:.5;cursor:not-allowed" disabled>Sold Out</button>`
+            : `<button class="card-quick-cta" onclick="event.stopPropagation();window.addToCart&&window.addToCart('${esc(p.id)}');window.renderBag&&window.renderBag()">Add to Cart</button>`
+          }
           <button class="wishlist-icon-btn${wish ? ' wishlisted' : ''}" aria-label="${wish ? 'Remove from wishlist' : 'Add to wishlist'}: ${esc(p.name)}" onclick="event.stopPropagation();window.toggleWishlist && window.toggleWishlist('${esc(p.id)}',this)">
             <span class="material-symbols-outlined icon">${wish ? 'favorite' : 'favorite_border'}</span>
           </button>

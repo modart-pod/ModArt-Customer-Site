@@ -725,3 +725,16 @@ window.uploadDesign      = uploadDesign;
 window.deleteLayer       = deleteLayer;
 window.selectLayer       = selectLayer;
 window.updateTextLayer   = updateTextLayer;
+
+// Tab switcher for customizer UI panels
+window.switchCustTab = function(tab) {
+  ['colors','graphics','text'].forEach(t => {
+    const panel = document.getElementById('cust-panel-' + t);
+    const btn   = document.getElementById('tab-' + t);
+    if (panel) panel.style.display = t === tab ? '' : 'none';
+    if (btn) {
+      btn.style.borderBottomColor = t === tab ? 'var(--red)' : 'transparent';
+      btn.style.color = t === tab ? 'var(--black)' : 'var(--g3)';
+    }
+  });
+};
