@@ -1255,7 +1255,17 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
       <button class="btn-ghost" onclick="filterProductsTable('','','')">Clear</button>
     </div>
     <div class="card" style="padding:0">
-      <div style="padding:16px 18px;border-bottom:1px solid var(--border)"><div class="card-title">Product Catalog <span id="products-count-badge" style="color:var(--g3);font-weight:600"></span></div></div>
+      <div style="padding:16px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+        <div class="card-title">Product Catalog <span id="products-count-badge" style="color:var(--g3);font-weight:600"></span></div>
+        <select class="filter-select" id="products-sort" onchange="sortProductsTable(this.value)" style="font-size:10px;padding:6px 10px">
+          <option value="newest">Newest First</option>
+          <option value="oldest">Oldest First</option>
+          <option value="price-asc">Price: Low → High</option>
+          <option value="price-desc">Price: High → Low</option>
+          <option value="name-asc">Name: A → Z</option>
+          <option value="name-desc">Name: Z → A</option>
+        </select>
+      </div>
       <div class="table-wrap">
         <table id="products-table">
           <thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Badge</th><th>Status</th><th>Added</th><th>Actions</th></tr></thead>
@@ -4974,9 +4984,11 @@ async function loadAdminProducts() {
   if (!tbody) return;
   tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--g3)"><span class="material-symbols-outlined" style="font-size:20px;vertical-align:middle;animation:spin 1s linear infinite">autorenew</span> Loading</td></tr>';
   window._editProducts = {};
-  // Reset pagination state
-  window._productsAllRows = [];
-  window._productsPage    = 1;
+  // ✅ L1: hide badge until data loads — no (0) flash
+  const countBadge = document.getElementById('products-count-badge');
+  const pagInfo    = document.getElementById('products-pag-info');
+  if (countBadge) countBadge.textContent = '';
+  if (pagInfo)    pagInfo.textContent    = 'Loading…';
   try {
     const { data, error } = await sb.from('products').select('*').order('created_at', { ascending: false });
     if (error) throw error;
@@ -5116,6 +5128,34 @@ function changeProductsPage(delta) {
 
 function goToProductsPage(p) {
   window._productsPage = p;
+  renderProductsPage();
+}
+
+// ✅ L2: Sort products table
+function sortProductsTable(value) {
+  const rows = window._productsFiltered || window._productsAllRows;
+  if (!rows || !rows.length) return;
+
+  rows.sort((a, b) => {
+    // Extract sortable values from the cached row data
+    const nameA = a.html.match(/class="td-bold">([^<]+)<\/div>/)?.[1] || '';
+    const nameB = b.html.match(/class="td-bold">([^<]+)<\/div>/)?.[1] || '';
+    const priceA = parseFloat((a.html.match(/₹([\d,]+)/) || [])[1]?.replace(/,/g,'') || '0');
+    const priceB = parseFloat((b.html.match(/₹([\d,]+)/) || [])[1]?.replace(/,/g,'') || '0');
+    const dateA  = a.html.match(/class="text-muted text-sm">([^<]+)<\/td>/)?.[1] || '';
+    const dateB  = b.html.match(/class="text-muted text-sm">([^<]+)<\/td>/)?.[1] || '';
+
+    switch (value) {
+      case 'price-asc':  return priceA - priceB;
+      case 'price-desc': return priceB - priceA;
+      case 'name-asc':   return nameA.localeCompare(nameB);
+      case 'name-desc':  return nameB.localeCompare(nameA);
+      case 'oldest':     return dateA.localeCompare(dateB);
+      default:           return dateB.localeCompare(dateA); // newest first
+    }
+  });
+
+  window._productsPage = 1;
   renderProductsPage();
 }
 async function loadAdminInventory() {
@@ -6546,6 +6586,7 @@ window.filterProductsTable    = filterProductsTable;
 window.renderProductsPage     = renderProductsPage;
 window.changeProductsPage     = changeProductsPage;
 window.goToProductsPage       = goToProductsPage;
+window.sortProductsTable      = sortProductsTable;
 window.loadAdminInventory     = loadAdminInventory;
 window.loadAdminCustomers     = loadAdminCustomers;
 window.loadAdminCoupons       = loadAdminCoupons;
