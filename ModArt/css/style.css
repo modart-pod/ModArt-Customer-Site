@@ -553,7 +553,29 @@ a {
   background: var(--g2);
 }
 /* =================================================================
-   SHOP GRID ΓÇö SHORTER CARDS
+   WISHLIST PAGE
+   ================================================================= */
+
+/* Always show overlay on wishlist cards (no hover needed on mobile) */
+.wishlist-card .product-card-overlay {
+  opacity: 1;
+  background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 55%);
+}
+
+/* 2-col on mobile, 3-col on tablet, 4-col on desktop */
+#wishlist-grid {
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(10px, 2vw, 20px);
+}
+@media (min-width: 600px) {
+  #wishlist-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (min-width: 1024px) {
+  #wishlist-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* =================================================================
+   SHOP GRID — SHORTER CARDS
    (replaces previous aspect-ratio: 1/1 with 4/5)
    ================================================================= */
 .shop-grid .product-card-img {

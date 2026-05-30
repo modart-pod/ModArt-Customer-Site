@@ -140,17 +140,29 @@ export async function saveProfile() {
  * Renders the wishlist page using live products if available.
  */
 export function renderWishlistPage() {
-  const grid     = document.getElementById('wishlist-grid');
-  const empty    = document.getElementById('wishlist-empty');
-  const countEl  = document.getElementById('wishlist-count');
-  const shareBtn = document.getElementById('share-wishlist-btn');
+  const grid      = document.getElementById('wishlist-grid');
+  const empty     = document.getElementById('wishlist-empty');
+  const loggedOut = document.getElementById('wishlist-logged-out');
+  const countEl   = document.getElementById('wishlist-count');
+  const shareBtn  = document.getElementById('share-wishlist-btn');
   if (!grid || !empty) return;
+
+  // Show logged-out state if not signed in
+  if (!currentUser) {
+    if (loggedOut) loggedOut.style.display = 'block';
+    if (empty)     empty.style.display     = 'none';
+    grid.style.display = 'none';
+    if (shareBtn) shareBtn.style.display = 'none';
+    if (countEl)  countEl.textContent = '';
+    return;
+  }
+  if (loggedOut) loggedOut.style.display = 'none';
 
   // Use live products if available
   const src   = (window._PRODUCTS && window._PRODUCTS.length > 0) ? window._PRODUCTS : PRODUCTS;
   const items = src.filter(p => wishlist.has(p.id));
 
-  if (countEl) countEl.textContent = `(${items.length})`;
+  if (countEl) countEl.textContent = items.length > 0 ? `(${items.length})` : '';
 
   if (items.length === 0) {
     empty.style.display = 'block';
@@ -163,11 +175,20 @@ export function renderWishlistPage() {
   grid.style.display  = '';
   if (shareBtn) shareBtn.style.display = '';
 
-  grid.innerHTML = items.map(p => `
-    <div class="product-card" onclick="window.openProduct && window.openProduct('${esc(p.id)}')" role="article" aria-label="${esc(p.name)}">
+  grid.innerHTML = items.map(p => {
+    const sold = p.stock === 0;
+    const low  = p.stock > 0 && p.stock <= 5;
+    const price = window.formatPrice ? window.formatPrice(p.price) : '₹' + p.price;
+    return `
+    <div class="product-card wishlist-card" onclick="window.openProduct && window.openProduct('${esc(p.id)}')" role="article" aria-label="${esc(p.name)}">
       <div class="product-card-img">
         <img src="${esc(p.img)}" alt="${esc(p.name)}" loading="lazy"/>
+        ${p.badge ? `<div class="product-card-badge${sold ? ' badge-sold' : low ? ' badge-low' : ''}">${esc(p.badge)}</div>` : ''}
         <div class="product-card-overlay">
+          <button class="card-quick-cta" onclick="event.stopPropagation();window.addToCart && window.addToCart('${esc(p.id)}');window.goTo && window.goTo('bag')"
+            ${sold ? 'disabled style="opacity:.5;cursor:not-allowed"' : ''}>
+            ${sold ? 'Sold Out' : 'Add to Bag'}
+          </button>
           <button class="wishlist-icon-btn wishlisted" aria-label="Remove ${esc(p.name)} from wishlist"
             onclick="event.stopPropagation();window.toggleWishlist && window.toggleWishlist('${esc(p.id)}',this);window.renderWishlistPage && window.renderWishlistPage()">
             <span class="material-symbols-outlined icon">favorite</span>
@@ -177,9 +198,12 @@ export function renderWishlistPage() {
       <div class="product-card-series">${esc(p.series)}</div>
       <div class="product-card-name">${esc(p.name)}</div>
       <div class="product-card-footer">
-        <div class="product-card-price">${window.formatPrice ? window.formatPrice(p.price) : '₹' + p.price}</div>
+        <div class="product-card-price">${sold ? `<s style="color:var(--g3)">${price}</s>` : price}</div>
+        ${low && !sold ? `<div class="product-card-scarcity">Only ${p.stock} Left</div>` : ''}
+        ${sold ? '<div style="font-size:9px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--g3)">Sold Out</div>' : ''}
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 /**
