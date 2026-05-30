@@ -214,22 +214,23 @@ export async function initAuth() {
     
     // Listen for auth state changes (login, logout, token refresh, OAuth callback)
     client.auth.onAuthStateChange((event, session) => {
+      const wasLoggedIn = !!currentUser;
       currentUser = session?.user ?? null;
       window.currentUser = currentUser;
       updateAuthUI();
 
       if (event === 'SIGNED_IN') {
         startTokenRefreshInterval();
-        // Navigate to account page after successful sign-in
-        if (window.goTo) {
+        // Only navigate to account on a genuine new sign-in (user was not already logged in)
+        // TOKEN_REFRESHED also fires SIGNED_IN — ignore those silent refreshes
+        if (!wasLoggedIn && window.goTo) {
           const checkoutRedirect = sessionStorage.getItem('modart_checkout_redirect');
           if (checkoutRedirect) {
             sessionStorage.removeItem('modart_checkout_redirect');
             window.goTo('checkout');
-          } else if (window.location.pathname === '/' || window.location.pathname === '/login') {
-            // Only redirect if on home or login page — don't interrupt other pages
+          } else {
             const currentPage = window.getCurrentPage ? window.getCurrentPage() : 'home';
-            if (currentPage === 'login' || currentPage === 'home') {
+            if (currentPage === 'login' || currentPage === 'register') {
               window.goTo('account');
             }
           }
