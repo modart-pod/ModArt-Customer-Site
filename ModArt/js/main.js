@@ -119,7 +119,21 @@ function lp(pct, msg) {
   if (window.setLoaderProgress) window.setLoaderProgress(pct, msg);
 }
 
+// Wraps a promise with a timeout — resolves/rejects after ms if the promise hasn't settled
+function withTimeout(promise, ms, label) {
+  return Promise.race([
+    promise,
+    new Promise(resolve => setTimeout(() => {
+      console.warn(`[loader] "${label}" timed out after ${ms}ms — continuing`);
+      resolve(); // resolve (not reject) so the chain always continues
+    }, ms))
+  ]);
+}
+
 async function initApplication() {
+  // 0. Wait for Supabase credentials before doing anything auth-related
+  if (window.__configReady) await withTimeout(window.__configReady, 4000, 'config fetch');
+
   // 1. Router + Layout
   lp(8, 'Initialising\u2026');
   initRouter();
@@ -139,37 +153,39 @@ async function initApplication() {
 
   // 2. Currency
   lp(14, 'Loading settings\u2026');
-  await initCurrency();
+  await withTimeout(initCurrency(), 4000, 'initCurrency');
   const badge = document.getElementById('currency-badge');
   if (badge) badge.textContent = getCurrencyBadge();
 
   // 3. Auth
   lp(22, 'Checking your account\u2026');
-  await initAuth();
+  await withTimeout(initAuth(), 6000, 'initAuth');
   markAuthReady();
-  if (window.loadWishlistFromSupabase) await window.loadWishlistFromSupabase();
+  if (window.loadWishlistFromSupabase) {
+    await withTimeout(window.loadWishlistFromSupabase(), 5000, 'loadWishlist');
+  }
 
   // 4. Cart
   lp(38, 'Loading your cart\u2026');
-  await initCartPersistence();
+  await withTimeout(initCartPersistence(), 5000, 'initCartPersistence');
 
   // 5. Products + inventory
   lp(52, 'Fetching products\u2026');
-  await initProducts();
+  await withTimeout(initProducts(), 8000, 'initProducts');
 
   // 6. Realtime + Drops
   lp(70, 'Connecting live updates\u2026');
   initRealtime();
-  await initDrops();
+  await withTimeout(initDrops(), 6000, 'initDrops');
 
   // 7. Customizer
   lp(80, 'Loading studio\u2026');
-  initCustomizer();
+  try { initCustomizer(); } catch (e) { console.warn('initCustomizer failed:', e); }
 
   // 8. Render
   lp(90, 'Rendering collection\u2026');
-  initCarousel();
-  renderBag();
+  try { initCarousel(); } catch (e) { console.warn('initCarousel failed:', e); }
+  try { renderBag(); } catch (e) { console.warn('renderBag failed:', e); }
   window.renderAccountPage  && window.renderAccountPage();
   window.renderWishlistPage && window.renderWishlistPage();
   updateBadges();
@@ -193,10 +209,14 @@ async function initApplication() {
     .forEach(el => { el.classList.add('fade-in-section'); fadeObserver.observe(el); });
 
   // 10. Re-render current page
-  const currentPage = window.getCurrentPage ? window.getCurrentPage() : 'home';
-  if (currentPage === 'home' || currentPage === 'shop') {
-    renderProducts(currentPage);
-    if (currentPage === 'home') window._rebuildCarouselDots && window._rebuildCarouselDots();
+  try {
+    const currentPage = window.getCurrentPage ? window.getCurrentPage() : 'home';
+    if (currentPage === 'home' || currentPage === 'shop') {
+      renderProducts(currentPage);
+      if (currentPage === 'home') window._rebuildCarouselDots && window._rebuildCarouselDots();
+    }
+  } catch (e) {
+    console.warn('renderProducts failed during init:', e);
   }
 
   // 11. Done — animate to 100% then hide loader
@@ -210,10 +230,20 @@ async function initApplication() {
 /* ================================================================
    BOOT
    ================================================================ */
+function bootApp() {
+  initApplication().catch(err => {
+    console.error('[ModArt] initApplication crashed:', err);
+    // Force the loader to hide even if init blew up
+    lp(100, 'Welcome to ModArt');
+    const loader = document.getElementById('modart-loader');
+    if (loader) setTimeout(() => loader.classList.add('hidden'), 800);
+  });
+}
+
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initApplication);
+  document.addEventListener('DOMContentLoaded', bootApp);
 } else {
-  initApplication();
+  bootApp();
 }
 
 export { initApplication };

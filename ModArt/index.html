@@ -40,15 +40,14 @@
         sessionStorage.setItem('modart_oauth_error', decodeURIComponent(desc.replace(/\+/g,' ')));
       }
     })();
-    (function(){
-      fetch('/api/config')
-        .then(function(r){ return r.json(); })
-        .then(function(c){
-          window.__SUPABASE_URL__      = c.supabaseUrl;
-          window.__SUPABASE_ANON_KEY__ = c.supabaseAnonKey;
-        })
-        .catch(function(){ console.error('Failed to load config'); });
-    })();
+    // Store config fetch as a promise so initApplication can await it
+    window.__configReady = fetch('/api/config')
+      .then(function(r){ return r.json(); })
+      .then(function(c){
+        window.__SUPABASE_URL__      = c.supabaseUrl;
+        window.__SUPABASE_ANON_KEY__ = c.supabaseAnonKey;
+      })
+      .catch(function(){ console.error('Failed to load config'); });
   </script>
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/layout.css">
@@ -199,6 +198,15 @@
 
   // Start at 5% immediately so bar isn't empty
   animateTo(5, 'Starting up\u2026');
+
+  // Safety hard-cap: if the loader is still visible after 15s, force-hide it
+  setTimeout(function() {
+    var loader = document.getElementById('modart-loader');
+    if (loader && !loader.classList.contains('hidden')) {
+      console.warn('Loader safety timeout triggered — forcing hide');
+      loader.classList.add('hidden');
+    }
+  }, 15000);
 })();
 </script>
 <a href="#main-content" class="skip-link">Skip to main content</a>
