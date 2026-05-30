@@ -128,42 +128,43 @@ body.layout-desktop #page-home         { padding-top: 0; }
     flex-shrink: 0;
   }
 
-  /* ── Hero ── */
-  .home-hero { min-height: 100svh; }
+  /* ── Hero — compact on mobile, not full screen ── */
+  .home-hero { min-height: 88svh; max-height: 92svh; }
   .home-hero-content {
-    padding-top: calc(var(--nav-h) + 20px);
+    padding-top: calc(var(--nav-h) + 16px);
     padding-left: 20px;
     padding-right: 20px;
-    padding-bottom: 32px;
+    padding-bottom: 28px;
   }
   .hero-title {
-    font-size: clamp(44px, 13vw, 64px);
+    font-size: clamp(40px, 12vw, 58px);
     line-height: .9;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
   }
   .hero-sub {
     font-size: 13px;
-    line-height: 1.6;
-    max-width: 280px;
-    margin-bottom: 20px;
+    line-height: 1.55;
+    max-width: 260px;
+    margin-bottom: 18px;
+    color: rgba(255,255,255,.5);
   }
   .hero-actions {
     flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
+    align-items: stretch;
+    gap: 8px;
   }
   .hero-actions .btn-red-pill,
   .hero-actions .btn-outline {
     width: 100%;
     text-align: center;
     justify-content: center;
-    padding: 15px 20px;
-    font-size: 12px;
+    padding: 14px 20px;
+    font-size: 11px;
   }
-  .live-orders-ticker { font-size: 10px; margin-top: 16px; }
-  .hero-countdown { margin-top: 20px; }
+  .live-orders-ticker { font-size: 10px; margin-top: 14px; }
+  .hero-countdown { margin-top: 16px; padding-top: 16px; }
   .hero-cd-label { font-size: 9px; letter-spacing: .18em; }
-  .hero-cd-unit { font-size: 28px; }
+  .hero-cd-unit { font-size: 26px; }
 
   /* ── Trust strip — single row scroll ── */
   .trust-strip { padding: 12px 0; overflow-x: auto; }
@@ -223,33 +224,45 @@ body.layout-desktop #page-home         { padding-top: 0; }
   #home-product-grid .product-card-price { font-size: 13px; font-weight: 800; }
   #shop-product-grid .product-card-badge,
   #home-product-grid .product-card-badge { font-size: 8px; padding: 3px 6px; top: 8px; left: 8px; }
+  /* On mobile: hide the CTA button, only show wishlist heart */
   #shop-product-grid .product-card-overlay,
   #home-product-grid .product-card-overlay {
     opacity: 1;
-    background: linear-gradient(to top, rgba(0,0,0,.6) 0%, transparent 60%);
+    background: linear-gradient(to top, rgba(0,0,0,.3) 0%, transparent 50%);
+    justify-content: flex-end;
+    align-items: flex-end;
+    padding: 8px;
   }
+  #shop-product-grid .card-quick-cta,
+  #home-product-grid .card-quick-cta { display: none; }
+  .product-card-overlay .wishlist-icon-btn {
+    width: 30px;
+    height: 30px;
+  }
+  .product-card-overlay .wishlist-icon-btn .icon { font-size: 15px; }
 
   /* ── Manifesto ── */
-  .manifesto { padding: 44px 0; }
-  .manifesto-title { font-size: clamp(32px, 10vw, 48px); margin-bottom: 16px; }
-  .manifesto-body { font-size: 13px; line-height: 1.65; margin-bottom: 20px; }
-  .manifesto-stats { grid-template-columns: repeat(3, 1fr); gap: 12px; padding-top: 24px; margin-top: 24px; }
-  .manifesto-stat-num { font-size: 26px; }
+  .manifesto { padding: 40px 0; }
+  .manifesto-layout { gap: 0; }
+  .manifesto-title { font-size: clamp(30px, 9vw, 44px); margin-bottom: 14px; }
+  .manifesto-body { font-size: 13px; line-height: 1.65; margin-bottom: 18px; }
+  .manifesto-stats { grid-template-columns: repeat(3, 1fr); gap: 12px; padding-top: 20px; margin-top: 20px; }
+  .manifesto-stat-num { font-size: 24px; }
   .manifesto-stat-lbl { font-size: 9px; }
   /* Hide the image on mobile — text-only manifesto like Zara */
-  .manifesto-layout > div:last-child { display: none; }
+  .manifesto-layout > div:last-child { display: none !important; }
 
   /* ── Drop archive ── */
-  .drop-archive { padding: 36px 0; }
-  .drop-row { grid-template-columns: 44px 1fr auto; gap: 12px; padding: 16px 0; }
-  .drop-num { font-size: 24px; min-width: 44px; }
-  .drop-name { font-size: 15px; }
-  .drop-meta { font-size: 10px; }
-  .drop-status { font-size: 8px; padding: 4px 10px; }
-  /* Drop archive cards (when JS loads) */
-  .drop-archive-grid { display: flex; flex-direction: column; gap: 12px; }
-  .drop-archive-card { border-radius: var(--r-lg); overflow: hidden; }
-  .drop-archive-cover { min-height: 140px; }
+  .drop-archive { padding: 32px 0; }
+  .drop-row { grid-template-columns: 40px 1fr auto; gap: 10px; padding: 14px 0; }
+  .drop-num { font-size: 22px; min-width: 40px; }
+  .drop-name { font-size: 14px; }
+  .drop-meta { font-size: 9px; }
+  .drop-status { font-size: 8px; padding: 3px 8px; }
+  /* On mobile: force list layout, hide card grid */
+  #drop-archive-grid { display: block !important; }
+  .drop-archive-grid > *:not(#drop-list-fallback) { display: none !important; }
+  #drop-list-fallback { display: flex !important; }
 
   /* ── Reviews ── */
   .reviews-section { padding: 36px 0; }
@@ -267,39 +280,39 @@ body.layout-desktop #page-home         { padding-top: 0; }
   /* ── UGC grid — 2 col, fixed height to prevent collapse ── */
   .ugc-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-    margin-top: 20px;
+    gap: 6px;
+    margin-top: 16px;
   }
-  .ugc-card { min-height: 150px; border-radius: var(--r-sm); }
-  .ugc-photo { min-height: 150px; }
-  /* Show overlay always on mobile */
-  .ugc-card .ugc-overlay { opacity: 1; background: rgba(0,0,0,.35); }
+  .ugc-card { min-height: 140px; border-radius: var(--r-sm); }
+  .ugc-photo { min-height: 140px; }
+  /* Keep overlay hidden on mobile — tap to see */
+  .ugc-card .ugc-overlay { opacity: 0; }
   .ugc-overlay-handle { font-size: 10px; }
   .ugc-overlay-remix { font-size: 9px; padding: 4px 10px; }
 
   /* ── Early access ── */
-  .early-access { padding: 44px 0; }
-  .early-access-title { font-size: clamp(30px, 10vw, 44px); margin-bottom: 12px; }
-  .early-access-sub { font-size: 13px; margin-bottom: 24px; }
+  .early-access { padding: 36px 0; }
+  .early-access-title { font-size: clamp(28px, 9vw, 40px); margin-bottom: 10px; line-height: .95; }
+  .early-access-sub { font-size: 12px; margin-bottom: 20px; }
   .early-access-form {
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
     padding: 0 4px;
   }
   .early-input {
     width: 100%;
     min-width: unset;
-    padding: 15px 18px;
-    font-size: 16px; /* prevent iOS zoom */
+    padding: 14px 18px;
+    font-size: 16px;
   }
   .early-access-form .btn-red-pill {
     width: 100%;
-    padding: 15px;
-    font-size: 12px;
+    padding: 14px;
+    font-size: 11px;
     justify-content: center;
   }
-  .spots-counter { font-size: 10px; margin-bottom: 20px; }
-  .early-privacy { font-size: 9px; }
+  .spots-counter { font-size: 10px; margin-bottom: 16px; }
+  .early-privacy { font-size: 9px; margin-top: 8px; }
 
   /* ── Section headers ── */
   .section-hdr { margin-bottom: 20px; }

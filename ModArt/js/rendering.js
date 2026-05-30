@@ -253,8 +253,14 @@ export async function renderBag() {
   if (cart.items.length === 0) {
     list.innerHTML = '';
     if (empty) empty.style.display = 'block';
+    // Hide summary card when bag is empty
+    const summaryCard = document.querySelector('.bag-summary-card');
+    if (summaryCard) summaryCard.style.display = 'none';
   } else {
     if (empty) empty.style.display = 'none';
+    // Show summary card when items exist
+    const summaryCard = document.querySelector('.bag-summary-card');
+    if (summaryCard) summaryCard.style.display = '';
     const productSource = (window._PRODUCTS && window._PRODUCTS.length > 0) ? window._PRODUCTS : PRODUCTS;
     list.innerHTML = cart.items.map(item => {
       const p = productSource.find(p => p.id === item.productId);
