@@ -51,6 +51,8 @@ export function renderDropsSection() {
   if (isMobile) {
     const fallback = document.getElementById('drop-list-fallback');
     if (fallback) {
+      fallback.style.display = 'flex';
+      fallback.style.flexDirection = 'column';
       fallback.innerHTML = drops.map(drop => {
         const isLive = drop.status === 'live';
         const isUpcoming = drop.status === 'upcoming';
@@ -68,6 +70,8 @@ export function renderDropsSection() {
         </div>`;
       }).join('');
     }
+    // Remove any card-style elements that may have been injected
+    grid.querySelectorAll('.drop-archive-card').forEach(el => el.remove());
     return;
   }
 
