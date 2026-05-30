@@ -32,7 +32,24 @@ export async function handleLogin() {
   if (btn) { btn.textContent = 'Sign In'; btn.disabled = false; }
 
   if (error) {
-    showAuthError('login-error', error.message || 'Sign in failed. Please try again.');
+    // Detect Google-only accounts trying to use email/password
+    const msg = error.message || '';
+    let friendlyMsg = 'Sign in failed. Please try again.';
+
+    if (msg.toLowerCase().includes('invalid login credentials') ||
+        msg.toLowerCase().includes('invalid credentials')) {
+      friendlyMsg = 'Incorrect email or password. If you signed up with Google, use the "Continue with Google" button above.';
+    } else if (msg.toLowerCase().includes('email not confirmed')) {
+      friendlyMsg = 'Please confirm your email address first. Check your inbox for a confirmation link.';
+    } else if (msg.toLowerCase().includes('too many requests')) {
+      friendlyMsg = 'Too many attempts. Please wait a few minutes and try again.';
+    } else if (msg.toLowerCase().includes('user not found')) {
+      friendlyMsg = 'No account found with this email. Please create an account first.';
+    } else {
+      friendlyMsg = msg;
+    }
+
+    showAuthError('login-error', friendlyMsg);
     return;
   }
   if (user && window.goTo) window.goTo('account');
