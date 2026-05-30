@@ -6,12 +6,35 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>MODART  Admin Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet"/>
 <style>
 /* ============================================================
    DESIGN TOKENS  mirrors ModArt website exactly
    ============================================================ */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+/* Prevent icon font text flash before Material Symbols loads */
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  /* Hide text until font loads — prevents icon names showing as text */
+  visibility: hidden;
+}
+.fonts-loaded .material-symbols-outlined,
+.material-symbols-outlined.loaded {
+  visibility: visible;
+}
+
 :root{
   --red:#D72638;--red-dk:#B81F2E;--red-glow:rgba(215,38,56,.22);
   --bg:#F7F5F1;--bg-c:#EDEBE6;--bg-d:#E4E1DB;
@@ -171,7 +194,9 @@ body.dark .topbar{background:rgba(17,17,17,.96);}
 /* ============================================================
    STAT CARDS
    ============================================================ */
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px;margin-bottom:22px;}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px;}
+@media(min-width:1200px){.stats-grid{grid-template-columns:repeat(6,1fr);}}
+@media(max-width:700px){.stats-grid{grid-template-columns:1fr 1fr;}}
 .stats-grid-5{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:22px;}
 @media(max-width:900px){.stats-grid-5{grid-template-columns:repeat(3,1fr);}}
 @media(max-width:600px){.stats-grid-5{grid-template-columns:1fr 1fr;}}
@@ -679,6 +704,17 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
       })
       .catch(function(){ console.error('Failed to load config'); });
   })();
+</script>
+<script>
+  // Mark icons visible once Material Symbols font is loaded
+  // Prevents icon names showing as raw text during font load
+  document.fonts.ready.then(function() {
+    document.body.classList.add('fonts-loaded');
+  });
+  // Fallback: show icons after 2s regardless
+  setTimeout(function() {
+    document.body.classList.add('fonts-loaded');
+  }, 2000);
 </script>
 </head>
 <body>
