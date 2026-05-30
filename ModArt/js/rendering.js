@@ -90,7 +90,7 @@ export function renderProducts(page) {
         <div class="product-card-overlay">
           ${sold
             ? `<button class="card-quick-cta" style="opacity:.5;cursor:not-allowed" disabled>Sold Out</button>`
-            : `<button class="card-quick-cta" onclick="event.stopPropagation();window.addToCart&&window.addToCart('${esc(p.id)}');window.renderBag&&window.renderBag()">Add to Cart</button>`
+            : `<button class="card-quick-cta" onclick="event.stopPropagation();showAddToCartPicker('${esc(p.id)}','${esc(p.name)}')">Add to Cart</button>`
           }
           <button class="wishlist-icon-btn${wish ? ' wishlisted' : ''}" aria-label="${wish ? 'Remove from wishlist' : 'Add to wishlist'}: ${esc(p.name)}" onclick="event.stopPropagation();window.toggleWishlist && window.toggleWishlist('${esc(p.id)}',this)">
             <span class="material-symbols-outlined icon">${wish ? 'favorite' : 'favorite_border'}</span>
@@ -268,7 +268,7 @@ export async function renderBag() {
           <button class="bag-item-edit" onclick="window.goTo && window.goTo('customize')">Edit Design</button>
           <div class="qty-control" role="group" aria-label="Quantity for ${esc(p.name)}">
             <button class="qty-btn" aria-label="Decrease quantity" onclick="window.cart && window.cart.updateQty('${esc(p.id)}',-1,'${esc(item.size)}')">−</button>
-            <span class="qty-val" aria-live="polite">${item.qty}</span>
+            <span class="qty-display" aria-live="polite">${item.qty}</span>
             <button class="qty-btn" aria-label="Increase quantity" onclick="window.cart && window.cart.updateQty('${esc(p.id)}',1,'${esc(item.size)}')">+</button>
           </div>
           <div class="bag-item-price">${formatPrice(p.price * item.qty)}</div>
@@ -455,7 +455,7 @@ if (typeof window !== 'undefined') {
   window.applyDiscount = applyDiscount;
   window.openProduct = openProduct;
   window.renderProductDetail = renderProductDetail;
-  
+
   // Make cart object available globally for onclick handlers
   window.cart = cart;
 
@@ -464,6 +464,70 @@ if (typeof window !== 'undefined') {
     const selectedSize = size || document.querySelector('.size-btn.sel')?.dataset?.size || 'M';
     const printAddon = window._printAddon || 0;
     cart.add(productId, selectedSize, printAddon);
+    // Toast feedback
+    const src = (window._PRODUCTS && window._PRODUCTS.length > 0) ? window._PRODUCTS : [];
+    const p = src.find(p => p.id === productId);
+    if (window.showCustomerToast) {
+      window.showCustomerToast(
+        (p ? p.name : 'Item') + ' added to bag',
+        'cart'
+      );
+    }
+  };
+
+  // Size picker before add-to-cart from shop cards
+  window.showAddToCartPicker = (productId, productName) => {
+    const src = (window._PRODUCTS && window._PRODUCTS.length > 0) ? window._PRODUCTS : [];
+    const p = src.find(p => p.id === productId);
+    const inv = window.LIVE_INVENTORY?.[productId] || {};
+    const sizes = ['XS','S','M','L','XL','XXL'].filter(s => (inv[s] ?? 1) > 0);
+
+    // If only one size or no inventory data, add with default
+    if (sizes.length <= 1) {
+      const sz = sizes[0] || 'M';
+      cart.add(productId, sz, 0);
+      if (window.showCustomerToast) {
+        window.showCustomerToast((p ? p.name : 'Item') + ' added to bag', 'cart');
+      }
+      return;
+    }
+
+    // Show inline size picker overlay on the card
+    const card = document.querySelector(`[data-product-id="${productId}"]`);
+    if (!card) return;
+
+    // Remove any existing picker
+    document.querySelectorAll('.size-picker-popup').forEach(el => el.remove());
+
+    const picker = document.createElement('div');
+    picker.className = 'size-picker-popup';
+    picker.style.cssText = 'position:absolute;inset:0;background:rgba(0,0,0,.85);border-radius:inherit;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;z-index:10;padding:16px';
+    picker.innerHTML = `
+      <div style="font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:4px">Select Size</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center">
+        ${sizes.map(s => `
+          <button onclick="event.stopPropagation();window.cart.add('${productId}','${s}',0);this.closest('.size-picker-popup').remove();window.showCustomerToast&&window.showCustomerToast('${productName.replace(/'/g,"\\'")} (${s}) added','cart')"
+            style="min-width:40px;padding:8px 10px;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.25);border-radius:6px;color:#fff;font-family:var(--font);font-size:11px;font-weight:700;cursor:pointer;transition:background .15s"
+            onmouseover="this.style.background='var(--red)';this.style.borderColor='var(--red)'"
+            onmouseout="this.style.background='rgba(255,255,255,.12)';this.style.borderColor='rgba(255,255,255,.25)'">${s}</button>
+        `).join('')}
+      </div>
+      <button onclick="event.stopPropagation();this.closest('.size-picker-popup').remove()"
+        style="font-size:10px;color:rgba(255,255,255,.4);background:none;border:none;cursor:pointer;margin-top:4px;font-family:var(--font);letter-spacing:.08em;text-transform:uppercase">Cancel</button>`;
+
+    // Card needs position:relative
+    card.style.position = 'relative';
+    card.appendChild(picker);
+
+    // Auto-dismiss on outside click
+    setTimeout(() => {
+      document.addEventListener('click', function dismiss(e) {
+        if (!picker.contains(e.target)) {
+          picker.remove();
+          document.removeEventListener('click', dismiss);
+        }
+      });
+    }, 50);
   };
 }
 

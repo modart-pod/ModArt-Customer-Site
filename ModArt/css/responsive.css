@@ -43,6 +43,95 @@ body.layout-desktop #page-home         { padding-top: 0; }
   display: flex;
 }
 
+/* Mobile header: logo centred, actions on right */
+.mobile-hdr .mobile-logo-btn {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Qty buttons — larger tap targets on mobile */
+.qty-btn {
+  width: 44px;
+  height: 44px;
+  font-size: 20px;
+}
+.qty-display {
+  width: 44px;
+  height: 44px;
+  font-size: 14px;
+}
+
+/* Checkout form — more breathing room on mobile */
+@media (max-width: 599px) {
+  .form-group { margin-bottom: 16px; }
+  .form-input  { padding: 14px 16px; font-size: 16px; } /* 16px prevents iOS zoom */
+  .form-section { margin-bottom: 28px; }
+  .checkout-layout { gap: 24px; }
+  #pay-now-btn { font-size: 15px; padding: 18px; }
+}
+
+/* Customizer — single column on mobile */
+@media (max-width: 767px) {
+  .customizer-body {
+    flex-direction: column !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+  }
+  .customizer-tools-col {
+    width: 100% !important;
+    border-right: none !important;
+    border-bottom: 1px solid var(--border);
+    max-height: 260px;
+    overflow-y: auto;
+    order: 2;
+  }
+  .customizer-canvas-col {
+    order: 1;
+    padding: 16px !important;
+    min-height: 320px;
+  }
+  .customizer-layers-col {
+    display: none !important; /* hidden on mobile — use canvas directly */
+  }
+  .canvas-wrap {
+    width: clamp(200px, 72vw, 320px) !important;
+    height: clamp(250px, 90vw, 400px) !important;
+  }
+}
+
+/* Footer — compact on mobile */
+@media (max-width: 599px) {
+  .site-footer { padding: 32px 0 16px; }
+  .footer-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 20px !important;
+    margin-bottom: 24px !important;
+  }
+  .footer-brand-col { grid-column: 1 / -1; }
+  .footer-brand-logo { font-size: 18px; }
+  .footer-brand-desc { font-size: 11px; max-width: 100%; }
+  .footer-col-title { font-size: 9px; }
+  .footer-link { font-size: 11px; }
+  .footer-bottom { flex-direction: column; gap: 8px; padding-top: 16px; }
+  .footer-copy { font-size: 10px; }
+  .footer-legal-link { font-size: 10px; }
+}
+
+/* Search overlay — full width on mobile */
+@media (max-width: 599px) {
+  #search-overlay { padding-top: 60px; }
+  #search-overlay > div { padding: 0 12px; }
+  #search-input { font-size: 16px; } /* prevent iOS zoom */
+}
+
+/* Bag items — larger tap targets */
+@media (max-width: 599px) {
+  .bag-item { grid-template-columns: 72px 1fr auto; gap: 10px; padding: 16px 0; }
+  .bag-item-name { font-size: 12px; }
+  .bag-item-price { font-size: 14px; }
+}
+
 /* =================================================================
    SMALL MOBILE ADJUSTMENTS (<600px)
    ================================================================= */

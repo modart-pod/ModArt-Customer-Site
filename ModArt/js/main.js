@@ -21,6 +21,7 @@ import './auth-handlers.js';
 import './account.js';
 import { initCarousel } from './utils.js';
 import './modals.js';
+import { showCustomerToast } from './toast.js';
 
 /* ================================================================
    COUNTDOWN TIMER

@@ -635,7 +635,7 @@
             <h1 class="product-detail-title">Vanta Black<br>Hoodie</h1>
             <div class="product-detail-subtitle">600 GSM Supima Cotton / Limited Release / Drop 02</div>
             <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:10px">
-              <div class="product-detail-price" id="detail-price">?19,999</div>
+              <div class="product-detail-price" id="detail-price">19,999</div>
               <div class="scarcity-pill" style="font-size:9px;padding:4px 10px" aria-live="polite"><span class="scarcity-dot"></span> 7 Left</div>
             </div>
             <div class="prod-timeline">
@@ -646,9 +646,9 @@
             <div class="print-type-section">
               <div class="print-type-lbl-row"><span class="form-lbl">Print Method</span><span style="font-size:10px;color:var(--g3)">Affects final price</span></div>
               <div class="print-types">
-                <button class="print-type-btn sel" onclick="selectPrint(this,'DTG Flatbed',0)"><span class="print-type-name">DTG Flatbed</span><span class="print-type-plus">+?0 included</span></button>
-                <button class="print-type-btn" onclick="selectPrint(this,'Puff Print',1500)"><span class="print-type-name">Puff Print</span><span class="print-type-plus cost">+?1,500</span></button>
-                <button class="print-type-btn" onclick="selectPrint(this,'Embroidery',2500)"><span class="print-type-name">Embroidery</span><span class="print-type-plus cost">+?2,500</span></button>
+                <button class="print-type-btn sel" onclick="selectPrint(this,'DTG Flatbed',0)"><span class="print-type-name">DTG Flatbed</span><span class="print-type-plus">+0 included</span></button>
+                <button class="print-type-btn" onclick="selectPrint(this,'Puff Print',1500)"><span class="print-type-name">Puff Print</span><span class="print-type-plus cost">+1,500</span></button>
+                <button class="print-type-btn" onclick="selectPrint(this,'Embroidery',2500)"><span class="print-type-name">Embroidery</span><span class="print-type-plus cost">+2,500</span></button>
               </div>
             </div>
             <div class="fabric-specs">
@@ -668,7 +668,7 @@
               <div class="size-options" id="size-options-dynamic"><button class="size-btn sel" onclick="selSize(this)" data-size="M">M</button></div>
             </div>
             <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
-              <button class="btn-black btn-red-full" style="padding:18px;border-radius:var(--r-full)" onclick="addToCart('vanta-hoodie');goTo('bag')">Add to Bag — <span id="detail-price-btn">?19,999</span></button>
+              <button class="btn-black btn-red-full" style="padding:18px;border-radius:var(--r-full)" onclick="addToCart('vanta-hoodie');goTo('bag')">Add to Bag — <span id="detail-price-btn">19,999</span></button>
               <button class="btn-red btn-red-full btn-red-pill" onclick="goTo('customize')"><span class="material-symbols-outlined icon" style="font-size:18px">palette</span> Customise This Piece</button>
               <button class="btn-outline" style="border-radius:var(--r-full);width:100%;padding:16px" id="wishlist-detail-btn" onclick="toggleWishlistDetail(this)"><span class="material-symbols-outlined icon" style="font-size:17px">favorite_border</span> Wishlist</button>
             </div>
@@ -853,11 +853,11 @@
               <input id="discount-input" class="form-input" placeholder="Promo code" style="flex:1"/>
               <button class="btn-black" style="padding:14px 16px;border-radius:var(--r-sm)" onclick="applyDiscount()">Apply</button>
             </div>
-            <div class="bag-sum-row"><span style="font-size:13px;color:var(--g2)">Subtotal</span><span id="bag-subtotal" style="font-size:13px;font-weight:700">?0</span></div>
-            <div id="discount-row-display" style="display:none" class="bag-sum-row"><span style="font-size:13px;color:var(--green)">Discount (10%)</span><span id="discount-val" style="font-size:13px;font-weight:700;color:var(--green)">-?0</span></div>
+            <div class="bag-sum-row"><span style="font-size:13px;color:var(--g2)">Subtotal</span><span id="bag-subtotal" style="font-size:13px;font-weight:700">0</span></div>
+            <div id="discount-row-display" style="display:none" class="bag-sum-row"><span style="font-size:13px;color:var(--green)">Discount (10%)</span><span id="discount-val" style="font-size:13px;font-weight:700;color:var(--green)">-0</span></div>
             <div class="bag-sum-row"><span style="font-size:13px;color:var(--g2)">Shipping</span><span style="font-size:13px;font-weight:700">Calculated at checkout</span></div>
             <div style="border-top:1px solid var(--border);margin:16px 0"></div>
-            <div class="bag-sum-row" style="margin-bottom:20px"><span style="font-size:15px;font-weight:800">Total</span><span id="bag-total" style="font-size:18px;font-weight:900">?0</span></div>
+            <div class="bag-sum-row" style="margin-bottom:20px"><span style="font-size:15px;font-weight:800">Total</span><span id="bag-total" style="font-size:18px;font-weight:900">0</span></div>
             <button class="btn-red btn-red-full btn-red-pill" style="padding:18px" onclick="goTo('checkout')">Checkout</button>
             <div style="text-align:center;margin-top:12px"><button class="btn-ghost" onclick="goTo('shop')">Continue Shopping</button></div>
           </div>
@@ -898,8 +898,8 @@
           </div>
           <div class="form-section">
             <div class="form-section-title">Shipping Method</div>
-            <label style="display:flex;align-items:center;gap:12px;padding:14px;border:1.5px solid var(--red);border-radius:var(--r-md);cursor:pointer;margin-bottom:8px"><input type="radio" name="shipping" value="standard" checked style="accent-color:var(--red)" onchange="window.populateCheckoutSummary&&window.populateCheckoutSummary()"/><div><div style="font-size:12px;font-weight:700">Standard — 4—6 days</div><div style="font-size:11px;color:var(--g3)">Free on orders over ?2,499</div></div><span style="margin-left:auto;font-weight:700">?149</span></label>
-            <label style="display:flex;align-items:center;gap:12px;padding:14px;border:1.5px solid var(--border);border-radius:var(--r-md);cursor:pointer"><input type="radio" name="shipping" value="express" style="accent-color:var(--red)" onchange="window.populateCheckoutSummary&&window.populateCheckoutSummary()"/><div><div style="font-size:12px;font-weight:700">Express — 1—2 days</div><div style="font-size:11px;color:var(--g3)">Priority production + shipping</div></div><span style="margin-left:auto;font-weight:700">?499</span></label>
+            <label style="display:flex;align-items:center;gap:12px;padding:14px;border:1.5px solid var(--red);border-radius:var(--r-md);cursor:pointer;margin-bottom:8px"><input type="radio" name="shipping" value="standard" checked style="accent-color:var(--red)" onchange="window.populateCheckoutSummary&&window.populateCheckoutSummary()"/><div><div style="font-size:12px;font-weight:700">Standard — 4–6 days</div><div style="font-size:11px;color:var(--g3)">Free on orders over ₹2,499</div></div><span style="margin-left:auto;font-weight:700">₹149</span></label>
+            <label style="display:flex;align-items:center;gap:12px;padding:14px;border:1.5px solid var(--border);border-radius:var(--r-md);cursor:pointer"><input type="radio" name="shipping" value="express" style="accent-color:var(--red)" onchange="window.populateCheckoutSummary&&window.populateCheckoutSummary()"/><div><div style="font-size:12px;font-weight:700">Express — 1–2 days</div><div style="font-size:11px;color:var(--g3)">Priority production + shipping</div></div><span style="margin-left:auto;font-weight:700">₹499</span></label>
           </div>
           <button class="btn-red btn-red-full btn-red-pill" id="pay-now-btn" style="padding:18px;font-size:14px" onclick="handleCheckoutSubmit()">Place Order — Cash on Delivery</button>
           <div style="display:flex;justify-content:center;gap:clamp(16px,3vw,36px);margin-top:20px">
@@ -913,10 +913,10 @@
             <div style="font-size:11px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;margin-bottom:16px">Order Summary</div>
             <div id="checkout-items" style="margin-bottom:16px"></div>
             <div style="border-top:1px solid var(--border);padding-top:14px">
-              <div class="bag-sum-row"><span style="font-size:13px;color:var(--g2)">Subtotal</span><span id="co-subtotal" style="font-size:13px;font-weight:700">?0</span></div>
-              <div class="bag-sum-row"><span style="font-size:13px;color:var(--g2)">Shipping</span><span id="co-shipping" style="font-size:13px;font-weight:700">?149</span></div>
+              <div class="bag-sum-row"><span style="font-size:13px;color:var(--g2)">Subtotal</span><span id="co-subtotal" style="font-size:13px;font-weight:700">0</span></div>
+              <div class="bag-sum-row"><span style="font-size:13px;color:var(--g2)">Shipping</span><span id="co-shipping" style="font-size:13px;font-weight:700">149</span></div>
               <div style="border-top:1px solid var(--border);margin:12px 0"></div>
-              <div class="bag-sum-row"><span style="font-size:15px;font-weight:800">Total</span><span id="co-total" style="font-size:18px;font-weight:900">?0</span></div>
+              <div class="bag-sum-row"><span style="font-size:15px;font-weight:800">Total</span><span id="co-total" style="font-size:18px;font-weight:900">0</span></div>
             </div>
           </div>
         </div>
