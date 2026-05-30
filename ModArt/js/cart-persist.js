@@ -61,7 +61,7 @@ export async function loadCartFromSupabase() {
       .from('carts')
       .select('items')
       .eq('user_id', user.id)
-      .single();
+      .maybeSingle();  // ✅ returns null instead of 406 when no row exists
     if (data?.items) {
       const items = JSON.parse(data.items);
       if (Array.isArray(items)) {

@@ -46,7 +46,7 @@ export async function loadWishlistFromSupabase() {
       .from('wishlists')
       .select('items')
       .eq('user_id', currentUser.id)
-      .single();
+      .maybeSingle();  // ✅ returns null instead of 406 when no row exists
     if (data?.items) {
       const ids = JSON.parse(data.items);
       ids.forEach(id => { if (!wishlist.has(id)) wishlist.add(id); });
