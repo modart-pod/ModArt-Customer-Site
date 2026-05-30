@@ -525,11 +525,11 @@
           <div class="review-card"><div class="review-stars"><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star_half</span></div><p class="review-text">"Never seen quality this good from a streetwear brand. Looks exactly like the render — somehow better in hand."</p><div class="review-author"><img class="review-avatar" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=80&q=80" alt="Alex R" loading="lazy"/><div><div class="review-name">Alex R.</div><div class="review-date">Oct 5, 2023</div></div><span class="review-verified"><span class="material-symbols-outlined" style="font-size:12px;vertical-align:middle">verified</span> Verified</span></div></div>
         </div>
         <div class="ugc-grid">
-          <div class="ugc-card"><img class="ugc-photo" src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&q=80" alt="UGC" loading="lazy"/><div class="ugc-overlay"><span class="ugc-overlay-handle">@kirasato</span><button class="ugc-overlay-remix" onclick="goTo('customize')">Remix</button></div></div>
-          <div class="ugc-card"><img class="ugc-photo" src="https://images.unsplash.com/photo-1554568218-0f1715e72254?w=400&q=80" alt="UGC" loading="lazy"/><div class="ugc-overlay"><span class="ugc-overlay-handle">@zanemori</span><button class="ugc-overlay-remix" onclick="goTo('customize')">Remix</button></div></div>
-          <div class="ugc-card"><img class="ugc-photo" src="https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=400&q=80" alt="UGC" loading="lazy"/><div class="ugc-overlay"><span class="ugc-overlay-handle">@noepark</span><button class="ugc-overlay-remix" onclick="goTo('customize')">Remix</button></div></div>
-          <div class="ugc-card"><img class="ugc-photo" src="https://images.unsplash.com/photo-1509631179647-0177331693ae?w=400&q=80" alt="UGC" loading="lazy"/><div class="ugc-overlay"><span class="ugc-overlay-handle">@alexrivera</span><button class="ugc-overlay-remix" onclick="goTo('customize')">Remix</button></div></div>
-          <div class="ugc-card"><img class="ugc-photo" src="https://images.unsplash.com/photo-1507643179773-3e975d7ac515?w=400&q=80" alt="UGC" loading="lazy"/><div class="ugc-overlay"><span class="ugc-overlay-handle">@modartfan</span><button class="ugc-overlay-remix" onclick="goTo('customize')">Remix</button></div></div>
+          <div class="ugc-card"><img class="ugc-photo" src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=400&q=80" alt="Community" loading="lazy"/><div class="ugc-overlay"><span class="ugc-overlay-handle">@kirasato</span><button class="ugc-overlay-remix" onclick="goTo('customize')">Remix</button></div></div>
+          <div class="ugc-card"><img class="ugc-photo" src="https://images.unsplash.com/photo-1554568218-0f1715e72254?w=400&q=80" alt="Community" loading="lazy"/><div class="ugc-overlay"><span class="ugc-overlay-handle">@zanemori</span><button class="ugc-overlay-remix" onclick="goTo('customize')">Remix</button></div></div>
+          <div class="ugc-card"><img class="ugc-photo" src="https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=400&q=80" alt="Community" loading="lazy"/><div class="ugc-overlay"><span class="ugc-overlay-handle">@noepark</span><button class="ugc-overlay-remix" onclick="goTo('customize')">Remix</button></div></div>
+          <div class="ugc-card"><img class="ugc-photo" src="https://images.unsplash.com/photo-1509631179647-0177331693ae?w=400&q=80" alt="Community" loading="lazy"/><div class="ugc-overlay"><span class="ugc-overlay-handle">@alexrivera</span><button class="ugc-overlay-remix" onclick="goTo('customize')">Remix</button></div></div>
+          <div class="ugc-card"><img class="ugc-photo" src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&q=80" alt="Community" loading="lazy"/><div class="ugc-overlay"><span class="ugc-overlay-handle">@modartfan</span><button class="ugc-overlay-remix" onclick="goTo('customize')">Remix</button></div></div>
         </div>
       </div>
     </section>
@@ -909,8 +909,8 @@
           <div id="bag-items-list" class="bag-items"></div>
         </div>
 
-        <!-- RIGHT: Order summary -->
-        <div class="bag-summary-col">
+        <!-- RIGHT: Order summary — hidden when bag is empty -->
+        <div class="bag-summary-col" id="bag-summary-col" style="display:none">
           <div class="bag-summary-card">
 
             <!-- Free shipping progress -->

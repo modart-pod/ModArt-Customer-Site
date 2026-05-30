@@ -129,23 +129,26 @@ body.layout-desktop #page-home         { padding-top: 0; }
   }
 
   /* ── Hero — compact on mobile, not full screen ── */
-  .home-hero { min-height: 88svh; max-height: 92svh; }
+  .home-hero { min-height: 75svh !important; max-height: 80svh !important; overflow: hidden; }
+  .home-hero-img { object-position: center top; }
   .home-hero-content {
-    padding-top: calc(var(--nav-h) + 16px);
+    padding-top: calc(var(--nav-h) + 12px);
     padding-left: 20px;
     padding-right: 20px;
-    padding-bottom: 28px;
+    padding-bottom: 24px;
+    justify-content: flex-end;
   }
+  .hero-badge { margin-bottom: 10px; font-size: 9px; }
   .hero-title {
-    font-size: clamp(40px, 12vw, 58px);
-    line-height: .9;
-    margin-bottom: 12px;
+    font-size: clamp(36px, 11vw, 52px);
+    line-height: .88;
+    margin-bottom: 10px;
   }
   .hero-sub {
-    font-size: 13px;
-    line-height: 1.55;
-    max-width: 260px;
-    margin-bottom: 18px;
+    font-size: 12px;
+    line-height: 1.5;
+    max-width: 240px;
+    margin-bottom: 16px;
     color: rgba(255,255,255,.5);
   }
   .hero-actions {
@@ -158,13 +161,13 @@ body.layout-desktop #page-home         { padding-top: 0; }
     width: 100%;
     text-align: center;
     justify-content: center;
-    padding: 14px 20px;
+    padding: 13px 20px;
     font-size: 11px;
   }
-  .live-orders-ticker { font-size: 10px; margin-top: 14px; }
-  .hero-countdown { margin-top: 16px; padding-top: 16px; }
-  .hero-cd-label { font-size: 9px; letter-spacing: .18em; }
-  .hero-cd-unit { font-size: 26px; }
+  .live-orders-ticker { font-size: 10px; margin-top: 12px; }
+  .hero-countdown { margin-top: 14px; padding-top: 14px; }
+  .hero-cd-label { font-size: 9px; letter-spacing: .16em; }
+  .hero-cd-unit { font-size: 24px; }
 
   /* ── Trust strip — single row scroll ── */
   .trust-strip { padding: 12px 0; overflow-x: auto; }
@@ -252,17 +255,17 @@ body.layout-desktop #page-home         { padding-top: 0; }
   /* Hide the image on mobile — text-only manifesto like Zara */
   .manifesto-layout > div:last-child { display: none !important; }
 
-  /* ── Drop archive ── */
+  /* ── Drop archive — force list view, no card grid on mobile ── */
   .drop-archive { padding: 32px 0; }
   .drop-row { grid-template-columns: 40px 1fr auto; gap: 10px; padding: 14px 0; }
   .drop-num { font-size: 22px; min-width: 40px; }
   .drop-name { font-size: 14px; }
   .drop-meta { font-size: 9px; }
   .drop-status { font-size: 8px; padding: 3px 8px; }
-  /* On mobile: force list layout, hide card grid */
+  /* Force list layout — hide JS-rendered card grid, show fallback list */
   #drop-archive-grid { display: block !important; }
-  .drop-archive-grid > *:not(#drop-list-fallback) { display: none !important; }
-  #drop-list-fallback { display: flex !important; }
+  #drop-archive-grid > .drop-archive-card { display: none !important; }
+  #drop-list-fallback { display: flex !important; flex-direction: column; }
 
   /* ── Reviews ── */
   .reviews-section { padding: 36px 0; }
@@ -377,6 +380,16 @@ body.layout-desktop #page-home         { padding-top: 0; }
   .form-section { margin-bottom: 28px; }
   .checkout-layout { gap: 24px; }
   #pay-now-btn { font-size: 15px; padding: 18px; }
+}
+
+/* =================================================================
+   MOBILE HERO HEIGHT — must come AFTER the utilities block above
+   ================================================================= */
+@media (max-width: 599px) {
+  .home-hero {
+    min-height: 72svh !important;
+    max-height: 78svh !important;
+  }
 }
 
 /* =================================================================
@@ -808,7 +821,7 @@ img {
   height: auto;
 }
 
-/* Hero image responsive positioning */
+/* Hero image responsive positioning — desktop default */
 .home-hero {
   min-height: 100svh;
 }

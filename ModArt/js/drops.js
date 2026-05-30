@@ -35,7 +35,7 @@ export async function fetchDrops() {
 
 /**
  * Renders the drop archive section on the home page.
- * Targets #drop-archive-grid if it exists.
+ * On mobile: renders as compact list rows. On desktop: card grid.
  */
 export function renderDropsSection() {
   const grid = document.getElementById('drop-archive-grid');
@@ -46,7 +46,32 @@ export function renderDropsSection() {
   // If no live data yet, keep the fallback static list visible
   if (!drops) return;
 
-  // Hide the static fallback list now that we have real data
+  // On mobile, render as list rows (same as fallback) — no huge cards
+  const isMobile = window.innerWidth < 600;
+  if (isMobile) {
+    const fallback = document.getElementById('drop-list-fallback');
+    if (fallback) {
+      fallback.innerHTML = drops.map(drop => {
+        const isLive = drop.status === 'live';
+        const isUpcoming = drop.status === 'upcoming';
+        const statusLabel = isLive ? 'Live Now' : isUpcoming ? 'Upcoming' : 'Sold Out';
+        const statusClass = isLive ? 'drop-live' : isUpcoming ? '' : 'drop-sold';
+        const statusColor = isUpcoming ? 'color:var(--amber)' : '';
+        return `<div class="drop-row" onclick="window.goTo&&window.goTo('shop')">
+          <div class="drop-num">${String(drop.drop_number || '—').padStart(2,'0')}</div>
+          <div class="drop-info">
+            <div class="drop-name">${_esc(drop.name)}</div>
+            <div class="drop-meta">${statusLabel} · ${drop.total_units||0} Units${drop.sold_units ? ` · ${drop.sold_units} Sold` : ''}</div>
+          </div>
+          <div class="drop-status ${statusClass}" style="${statusColor}">${statusLabel}</div>
+          <span class="material-symbols-outlined" style="font-size:18px;color:var(--g3)">arrow_forward</span>
+        </div>`;
+      }).join('');
+    }
+    return;
+  }
+
+  // Hide the static fallback list now that we have real data (desktop)
   const fallback = document.getElementById('drop-list-fallback');
   if (fallback) fallback.style.display = 'none';
 
