@@ -90,7 +90,7 @@ export function renderProducts(page) {
         <div class="product-card-overlay">
           ${sold
             ? `<button class="card-quick-cta" style="opacity:.5;cursor:not-allowed" disabled>Sold Out</button>`
-            : `<button class="card-quick-cta" onclick="event.stopPropagation();showAddToCartPicker('${esc(p.id)}','${esc(p.name)}')">Add to Cart</button>`
+            : `<button class="card-quick-cta" onclick="event.stopPropagation();window.goTo&&window.goTo('customize')">Customize</button>`
           }
           <button class="wishlist-icon-btn${wish ? ' wishlisted' : ''}" aria-label="${wish ? 'Remove from wishlist' : 'Add to wishlist'}: ${esc(p.name)}" onclick="event.stopPropagation();window.toggleWishlist && window.toggleWishlist('${esc(p.id)}',this)">
             <span class="material-symbols-outlined icon">${wish ? 'favorite' : 'favorite_border'}</span>
