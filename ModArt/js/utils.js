@@ -309,7 +309,7 @@ if (typeof window !== 'undefined') {
 }
 
 /* ================================================================
-   HOME CAROUSEL — auto-looping
+   HOME CAROUSEL — manual swipe with dot indicators
    ================================================================ */
 
 export function initCarousel() {
@@ -317,57 +317,48 @@ export function initCarousel() {
   const dotsEl = document.getElementById('carousel-dots');
   if (!track || !dotsEl) return;
 
-  const cards = () => Array.from(track.querySelectorAll('.product-card'));
+  const getCards = () => Array.from(track.querySelectorAll('.product-card'));
 
-  // Build dots once cards are rendered
+  // Build dots based on current cards
   function buildDots() {
-    const items = cards();
-    if (!items.length) return;
+    const items = getCards();
+    if (!items.length) { dotsEl.innerHTML = ''; return; }
     dotsEl.innerHTML = items.map((_, i) =>
-      `<button class="carousel-dot${i === 0 ? ' active' : ''}" aria-label="Go to slide ${i + 1}" onclick="scrollCarouselTo(${i})"></button>`
+      `<button class="carousel-dot${i === 0 ? ' active' : ''}" aria-label="Go to slide ${i + 1}" data-idx="${i}"></button>`
     ).join('');
-    startAutoLoop();
+
+    // Attach click handlers directly (no inline onclick — avoids global scope issues)
+    dotsEl.querySelectorAll('.carousel-dot').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = parseInt(btn.dataset.idx, 10);
+        const cards = getCards();
+        if (!cards[idx]) return;
+        const cardW = cards[0].offsetWidth + parseInt(getComputedStyle(track).gap || '10', 10);
+        track.scrollTo({ left: idx * cardW, behavior: 'smooth' });
+      });
+    });
   }
 
-  // Sync active dot on scroll
-  track.addEventListener('scroll', () => {
-    const items = cards();
+  // Update active dot based on scroll position
+  function syncDots() {
+    const items = getCards();
     if (!items.length) return;
-    const cardW = items[0].offsetWidth + 16;
-    const idx = Math.round(track.scrollLeft / cardW);
+    const gap = parseInt(getComputedStyle(track).gap || '10', 10);
+    const cardW = items[0].offsetWidth + gap;
+    // Use floor + 0.5 threshold for more accurate detection
+    const idx = Math.min(items.length - 1, Math.floor((track.scrollLeft + cardW * 0.5) / cardW));
     dotsEl.querySelectorAll('.carousel-dot').forEach((d, i) => {
       d.classList.toggle('active', i === idx);
     });
-  }, { passive: true });
-
-  // Auto-loop: advance one card every 2.5s, wrap back to start
-  let _loopTimer = null;
-  let _isPaused = false;
-
-  function startAutoLoop() {
-    if (_loopTimer) clearInterval(_loopTimer);
-    _loopTimer = setInterval(() => {
-      if (_isPaused) return;
-      const items = cards();
-      if (!items.length) return;
-      const cardW = items[0].offsetWidth + 16;
-      const maxScroll = track.scrollWidth - track.clientWidth;
-      const nextScroll = track.scrollLeft + cardW;
-      if (nextScroll >= maxScroll - 4) {
-        // At end — jump back to start smoothly
-        track.scrollTo({ left: 0, behavior: 'smooth' });
-      } else {
-        track.scrollBy({ left: cardW, behavior: 'smooth' });
-      }
-    }, 2500);
   }
 
-  // Pause on user touch/drag, resume after 5s
-  track.addEventListener('touchstart', () => { _isPaused = true; }, { passive: true });
-  track.addEventListener('touchend',   () => { setTimeout(() => { _isPaused = false; }, 5000); }, { passive: true });
+  track.addEventListener('scroll', syncDots, { passive: true });
 
   // Expose rebuild so renderProducts can call it after injecting cards
-  window._rebuildCarouselDots = buildDots;
+  window._rebuildCarouselDots = () => {
+    buildDots();
+    syncDots();
+  };
 }
 
 export function scrollCarousel(dir) {
@@ -375,7 +366,8 @@ export function scrollCarousel(dir) {
   if (!track) return;
   const cards = track.querySelectorAll('.product-card');
   if (!cards.length) return;
-  const cardW = cards[0].offsetWidth + 16;
+  const gap = parseInt(getComputedStyle(track).gap || '10', 10);
+  const cardW = cards[0].offsetWidth + gap;
   track.scrollBy({ left: dir * cardW * 2, behavior: 'smooth' });
 }
 
@@ -384,7 +376,8 @@ export function scrollCarouselTo(idx) {
   if (!track) return;
   const cards = track.querySelectorAll('.product-card');
   if (!cards[idx]) return;
-  const cardW = cards[0].offsetWidth + 16;
+  const gap = parseInt(getComputedStyle(track).gap || '10', 10);
+  const cardW = cards[0].offsetWidth + gap;
   track.scrollTo({ left: idx * cardW, behavior: 'smooth' });
 }
 
