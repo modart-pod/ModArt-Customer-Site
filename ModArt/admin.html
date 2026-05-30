@@ -1236,9 +1236,23 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
       <button class="btn-red" onclick="openProductModal(null)"><span class="material-symbols-outlined" style="font-size:15px">add</span>New Product</button>
     </div>
     <div class="filter-bar">
-      <div class="filter-search" style="max-width:260px"><span class="icon material-symbols-outlined">search</span><input type="text" placeholder="Search products" oninput="filterTable('products-table',this.value)"/></div>
-      <select class="filter-select"><option>All Categories</option><option>Apparel</option><option>Hoodies</option><option>Stickers</option><option>Polaroids</option><option>Accessories</option></select>
-      <select class="filter-select"><option>All Stock</option><option>In Stock</option><option>Low Stock</option><option>Out of Stock</option></select>
+      <div class="filter-search" style="max-width:260px"><span class="icon material-symbols-outlined">search</span><input type="text" placeholder="Search products" oninput="filterProductsTable(this.value)"/></div>
+      <select class="filter-select" id="products-category-filter" onchange="filterProductsTable()">
+        <option value="">All Categories</option>
+        <option value="Modart Tees">Tees</option>
+        <option value="Modart Fleece">Fleece</option>
+        <option value="Modart Hoodies">Hoodies</option>
+        <option value="Modart Jackets">Jackets</option>
+        <option value="Modart Bottoms">Bottoms</option>
+        <option value="Modart Women">Women</option>
+        <option value="Modart Accessories">Accessories</option>
+      </select>
+      <select class="filter-select" id="products-stock-filter" onchange="filterProductsTable()">
+        <option value="">All Status</option>
+        <option value="active">Active</option>
+        <option value="inactive">Inactive</option>
+      </select>
+      <button class="btn-ghost" onclick="filterProductsTable('','','')">Clear</button>
     </div>
     <div class="card" style="padding:0">
       <div style="padding:16px 18px;border-bottom:1px solid var(--border)"><div class="card-title">Product Catalog <span id="products-count-badge" style="color:var(--g3);font-weight:600"></span></div></div>
@@ -1250,10 +1264,10 @@ body.dark svg text[fill="rgba(255,255,255,.4)"] { opacity: 0.55; }
       </div>
       <div class="pagination">
         <div class="pag-info" id="products-pag-info">Loading</div>
-        <div class="pag-controls">
-          <button class="pag-btn" disabled>&#8249;</button>
-          <button class="pag-btn active">1</button>
-          <button class="pag-btn">&#8250;</button>
+        <div class="pag-controls" id="products-pag-controls">
+          <button class="pag-btn" id="products-pag-prev" onclick="changeProductsPage(-1)" disabled>&#8249;</button>
+          <span id="products-pag-pages" style="display:flex;gap:4px"></span>
+          <button class="pag-btn" id="products-pag-next" onclick="changeProductsPage(1)">&#8250;</button>
         </div>
       </div>
     </div>
@@ -3609,18 +3623,21 @@ async function submitProductModal() {
     let err;
     if (isEdit && editId) {
       ({ error: err } = await sb.from('products').update(payload).eq('id', editId));
+      if (!err) logAuditEvent('UPDATE_PRODUCT', { id: editId, changes: payload }).catch(() => {});
     } else {
       payload.id         = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '-' + Date.now().toString().slice(-4);
       payload.created_at = new Date().toISOString();
       ({ error: err } = await sb.from('products').insert(payload));
-
-      // Seed inventory rows for each size
-      const sizes = document.getElementById('pm-sizes').value
-        .split(',').map(s => s.trim()).filter(Boolean);
-      const stock = parseInt(document.getElementById('pm-stock').value) || 50;
-      if (sizes.length > 0) {
-        const invRows = sizes.map(size => ({ product_id: payload.id, size, stock }));
-        await sb.from('inventory').insert(invRows).then(() => {});
+      if (!err) {
+        logAuditEvent('CREATE_PRODUCT', { product: payload }).catch(() => {});
+        // Seed inventory rows for each size
+        const sizes = document.getElementById('pm-sizes').value
+          .split(',').map(s => s.trim()).filter(Boolean);
+        const stock = parseInt(document.getElementById('pm-stock').value) || 50;
+        if (sizes.length > 0) {
+          const invRows = sizes.map(size => ({ product_id: payload.id, size, stock }));
+          await sb.from('inventory').insert(invRows).then(() => {});
+        }
       }
     }
 
@@ -4945,57 +4962,147 @@ async function loadAdminProducts() {
   const tbody = document.querySelector('#page-products table tbody');
   if (!tbody) return;
   tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--g3)"><span class="material-symbols-outlined" style="font-size:20px;vertical-align:middle;animation:spin 1s linear infinite">autorenew</span> Loading</td></tr>';
-  window._editProducts = {}; // store product data for edit buttons
+  window._editProducts = {};
+  // Reset pagination state
+  window._productsAllRows = [];
+  window._productsPage    = 1;
   try {
     const { data, error } = await sb.from('products').select('*').order('created_at', { ascending: false });
     if (error) throw error;
-    // Update count badge and pagination
-    const countBadge = document.getElementById('products-count-badge');
-    const pagInfo    = document.getElementById('products-pag-info');
-    if (countBadge) countBadge.textContent = '(' + (data ? data.length : 0) + ')';
-    if (pagInfo)    pagInfo.textContent    = 'Showing ' + (data ? data.length : 0) + ' products';
     if (!data || !data.length) {
       tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--g3)">No products yet. <button class="btn-ghost" onclick="openProductModal(null)">Add one</button></td></tr>';
+      const countBadge = document.getElementById('products-count-badge');
+      const pagInfo    = document.getElementById('products-pag-info');
+      if (countBadge) countBadge.textContent = '(0)';
+      if (pagInfo)    pagInfo.textContent    = 'No products';
       return;
     }
-    tbody.innerHTML = data.map(p => {
+    // Build all row data — store for filtering + pagination
+    window._productsAllRows = data.map(p => {
       const imgUrl = (p.images && p.images[0]) ? p.images[0] : '';
-      const img = imgUrl ? '<img src="' + esc(imgUrl) + '" width="40" height="40" style="object-fit:cover;border-radius:4px;background:#eee;flex-shrink:0" onerror="this.remove()">' : '<div style="width:40px;height:40px;border-radius:4px;background:var(--bg-d);flex-shrink:0;display:flex;align-items:center;justify-content:center"><span class="material-symbols-outlined" style="font-size:18px;color:var(--g3)">checkroom</span></div>';
+      const img = imgUrl
+        ? '<img src="' + esc(imgUrl) + '" width="40" height="40" style="object-fit:cover;border-radius:4px;background:#eee;flex-shrink:0" onerror="this.style.display=\'none\'">'
+        : '<div style="width:40px;height:40px;border-radius:4px;background:var(--bg-d);flex-shrink:0;display:flex;align-items:center;justify-content:center"><span class="material-symbols-outlined" style="font-size:18px;color:var(--g3)">checkroom</span></div>';
       const price  = '₹' + (p.price_inr || 0).toLocaleString('en-IN');
-      const status = p.is_active ? '<span class="pill live"><span class="pill-dot"></span>Active</span>' : '<span class="pill ended"><span class="pill-dot"></span>Inactive</span>';
-      const date   = new Date(p.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
-      // ✅ FIX #3: store ALL real DB values for edit — no hardcoded defaults
+      const status = p.is_active
+        ? '<span class="pill live"><span class="pill-dot"></span>Active</span>'
+        : '<span class="pill ended"><span class="pill-dot"></span>Inactive</span>';
+      const date = new Date(p.created_at).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
+      // ✅ FIX #3: store ALL real DB values
       window._editProducts[p.id] = {
-        id:        p.id,
-        name:      p.name,
-        category:  p.series  || '',
-        desc:      p.description || '',
-        price:     p.price_inr   || 0,
-        cost:      0,
-        sizes:     (p.tags || []).filter(t => ['XS','S','M','L','XL','XXL'].includes(t)).join(', ') || 'XS, S, M, L, XL, XXL',
-        colors:    '',
-        stock:     50,
-        threshold: 10,
-        sku:       '',
-        badge:     p.badge || '',
-        gsm:       p.fabric_gsm      || '',
-        material:  p.fabric_material || '',
-        is_active: p.is_active,
-        images:    p.images || [],
+        id: p.id, name: p.name, category: p.series || '', desc: p.description || '',
+        price: p.price_inr || 0, cost: 0,
+        sizes: (p.tags || []).filter(t => ['XS','S','M','L','XL','XXL'].includes(t)).join(', ') || 'XS, S, M, L, XL, XXL',
+        colors: '', stock: 50, threshold: 10, sku: '',
+        badge: p.badge || '', gsm: p.fabric_gsm || '', material: p.fabric_material || '',
+        is_active: p.is_active, images: p.images || [],
       };
-      return '<tr>'
-        + '<td><div style="display:flex;align-items:center;gap:10px">' + img + '<div><div class="td-bold">' + esc(p.name) + '</div><div class="text-xs text-muted">' + esc(p.id) + '</div></div></div></td>'
-        + '<td>' + esc(p.series || '—') + '</td>'
-        + '<td class="td-bold">' + esc(price) + '</td>'
-        + '<td>' + esc(p.badge || '—') + '</td>'
-        + '<td>' + status + '</td>'
-        + '<td class="text-muted text-sm">' + esc(date) + '</td>'
-        + '<td><div style="display:flex;gap:6px"><button class="btn-ghost" data-pid="' + esc(p.id) + '" onclick="openProductModal(window._editProducts[this.dataset.pid])">Edit</button><button class="btn-danger btn-sm" data-pid="' + esc(p.id) + '" onclick="deleteProduct(this.dataset.pid,this)">Delete</button></div></td>'
-        + '</tr>';
-    }).join('');
+      return {
+        category: (p.series || '').toLowerCase(),
+        status:   p.is_active ? 'active' : 'inactive',
+        html: '<tr>'
+          + '<td><div style="display:flex;align-items:center;gap:10px">' + img + '<div><div class="td-bold">' + esc(p.name) + '</div><div class="text-xs text-muted">' + esc(p.id) + '</div></div></div></td>'
+          + '<td>' + esc(p.series || '—') + '</td>'
+          + '<td class="td-bold">' + esc(price) + '</td>'
+          + '<td>' + esc(p.badge || '—') + '</td>'
+          + '<td>' + status + '</td>'
+          + '<td class="text-muted text-sm">' + esc(date) + '</td>'
+          + '<td><div style="display:flex;gap:6px">'
+          + '<button class="btn-ghost" data-pid="' + esc(p.id) + '" onclick="openProductModal(window._editProducts[this.dataset.pid])">Edit</button>'
+          + '<button class="btn-danger btn-sm" data-pid="' + esc(p.id) + '" onclick="deleteProduct(this.dataset.pid,this)">Delete</button>'
+          + '</div></td>'
+          + '</tr>',
+      };
+    });
+    renderProductsPage();
   } catch (e) {
     tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--red)">Error: ' + esc(e.message) + '</td></tr>';
   }
+}
+
+// ── H1 + H2: Filter by category and status ───────────────────────
+function filterProductsTable(searchVal, catVal, statusVal) {
+  const search = searchVal !== undefined ? searchVal
+    : (document.querySelector('#page-products .filter-search input')?.value || '').toLowerCase();
+  const cat    = catVal    !== undefined ? catVal
+    : (document.getElementById('products-category-filter')?.value || '').toLowerCase();
+  const status = statusVal !== undefined ? statusVal
+    : (document.getElementById('products-stock-filter')?.value || '').toLowerCase();
+
+  // Clear filters if all empty strings passed
+  if (searchVal === '' && catVal === '' && statusVal === '') {
+    document.querySelector('#page-products .filter-search input').value = '';
+    document.getElementById('products-category-filter').value = '';
+    document.getElementById('products-stock-filter').value    = '';
+  }
+
+  window._productsFiltered = (window._productsAllRows || []).filter(row => {
+    const matchSearch = !search || row.html.toLowerCase().includes(search);
+    const matchCat    = !cat    || row.category.includes(cat.toLowerCase());
+    const matchStatus = !status || row.status === status;
+    return matchSearch && matchCat && matchStatus;
+  });
+  window._productsPage = 1;
+  renderProductsPage();
+}
+
+// ── H3: Real pagination ───────────────────────────────────────────
+const PRODUCTS_PER_PAGE = 25;
+
+function renderProductsPage() {
+  const tbody    = document.querySelector('#page-products table tbody');
+  const pagInfo  = document.getElementById('products-pag-info');
+  const pagPages = document.getElementById('products-pag-pages');
+  const prevBtn  = document.getElementById('products-pag-prev');
+  const nextBtn  = document.getElementById('products-pag-next');
+  const countBadge = document.getElementById('products-count-badge');
+
+  const rows    = window._productsFiltered || window._productsAllRows || [];
+  const total   = rows.length;
+  const page    = window._productsPage || 1;
+  const pages   = Math.max(1, Math.ceil(total / PRODUCTS_PER_PAGE));
+  const start   = (page - 1) * PRODUCTS_PER_PAGE;
+  const end     = Math.min(start + PRODUCTS_PER_PAGE, total);
+  const visible = rows.slice(start, end);
+
+  if (countBadge) countBadge.textContent = '(' + total + ')';
+
+  if (total === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--g3)">No products match your filters.</td></tr>';
+    if (pagInfo) pagInfo.textContent = 'No results';
+    if (pagPages) pagPages.innerHTML = '';
+    if (prevBtn) prevBtn.disabled = true;
+    if (nextBtn) nextBtn.disabled = true;
+    return;
+  }
+
+  tbody.innerHTML = visible.map(r => r.html).join('');
+  if (pagInfo) pagInfo.textContent = 'Showing ' + (start + 1) + '–' + end + ' of ' + total + ' products';
+
+  // Page number buttons — show max 5
+  if (pagPages) {
+    const startPage = Math.max(1, page - 2);
+    const endPage   = Math.min(pages, startPage + 4);
+    pagPages.innerHTML = Array.from({ length: endPage - startPage + 1 }, (_, i) => {
+      const p = startPage + i;
+      return `<button class="pag-btn${p === page ? ' active' : ''}" onclick="goToProductsPage(${p})">${p}</button>`;
+    }).join('');
+  }
+
+  if (prevBtn) prevBtn.disabled = page <= 1;
+  if (nextBtn) nextBtn.disabled = page >= pages;
+}
+
+function changeProductsPage(delta) {
+  const rows  = window._productsFiltered || window._productsAllRows || [];
+  const pages = Math.max(1, Math.ceil(rows.length / PRODUCTS_PER_PAGE));
+  window._productsPage = Math.max(1, Math.min(pages, (window._productsPage || 1) + delta));
+  renderProductsPage();
+}
+
+function goToProductsPage(p) {
+  window._productsPage = p;
+  renderProductsPage();
 }
 async function loadAdminInventory() {
   const sb = getSB(); if (!sb) return;
@@ -5079,8 +5186,17 @@ async function deleteProduct(productId, btnEl) {
       try {
         const { error } = await sb.from('products').update({ is_active: false }).eq('id', productId);
         if (error) throw error;
+        logAuditEvent('DELETE_PRODUCT', { id: productId }).catch(() => {}); // ✅ H4: audit log
         const row = btnEl?.closest('tr');
         if (row) row.remove();
+        // Update cached rows too
+        if (window._productsAllRows) {
+          window._productsAllRows = window._productsAllRows.filter(r => !r.html.includes('data-pid="' + productId + '"'));
+          if (window._productsFiltered) {
+            window._productsFiltered = window._productsFiltered.filter(r => !r.html.includes('data-pid="' + productId + '"'));
+          }
+          renderProductsPage();
+        }
         showToast('Product removed from store', 'refund');
       } catch (e) { showToast('Delete failed: ' + e.message, 'refund'); }
     },
@@ -6392,6 +6508,10 @@ window.toggleDropStatus       = typeof toggleDropStatus !== 'undefined' ? toggle
 window.logAuditEvent          = logAuditEvent;
 window.loadAdminOrders        = loadAdminOrders;
 window.loadAdminProducts      = loadAdminProducts;
+window.filterProductsTable    = filterProductsTable;
+window.renderProductsPage     = renderProductsPage;
+window.changeProductsPage     = changeProductsPage;
+window.goToProductsPage       = goToProductsPage;
 window.loadAdminInventory     = loadAdminInventory;
 window.loadAdminCustomers     = loadAdminCustomers;
 window.loadAdminCoupons       = loadAdminCoupons;
