@@ -3514,15 +3514,10 @@ function openProductModal(data) {
         <div class="img-upload-sub">Click to upload — PNG, JPG, WebP — Max 8MB</div>`;
     }
     imgZone.onclick = function() {
-      let inp = imgZone._fileInput;
-      if (!inp) {
-        inp = document.createElement('input');
-        inp.type = 'file'; inp.accept = 'image/*'; inp.style.display = 'none';
-        inp.onchange = ev => handleImgUpload(ev, imgZone);
-        document.body.appendChild(inp);
-        imgZone._fileInput = inp;
-      }
-      inp.value = ''; inp.click();
+      _activeImgZone = imgZone;
+      const inp = _getSharedFileInput();
+      inp.value = '';
+      inp.click();
     };
   }
 
@@ -4582,6 +4577,27 @@ function filterByStatus(tableId, status) {
 // ====================================================
 // IMAGE UPLOAD PREVIEW  no listener stacking
 // ====================================================
+// IMAGE UPLOAD — no DOM leak, single shared input
+// ====================================================
+
+// ✅ M2 FIX: one shared hidden input reused across all uploads — no DOM leak
+let _sharedFileInput = null;
+let _activeImgZone   = null;
+
+function _getSharedFileInput() {
+  if (!_sharedFileInput) {
+    _sharedFileInput = document.createElement('input');
+    _sharedFileInput.type    = 'file';
+    _sharedFileInput.accept  = 'image/*';
+    _sharedFileInput.style.display = 'none';
+    _sharedFileInput.onchange = function(ev) {
+      if (_activeImgZone) handleImgUpload(ev, _activeImgZone);
+    };
+    document.body.appendChild(_sharedFileInput);
+  }
+  return _sharedFileInput;
+}
+
 function handleImgUpload(event, container) {
   const file = event.target.files[0];
   if (!file) return;
@@ -4589,7 +4605,7 @@ function handleImgUpload(event, container) {
     showToast('File too large — maximum 8MB', 'refund');
     return;
   }
-  // ✅ FIX #1: store the actual File object so submitProductModal can upload it
+  // Store the File object so submitProductModal can upload it
   container._pendingFile = file;
 
   const reader = new FileReader();
@@ -4598,15 +4614,10 @@ function handleImgUpload(event, container) {
       <img src="${e.target.result}" style="max-height:160px;border-radius:var(--r-md);margin:0 auto;display:block;" alt="Preview"/>
       <div style="text-align:center;margin-top:10px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--green);">${esc(file.name)}</div>
       <div style="text-align:center;margin-top:4px;font-size:10px;color:var(--g3);">${(file.size/1024).toFixed(0)}KB — Click to replace</div>`;
+    // Use shared input — no new elements appended to body
     container.onclick = function() {
-      let inp = container._fileInput;
-      if (!inp) {
-        inp = document.createElement('input');
-        inp.type = 'file'; inp.accept = 'image/*'; inp.style.display = 'none';
-        inp.onchange = ev => handleImgUpload(ev, container);
-        document.body.appendChild(inp);
-        container._fileInput = inp;
-      }
+      _activeImgZone = container;
+      const inp = _getSharedFileInput();
       inp.value = '';
       inp.click();
     };
@@ -4993,7 +5004,7 @@ async function loadAdminProducts() {
         id: p.id, name: p.name, category: p.series || '', desc: p.description || '',
         price: p.price_inr || 0, cost: 0,
         sizes: (p.tags || []).filter(t => ['XS','S','M','L','XL','XXL'].includes(t)).join(', ') || 'XS, S, M, L, XL, XXL',
-        colors: '', stock: 50, threshold: 10, sku: '',
+        colors: '', stock: 50, threshold: 10, sku: p.id.replace(/-\d{4}$/, '').toUpperCase(),
         badge: p.badge || '', gsm: p.fabric_gsm || '', material: p.fabric_material || '',
         is_active: p.is_active, images: p.images || [],
       };
@@ -5009,7 +5020,10 @@ async function loadAdminProducts() {
           + '<td class="text-muted text-sm">' + esc(date) + '</td>'
           + '<td><div style="display:flex;gap:6px">'
           + '<button class="btn-ghost" data-pid="' + esc(p.id) + '" onclick="openProductModal(window._editProducts[this.dataset.pid])">Edit</button>'
-          + '<button class="btn-danger btn-sm" data-pid="' + esc(p.id) + '" onclick="deleteProduct(this.dataset.pid,this)">Delete</button>'
+          + (p.is_active
+              ? '<button class="btn-danger btn-sm" data-pid="' + esc(p.id) + '" onclick="deleteProduct(this.dataset.pid,this)">Deactivate</button>'
+              : '<button class="btn-outline btn-sm" style="color:var(--green);border-color:var(--green)" data-pid="' + esc(p.id) + '" onclick="restoreProduct(this.dataset.pid,this)">Restore</button>'
+            )
           + '</div></td>'
           + '</tr>',
       };
@@ -5201,6 +5215,25 @@ async function deleteProduct(productId, btnEl) {
       } catch (e) { showToast('Delete failed: ' + e.message, 'refund'); }
     },
     'danger'
+  );
+}
+
+// ✅ M3+M4: Restore an inactive product back to active
+async function restoreProduct(productId, btnEl) {
+  confirmAction(
+    'Restore this product?',
+    'The product will become visible in the store again.',
+    'Restore',
+    async function() {
+      const sb = getSB(); if (!sb) return;
+      try {
+        const { error } = await sb.from('products').update({ is_active: true }).eq('id', productId);
+        if (error) throw error;
+        logAuditEvent('RESTORE_PRODUCT', { id: productId }).catch(() => {});
+        showToast('Product restored to store', 'order');
+        loadAdminProducts(); // Reload to reflect new state
+      } catch (e) { showToast('Restore failed: ' + e.message, 'refund'); }
+    }
   );
 }
 async function loadAdminCustomers() {
@@ -6482,6 +6515,7 @@ window.closeModal             = closeModal;
 window.openProductModal       = openProductModal;
 window.submitProductModal     = submitProductModal;
 window.deleteProduct          = deleteProduct; // ✅ FIX #5: was missing
+window.restoreProduct         = restoreProduct;
 window.openDropModal_legacy   = openDropModal_legacy;
 window.switchGeoView          = switchGeoView;
 window.updatePLMonth          = updatePLMonth;
