@@ -108,9 +108,9 @@ export function renderAccountPage() {
   }
 
   // Load order count
-  const sb = getSB() || supabase;
-  if (sb && currentUser) {
-    sb.from('orders')
+  const client = getSupabase() || supabase;
+  if (client && currentUser) {
+    client.from('orders')
       .select('id', { count: 'exact', head: true })
       .eq('user_id', currentUser.id)
       .then(({ count }) => {
