@@ -226,6 +226,10 @@ export function toggleWishlistItem(id) {
   if (typeof window !== 'undefined' && window.syncWishlistToSupabase) {
     window.syncWishlistToSupabase();
   }
+  // Update nav badges immediately
+  if (typeof window !== 'undefined' && window.updateBadges) {
+    window.updateBadges();
+  }
 }
 
 /* ================================================================

@@ -575,7 +575,66 @@ a {
 }
 
 /* =================================================================
-   SHOP GRID — SHORTER CARDS
+   SHOP FILTER BAR
+   ================================================================= */
+
+.shop-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: clamp(16px, 3vw, 24px);
+}
+
+.shop-filter-btns {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.shop-sort-select {
+  font-family: var(--font);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: 8px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-full);
+  background: var(--bg);
+  color: var(--black);
+  cursor: pointer;
+  outline: none;
+  transition: border-color var(--t);
+  flex-shrink: 0;
+}
+.shop-sort-select:focus,
+.shop-sort-select:hover {
+  border-color: var(--black);
+}
+
+/* Mobile: filter bar scrolls horizontally */
+@media (max-width: 599px) {
+  .shop-filter-bar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 4px;
+  }
+  .shop-filter-bar::-webkit-scrollbar { display: none; }
+  .shop-filter-btns {
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+  }
+  .shop-sort-select {
+    flex-shrink: 0;
+  }
+}
+
+/* =================================================================
+   WISHLIST PAGE
    (replaces previous aspect-ratio: 1/1 with 4/5)
    ================================================================= */
 .shop-grid .product-card-img {

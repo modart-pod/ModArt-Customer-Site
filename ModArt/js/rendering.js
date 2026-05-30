@@ -315,6 +315,37 @@ export function updateBadges() {
       el.style.display = count > 0 ? '' : 'none';
     }
   });
+
+  // Update wishlist badge on desktop nav and mobile nav
+  const wishCount = wishlist.size;
+  ['wishlist-badge-desk', 'wishlist-badge-nav'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.textContent = wishCount;
+      el.style.display = wishCount > 0 ? '' : 'none';
+    }
+  });
+
+  // Update desktop nav heart icon — filled when items saved
+  const wishIcon = document.getElementById('wishlist-nav-icon');
+  if (wishIcon) {
+    wishIcon.style.fontVariationSettings = wishCount > 0
+      ? "'FILL' 1,'wght' 600,'GRAD' 0,'opsz' 24"
+      : "'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24";
+    wishIcon.style.color = wishCount > 0 ? 'var(--red)' : '';
+  }
+
+  // Update mobile nav wishlist icon
+  const mobWishBtn = document.getElementById('mob-nav-wishlist');
+  if (mobWishBtn) {
+    const icon = mobWishBtn.querySelector('.icon');
+    if (icon) {
+      icon.style.fontVariationSettings = wishCount > 0
+        ? "'FILL' 1,'wght' 600,'GRAD' 0,'opsz' 24"
+        : "'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24";
+      icon.style.color = wishCount > 0 ? 'var(--red)' : '';
+    }
+  }
 }
 
 /* ================================================================
@@ -446,29 +477,51 @@ export function filterShop(type, btn) {
   });
   if (btn) btn.classList.add('active');
 
-  // Map filter types to series keywords — works with any products added via admin
+  // Extended series map to match real catalogue
   const SERIES_MAP = {
-    hoodies: ['hoodie'],
-    tees:    ['tee'],
-    bottoms: ['cargo', 'pant', 'short'],
+    hoodies:     ['hoodie', 'hooded', 'zipper'],
+    tees:        ['tee', 'longline'],
+    fleece:      ['sweatshirt', 'fleece'],
+    bottoms:     ['jogger', 'short'],
+    women:       ['women', 'crop'],
+    accessories: ['tote', 'drawstring', 'bag'],
   };
 
   const grid = document.getElementById('shop-product-grid');
+  const emptyEl = document.getElementById('shop-empty');
   if (!grid) return;
+
   const cards = Array.from(grid.querySelectorAll('[data-product-id]'));
+  let visibleCount = 0;
+
   cards.forEach(card => {
     const pid   = card.dataset.productId?.toLowerCase() || '';
     const name  = card.dataset.productName?.toLowerCase() || '';
     const stock = parseInt(card.dataset.productStock || '1');
     let show = true;
+
     if (type === 'instock') {
       show = stock > 0;
     } else if (type !== 'all' && SERIES_MAP[type]) {
       const keywords = SERIES_MAP[type];
       show = keywords.some(kw => pid.includes(kw) || name.includes(kw));
     }
+
     card.style.display = show ? '' : 'none';
+    if (show) visibleCount++;
   });
+
+  // Show/hide empty state
+  if (emptyEl) emptyEl.style.display = visibleCount === 0 ? 'block' : 'none';
+
+  // Update scarcity count from live inventory
+  const scarcityEl = document.getElementById('shop-scarcity-count');
+  if (scarcityEl && window.LIVE_INVENTORY) {
+    const totalStock = Object.values(window.LIVE_INVENTORY)
+      .flatMap(sizes => Object.values(sizes))
+      .reduce((sum, s) => sum + s, 0);
+    scarcityEl.textContent = totalStock > 0 ? totalStock.toLocaleString('en-IN') : '—';
+  }
 }
 
 export function sortShop(value) {
