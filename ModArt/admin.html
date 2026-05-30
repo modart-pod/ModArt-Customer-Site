@@ -5076,10 +5076,7 @@ async function loadAdminProducts() {
           + '<td class="text-muted text-sm">' + esc(date) + '</td>'
           + '<td><div style="display:flex;gap:6px">'
           + '<button class="btn-ghost" data-pid="' + esc(p.id) + '" onclick="openProductModal(window._editProducts[this.dataset.pid])">Edit</button>'
-          + (p.is_active
-              ? '<button class="btn-danger btn-sm" data-pid="' + esc(p.id) + '" onclick="deleteProduct(this.dataset.pid,this)">Deactivate</button>'
-              : '<button class="btn-outline btn-sm" style="color:var(--green);border-color:var(--green)" data-pid="' + esc(p.id) + '" onclick="restoreProduct(this.dataset.pid,this)">Restore</button>'
-            )
+          + '<button class="btn-danger btn-sm" data-pid="' + esc(p.id) + '" onclick="hardDeleteProduct(this.dataset.pid,this)">Delete</button>'
           + '</div></td>'
           + '</tr>',
       };
@@ -5274,20 +5271,22 @@ async function editInventoryRow(btnOrId, size, currentStock) {
     if (e.key === 'Escape') modal.remove();
   });
 }
-async function deleteProduct(productId, btnEl) {
+// Hard delete product — permanently removes from DB
+async function hardDeleteProduct(productId, btnEl) {
   confirmAction(
-    'Remove this product?',
-    'The product will be hidden from the store. Orders are not affected.',
-    'Remove',
+    'Permanently delete this product?',
+    'This cannot be undone. The product and all its inventory records will be removed. Orders referencing it are not affected.',
+    'Delete Forever',
     async function() {
       const sb = getSB(); if (!sb) return;
       try {
-        const { error } = await sb.from('products').update({ is_active: false }).eq('id', productId);
+        // Delete inventory rows first (FK constraint)
+        await sb.from('inventory').delete().eq('product_id', productId);
+        // Hard delete the product
+        const { error } = await sb.from('products').delete().eq('id', productId);
         if (error) throw error;
-        logAuditEvent('DELETE_PRODUCT', { id: productId }).catch(() => {}); // ✅ H4: audit log
-        const row = btnEl?.closest('tr');
-        if (row) row.remove();
-        // Update cached rows too
+        logAuditEvent('DELETE_PRODUCT', { id: productId, type: 'hard_delete' }).catch(() => {});
+        // Remove from cached rows and re-render
         if (window._productsAllRows) {
           window._productsAllRows = window._productsAllRows.filter(r => !r.html.includes('data-pid="' + productId + '"'));
           if (window._productsFiltered) {
@@ -5295,29 +5294,10 @@ async function deleteProduct(productId, btnEl) {
           }
           renderProductsPage();
         }
-        showToast('Product removed from store', 'refund');
+        showToast('Product permanently deleted', 'refund');
       } catch (e) { showToast('Delete failed: ' + e.message, 'refund'); }
     },
     'danger'
-  );
-}
-
-// ✅ M3+M4: Restore an inactive product back to active
-async function restoreProduct(productId, btnEl) {
-  confirmAction(
-    'Restore this product?',
-    'The product will become visible in the store again.',
-    'Restore',
-    async function() {
-      const sb = getSB(); if (!sb) return;
-      try {
-        const { error } = await sb.from('products').update({ is_active: true }).eq('id', productId);
-        if (error) throw error;
-        logAuditEvent('RESTORE_PRODUCT', { id: productId }).catch(() => {});
-        showToast('Product restored to store', 'order');
-        loadAdminProducts(); // Reload to reflect new state
-      } catch (e) { showToast('Restore failed: ' + e.message, 'refund'); }
-    }
   );
 }
 async function loadAdminCustomers() {
@@ -6600,8 +6580,8 @@ window.openModal              = openModal;
 window.closeModal             = closeModal;
 window.openProductModal       = openProductModal;
 window.submitProductModal     = submitProductModal;
-window.deleteProduct          = deleteProduct; // ✅ FIX #5: was missing
-window.restoreProduct         = restoreProduct;
+window.deleteProduct          = hardDeleteProduct;
+window.hardDeleteProduct      = hardDeleteProduct;
 window.openDropModal_legacy   = openDropModal_legacy;
 window.switchGeoView          = switchGeoView;
 window.updatePLMonth          = updatePLMonth;
