@@ -182,23 +182,12 @@ body.layout-desktop #page-home         { padding-top: 0; }
   .hero-cd-label { font-size: 9px; letter-spacing: .16em; }
   .hero-cd-unit { font-size: 24px; }
 
-  /* ── Trust strip — single row scroll ── */
-  .trust-strip { padding: 12px 0; overflow-x: auto; }
-  .trust-items {
-    flex-wrap: nowrap;
-    justify-content: flex-start;
-    gap: 0;
-    padding: 0 16px;
-    width: max-content;
-  }
-  .trust-item {
-    flex-shrink: 0;
-    padding: 0 16px;
-    border-right: 1px solid rgba(255,255,255,.08);
-  }
-  .trust-item:last-child { border-right: none; }
-  .trust-item .icon { font-size: 16px; }
-  .trust-item-txt { font-size: 10px; white-space: nowrap; }
+  /* ── Trust strip — 3 equal columns, all visible ── */
+  .trust-strip { padding: 10px 0; }
+  .trust-items { gap: 0; flex-wrap: nowrap; }
+  .trust-item { flex: 1; padding: 0 6px; }
+  .trust-item .icon { font-size: 13px; }
+  .trust-item-txt { font-size: 8px; letter-spacing: .06em; }
 
   /* ── Ticker ── */
   .ticker-bar { padding: 10px 0; }

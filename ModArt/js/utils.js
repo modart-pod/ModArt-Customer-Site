@@ -309,7 +309,7 @@ if (typeof window !== 'undefined') {
 }
 
 /* ================================================================
-   HOME CAROUSEL
+   HOME CAROUSEL — auto-looping
    ================================================================ */
 
 export function initCarousel() {
@@ -326,19 +326,45 @@ export function initCarousel() {
     dotsEl.innerHTML = items.map((_, i) =>
       `<button class="carousel-dot${i === 0 ? ' active' : ''}" aria-label="Go to slide ${i + 1}" onclick="scrollCarouselTo(${i})"></button>`
     ).join('');
+    startAutoLoop();
   }
 
   // Sync active dot on scroll
   track.addEventListener('scroll', () => {
     const items = cards();
     if (!items.length) return;
-    const scrollLeft = track.scrollLeft;
-    const cardW = items[0].offsetWidth + 16; // width + gap
-    const idx = Math.round(scrollLeft / cardW);
+    const cardW = items[0].offsetWidth + 16;
+    const idx = Math.round(track.scrollLeft / cardW);
     dotsEl.querySelectorAll('.carousel-dot').forEach((d, i) => {
       d.classList.toggle('active', i === idx);
     });
   }, { passive: true });
+
+  // Auto-loop: advance one card every 2.5s, wrap back to start
+  let _loopTimer = null;
+  let _isPaused = false;
+
+  function startAutoLoop() {
+    if (_loopTimer) clearInterval(_loopTimer);
+    _loopTimer = setInterval(() => {
+      if (_isPaused) return;
+      const items = cards();
+      if (!items.length) return;
+      const cardW = items[0].offsetWidth + 16;
+      const maxScroll = track.scrollWidth - track.clientWidth;
+      const nextScroll = track.scrollLeft + cardW;
+      if (nextScroll >= maxScroll - 4) {
+        // At end — jump back to start smoothly
+        track.scrollTo({ left: 0, behavior: 'smooth' });
+      } else {
+        track.scrollBy({ left: cardW, behavior: 'smooth' });
+      }
+    }, 2500);
+  }
+
+  // Pause on user touch/drag, resume after 5s
+  track.addEventListener('touchstart', () => { _isPaused = true; }, { passive: true });
+  track.addEventListener('touchend',   () => { setTimeout(() => { _isPaused = false; }, 5000); }, { passive: true });
 
   // Expose rebuild so renderProducts can call it after injecting cards
   window._rebuildCarouselDots = buildDots;
