@@ -260,20 +260,33 @@ export async function renderBag() {
       const p = productSource.find(p => p.id === item.productId);
       if (!p) return '';
       return `<div class="bag-item">
-        <div class="bag-img"><img src="${esc(p.img)}" alt="${esc(p.name)}" loading="lazy"/></div>
-        <div>
-          <div class="bag-item-name">${esc(p.name)}</div>
-          <div class="bag-item-series">${esc(p.series)}</div>
-          <div class="bag-item-meta">Size: ${esc(item.size)}${item.printAddon ? ` · Print addon: ${formatPrice(item.printAddon)}` : ''} &nbsp; ${formatPrice(p.price + (item.printAddon || 0))} each</div>
-          <button class="bag-item-edit" onclick="window.goTo && window.goTo('customize')">Edit Design</button>
-          <div class="qty-control" role="group" aria-label="Quantity for ${esc(p.name)}">
-            <button class="qty-btn" aria-label="Decrease quantity" onclick="window.cart && window.cart.updateQty('${esc(p.id)}',-1,'${esc(item.size)}')">−</button>
-            <span class="qty-display" aria-live="polite">${item.qty}</span>
-            <button class="qty-btn" aria-label="Increase quantity" onclick="window.cart && window.cart.updateQty('${esc(p.id)}',1,'${esc(item.size)}')">+</button>
-          </div>
-          <div class="bag-item-price">${formatPrice(p.price * item.qty)}</div>
+        <div class="bag-img">
+          <img src="${esc(p.img)}" alt="${esc(p.name)}" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:var(--r-md)"/>
         </div>
-        <button class="bag-remove-btn" aria-label="Remove ${esc(p.name)}" onclick="window.cart && window.cart.remove('${esc(p.id)}','${esc(item.size)}')"><span class="material-symbols-outlined icon">close</span></button>
+        <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+            <div>
+              <div class="bag-item-series">${esc(p.series)}</div>
+              <div class="bag-item-name">${esc(p.name)}</div>
+            </div>
+            <button class="bag-remove-btn" aria-label="Remove ${esc(p.name)}" onclick="window.cart && window.cart.remove('${esc(p.id)}','${esc(item.size)}')">
+              <span class="material-symbols-outlined" style="font-size:16px">close</span>
+            </button>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span style="display:inline-flex;align-items:center;padding:3px 10px;background:var(--bg-c);border:1px solid var(--border);border-radius:var(--r-full);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g2)">Size: ${esc(item.size)}</span>
+            ${item.printAddon ? `<span style="display:inline-flex;align-items:center;gap:3px;padding:3px 10px;background:rgba(215,38,56,.07);border:1px solid rgba(215,38,56,.2);border-radius:var(--r-full);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red)"><span class="material-symbols-outlined" style="font-size:12px">palette</span> Custom Print</span>` : ''}
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px">
+            <div class="qty-control" role="group" aria-label="Quantity for ${esc(p.name)}">
+              <button class="qty-btn" aria-label="Decrease quantity" onclick="window.cart && window.cart.updateQty('${esc(p.id)}',-1,'${esc(item.size)}')">−</button>
+              <span class="qty-display" aria-live="polite">${item.qty}</span>
+              <button class="qty-btn" aria-label="Increase quantity" onclick="window.cart && window.cart.updateQty('${esc(p.id)}',1,'${esc(item.size)}')">+</button>
+            </div>
+            <div class="bag-item-price">${formatPrice(p.price * item.qty)}</div>
+          </div>
+          ${item.printAddon ? `<div style="font-size:10px;color:var(--g3)">Includes print addon: ${formatPrice(item.printAddon)}</div>` : ''}
+        </div>
       </div>`;
     }).join('');
   }
@@ -285,7 +298,7 @@ export async function renderBag() {
   const pct  = discountApplied ? (discountPercent || 10) : 0;
   const disc = discountApplied ? Math.round(sub * pct / 100) : 0;
 
-  if (discEl) discEl.style.display = disc > 0 ? '' : 'none';
+  if (discEl) discEl.style.display = disc > 0 ? 'flex' : 'none';
 
   // Update discount label to show real percent
   const discLabelEl = discEl?.querySelector('span:first-child');

@@ -87,9 +87,17 @@ export async function initCartPersistence() {
   if (window.updateBadges) window.updateBadges();
 }
 
+export function clearCart() {
+  cart.items = [];
+  try { localStorage.removeItem(LS_KEY); } catch (e) {}
+  if (window.updateBadges) window.updateBadges();
+  if (window.renderBag) window.renderBag();
+}
+
 if (typeof window !== 'undefined') {
   window.saveCartLocal       = saveCartLocal;
   window.syncCartToSupabase  = syncCartToSupabase;
   window.initCartPersistence = initCartPersistence;
   window.markAuthReady       = markAuthReady;
+  window.clearCart           = clearCart;
 }

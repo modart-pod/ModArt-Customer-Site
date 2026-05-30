@@ -173,6 +173,20 @@ async function initApplication() {
   lp(52, 'Fetching products\u2026');
   await withTimeout(initProducts(), 8000, 'initProducts');
 
+  // Strip any cart items that reference products no longer in the catalogue
+  try {
+    const { cart: cartState } = await import('./state.js');
+    if (window._PRODUCTS && window._PRODUCTS.length > 0) {
+      const validIds = new Set(window._PRODUCTS.map(p => p.id));
+      const before = cartState.items.length;
+      cartState.items = cartState.items.filter(i => validIds.has(i.productId));
+      if (cartState.items.length !== before) {
+        if (window.saveCartLocal) window.saveCartLocal();
+        if (window.updateBadges) window.updateBadges();
+      }
+    }
+  } catch (e) { /* non-critical */ }
+
   // 6. Realtime + Drops
   lp(70, 'Connecting live updates\u2026');
   initRealtime();

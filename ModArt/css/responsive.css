@@ -11,6 +11,8 @@ body.layout-mobile .desktop-nav       { display: none; }
 body.layout-mobile .mobile-hdr        { display: flex; }
 body.layout-mobile .mobile-bottom-nav { display: flex; }
 body.layout-mobile .mob-nav-spacer    { display: block; }
+body.layout-mobile .page              { padding-top: var(--nav-h); }
+body.layout-mobile #page-home         { padding-top: 0; }
 
 body.layout-tablet .desktop-nav       { display: block; }
 body.layout-tablet .mobile-hdr        { display: none; }

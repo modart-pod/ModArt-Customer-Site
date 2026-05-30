@@ -2670,6 +2670,7 @@
   border-radius: var(--r-md);
   background: var(--bg-d);
   flex-shrink: 0;
+  overflow: hidden;
 }
 
 .bag-item-info {
@@ -2773,19 +2774,25 @@
   color: var(--black);
 }
 
-.bag-remove {
-  font-size: 10px;
-  font-weight: 600;
+.bag-remove-btn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-c);
+  border: 1px solid var(--border);
+  border-radius: 50%;
   color: var(--g3);
-  background: none;
-  border: none;
-  text-decoration: underline;
-  letter-spacing: .08em;
-  text-transform: uppercase;
+  cursor: pointer;
+  transition: all var(--t);
+  flex-shrink: 0;
 }
 
-.bag-remove:hover {
-  color: var(--red);
+.bag-remove-btn:hover {
+  background: var(--red);
+  border-color: var(--red);
+  color: #fff;
 }
 
 .bag-empty {
