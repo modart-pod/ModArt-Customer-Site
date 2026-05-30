@@ -43,11 +43,24 @@ body.layout-desktop #page-home         { padding-top: 0; }
   display: flex;
 }
 
-/* Mobile header: logo centred, actions on right */
+/* Mobile header: logo left, actions right — clean flex layout */
+.mobile-hdr {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  height: var(--nav-h);
+  gap: 8px;
+}
+
 .mobile-hdr .mobile-logo-btn {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+  position: static !important;
+  transform: none !important;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
 }
 
 /* Qty buttons — larger tap targets on mobile */

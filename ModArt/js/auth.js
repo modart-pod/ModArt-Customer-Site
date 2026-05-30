@@ -268,9 +268,18 @@ export async function login(email, password) {
 export async function loginWithGoogle() {
   const client = getSupabase();
   if (!client) { showAuthError('google-error', 'Auth service unavailable'); return; }
+
+  // Use explicit site URL — never rely on window.location.origin
+  // which can be the Vercel preview URL or localhost
+  const siteUrl = 'https://modart-modart-pods-projects.vercel.app';
+  const redirectTo = siteUrl + '/';
+
   const { error } = await client.auth.signInWithOAuth({
     provider: 'google',
-    options: { redirectTo: window.location.origin }
+    options: {
+      redirectTo,
+      queryParams: { access_type: 'offline', prompt: 'consent' }
+    }
   });
   if (error) showAuthError('google-error', error.message);
 }

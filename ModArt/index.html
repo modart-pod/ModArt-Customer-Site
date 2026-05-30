@@ -245,17 +245,21 @@
   </nav>
 
   <!-- ============================================================
-       MOBILE HEADER
+       MOBILE HEADER — Logo left, actions right
        ============================================================ -->
   <header class="mobile-hdr" id="mobile-hdr">
-    <button class="mobile-logo-btn" onclick="goTo('home')" aria-label="ModArt home">
-      <img src="assets/images/logo-black.png" alt="ModArt" class="nav-logo-img"
-           style="height:28px;width:auto" onerror="this.style.display='none'"/>
+    <!-- Logo — top left -->
+    <button class="mobile-logo-btn" onclick="goTo('home')" aria-label="ModArt home" style="position:static;transform:none;display:flex;align-items:center;gap:6px">
+      <img src="assets/images/logo-black.png" alt="ModArt" style="height:36px;width:auto" onerror="this.style.display='none'"/>
+      <span style="font-size:15px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:var(--black)">MODART</span>
     </button>
-    <div class="mobile-hdr-actions">
-      <button class="nav-icon-btn" aria-label="Search" onclick="toggleSearch()"><span class="material-symbols-outlined icon">search</span></button>
+    <!-- Actions — top right -->
+    <div class="mobile-hdr-actions" style="display:flex;align-items:center;gap:2px;margin-left:auto">
+      <button class="nav-icon-btn" aria-label="Search" onclick="toggleSearch()">
+        <span class="material-symbols-outlined icon">search</span>
+      </button>
       <button class="nav-icon-btn" aria-label="Wishlist" onclick="goTo('wishlist')" style="position:relative">
-        <span class="material-symbols-outlined icon" style="font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24">favorite</span>
+        <span class="material-symbols-outlined icon" id="mob-hdr-wish-icon" style="font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24">favorite</span>
         <span class="cart-badge" id="wishlist-badge-mob-hdr" style="display:none">0</span>
       </button>
       <button class="nav-icon-btn" aria-label="Bag" onclick="goTo('bag')" style="position:relative">
@@ -292,11 +296,14 @@
       <span class="material-symbols-outlined icon">home</span>Home
     </button>
     <button class="mob-nav-item" id="mob-nav-shop" onclick="goTo('shop')">
-      <span class="material-symbols-outlined icon">search</span>Shop
+      <span class="material-symbols-outlined icon">grid_view</span>Shop
     </button>
-    <button class="mob-nav-item" id="mob-nav-wishlist" onclick="goTo('wishlist')" style="position:relative">
-      <span class="material-symbols-outlined icon">favorite_border</span>
-      <span class="cart-badge" id="wishlist-badge-nav" style="display:none;top:6px;right:calc(50% - 18px)">0</span>Saved
+    <!-- Centre Design+ button -->
+    <button class="mob-nav-item mob-nav-center" id="mob-nav-customize" onclick="goTo('customize')" style="position:relative">
+      <div style="width:52px;height:52px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(215,38,56,.45);margin-top:-20px;border:3px solid var(--bg)">
+        <span class="material-symbols-outlined" style="font-size:26px;color:#fff">add</span>
+      </div>
+      <span style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g3);margin-top:2px">Design</span>
     </button>
     <button class="mob-nav-item" id="mob-nav-bag" onclick="goTo('bag')" style="position:relative">
       <span class="material-symbols-outlined icon">shopping_bag</span>
