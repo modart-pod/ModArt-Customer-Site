@@ -2293,12 +2293,11 @@ Sitemap: https://modart.co/sitemap.xml</textarea>
       <button class="modal-close" onclick="closeModal('product-modal')"><span class="icon material-symbols-outlined">close</span></button>
     </div>
     <div class="modal-body">
-      <!-- Image upload zone — id used by openProductModal to reset it -->
-      <div class="img-upload mb-6" id="pm-img-zone" onclick="this.querySelector('input[type=file]').click()">
-        <input type="file" accept="image/*" style="display:none" onchange="handleImgUpload(event,this.parentElement)"/>
+      <!-- Image upload zone — controlled entirely by JS, no inline onclick -->
+      <div class="img-upload mb-6" id="pm-img-zone">
         <span class="icon material-symbols-outlined">add_photo_alternate</span>
         <div class="img-upload-label">Upload Product Image</div>
-        <div class="img-upload-sub">Click to upload — PNG, JPG, WebP — Max 8MB</div>
+        <div class="img-upload-sub">Click or drag & drop — PNG, JPG, WebP — Max 8MB</div>
       </div>
       <div class="form-grid">
         <div class="form-group"><label class="form-label">Product Name *</label><input id="pm-name" class="form-input" type="text" placeholder="e.g. Oversized Hoodie"/></div>
@@ -3503,32 +3502,60 @@ function closeModal(id) { document.getElementById(id).classList.remove('show'); 
 function openProductModal(data) {
   const isEdit = !!(data && data.id);
 
-  // Reset image upload zone every time modal opens
+  // ── Image zone setup ─────────────────────────────────────────
   const imgZone = document.getElementById('pm-img-zone');
   if (imgZone) {
-    imgZone._pendingFile  = null;
-    imgZone._uploadedUrl  = null;
-    imgZone._fileInput    = null;
-    // If editing and product has an existing image, show it
+    // Clear all state
+    imgZone._pendingFile = null;
+    imgZone._uploadedUrl = null;
+
+    // Remove old listeners by cloning
+    const fresh = imgZone.cloneNode(false); // cloneNode(false) = no children
+    imgZone.parentNode.replaceChild(fresh, imgZone);
+    const zone = document.getElementById('pm-img-zone');
+
+    // Show existing image if editing, otherwise show default prompt
     const existingImg = isEdit && data.images && data.images[0] ? data.images[0] : null;
     if (existingImg) {
-      imgZone._uploadedUrl = existingImg;
-      imgZone.innerHTML = `
+      zone._uploadedUrl = existingImg;
+      zone.innerHTML = `
         <img src="${esc(existingImg)}" style="max-height:160px;border-radius:var(--r-md);margin:0 auto;display:block;" alt="Current image"/>
-        <div style="text-align:center;margin-top:8px;font-size:10px;color:var(--g3);">Current image — click to replace</div>`;
+        <div style="text-align:center;margin-top:8px;font-size:10px;color:var(--g3);">Current image — click or drag to replace</div>`;
     } else {
-      imgZone.innerHTML = `
-        <input type="file" accept="image/*" style="display:none" onchange="handleImgUpload(event,this.parentElement)"/>
+      zone.innerHTML = `
         <span class="icon material-symbols-outlined">add_photo_alternate</span>
         <div class="img-upload-label">Upload Product Image</div>
-        <div class="img-upload-sub">Click to upload — PNG, JPG, WebP — Max 8MB</div>`;
+        <div class="img-upload-sub">Click or drag & drop — PNG, JPG, WebP — Max 8MB</div>`;
     }
-    imgZone.onclick = function() {
-      _activeImgZone = imgZone;
+
+    // Click to open file picker
+    zone.addEventListener('click', function() {
+      _activeImgZone = zone;
       const inp = _getSharedFileInput();
       inp.value = '';
       inp.click();
-    };
+    });
+
+    // Drag & drop support
+    zone.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      zone.style.borderColor = 'var(--red)';
+      zone.style.background  = 'rgba(215,38,56,0.04)';
+    });
+    zone.addEventListener('dragleave', function() {
+      zone.style.borderColor = '';
+      zone.style.background  = '';
+    });
+    zone.addEventListener('drop', function(e) {
+      e.preventDefault();
+      zone.style.borderColor = '';
+      zone.style.background  = '';
+      const file = e.dataTransfer?.files?.[0];
+      if (file) {
+        _activeImgZone = zone;
+        handleImgUploadFile(file, zone);
+      }
+    });
   }
 
   document.getElementById('pm-name').value      = isEdit ? (data.name      || '') : '';
@@ -3593,8 +3620,8 @@ async function submitProductModal() {
     tags:            [document.getElementById('pm-category').value.toLowerCase().replace(/\s+/g,'-')],
   };
 
-  // ✅ FIX #1: upload image to Supabase Storage if a new file was selected
-  const imgZone = document.getElementById('pm-img-zone');
+  // Upload image to Supabase Storage if a new file was selected
+  const imgZone    = document.getElementById('pm-img-zone');
   const pendingFile = imgZone?._pendingFile;
   if (pendingFile) {
     try {
@@ -4587,52 +4614,52 @@ function filterByStatus(tableId, status) {
 // ====================================================
 // IMAGE UPLOAD PREVIEW  no listener stacking
 // ====================================================
-// IMAGE UPLOAD — no DOM leak, single shared input
+// IMAGE UPLOAD — click + drag & drop, no DOM leak
 // ====================================================
 
-// ✅ M2 FIX: one shared hidden input reused across all uploads — no DOM leak
+// Single shared hidden input — no DOM leak
 let _sharedFileInput = null;
 let _activeImgZone   = null;
 
 function _getSharedFileInput() {
   if (!_sharedFileInput) {
-    _sharedFileInput = document.createElement('input');
-    _sharedFileInput.type    = 'file';
-    _sharedFileInput.accept  = 'image/*';
+    _sharedFileInput          = document.createElement('input');
+    _sharedFileInput.type     = 'file';
+    _sharedFileInput.accept   = 'image/*';
     _sharedFileInput.style.display = 'none';
     _sharedFileInput.onchange = function(ev) {
-      if (_activeImgZone) handleImgUpload(ev, _activeImgZone);
+      const file = ev.target.files[0];
+      if (file && _activeImgZone) handleImgUploadFile(file, _activeImgZone);
     };
     document.body.appendChild(_sharedFileInput);
   }
   return _sharedFileInput;
 }
 
-function handleImgUpload(event, container) {
-  const file = event.target.files[0];
+// Called from both click-picker and drag & drop
+function handleImgUploadFile(file, zone) {
   if (!file) return;
   if (file.size > 8 * 1024 * 1024) {
     showToast('File too large — maximum 8MB', 'refund');
     return;
   }
-  // Store the File object so submitProductModal can upload it
-  container._pendingFile = file;
+  // Store File object for upload on submit
+  zone._pendingFile = file;
 
   const reader = new FileReader();
   reader.onload = function(e) {
-    container.innerHTML = `
+    zone.innerHTML = `
       <img src="${e.target.result}" style="max-height:160px;border-radius:var(--r-md);margin:0 auto;display:block;" alt="Preview"/>
       <div style="text-align:center;margin-top:10px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--green);">${esc(file.name)}</div>
-      <div style="text-align:center;margin-top:4px;font-size:10px;color:var(--g3);">${(file.size/1024).toFixed(0)}KB — Click to replace</div>`;
-    // Use shared input — no new elements appended to body
-    container.onclick = function() {
-      _activeImgZone = container;
-      const inp = _getSharedFileInput();
-      inp.value = '';
-      inp.click();
-    };
+      <div style="text-align:center;margin-top:4px;font-size:10px;color:var(--g3);">${(file.size/1024).toFixed(0)}KB — Click or drag to replace</div>`;
   };
   reader.readAsDataURL(file);
+}
+
+// Legacy event-based entry point (kept for any remaining onchange references)
+function handleImgUpload(event, container) {
+  const file = event.target.files[0];
+  if (file) handleImgUploadFile(file, container);
 }
 // ====================================================
 // DROP CANCEL  double-click guard
