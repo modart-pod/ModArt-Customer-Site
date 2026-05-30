@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS products (
 
 CREATE TABLE IF NOT EXISTS inventory (
   id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  product_id  TEXT NOT NULL REFERENCES products(id) ON DELETE SET NULL,
+  product_id  TEXT REFERENCES products(id) ON DELETE SET NULL,
   size        TEXT NOT NULL,
   stock       INT NOT NULL DEFAULT 0,
   reorder_at  INT NOT NULL DEFAULT 10,
@@ -117,6 +117,8 @@ CREATE INDEX IF NOT EXISTS idx_order_items_order_id   ON order_items(order_id);
 CREATE INDEX IF NOT EXISTS idx_order_items_product_id ON order_items(product_id);
 
 CREATE TABLE IF NOT EXISTS carts (
+  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id    UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   items      TEXT NOT NULL DEFAULT '[]',
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   UNIQUE(user_id)
@@ -328,7 +330,7 @@ CREATE OR REPLACE FUNCTION decrement_stock(
 RETURNS BOOLEAN
 LANGUAGE plpgsql
 SECURITY DEFINER
-AS $func$
+AS $$
 DECLARE
   current_stock INT;
 BEGIN
@@ -344,7 +346,7 @@ BEGIN
   WHERE product_id = p_product_id AND size = p_size;
   RETURN TRUE;
 END;
-$func$;
+$$;
 
 -- ── 7b. STOCK ROLLBACK RPC ───────────────────────────────────────
 
@@ -358,14 +360,14 @@ CREATE OR REPLACE FUNCTION rollback_stock(
 RETURNS BOOLEAN
 LANGUAGE plpgsql
 SECURITY DEFINER
-AS $func$
+AS $$
 BEGIN
   UPDATE inventory
   SET stock = stock + p_quantity, updated_at = NOW()
   WHERE product_id = p_product_id AND size = p_size;
   RETURN FOUND;
 END;
-$func$;
+$$;
 
 -- ── 7c. ORDER-LEVEL STOCK ROLLBACK RPC ──────────────────────────
 
@@ -376,7 +378,7 @@ CREATE OR REPLACE FUNCTION rollback_order_stock(
 RETURNS BOOLEAN
 LANGUAGE plpgsql
 SECURITY DEFINER
-AS $func$
+AS $$
 DECLARE
   v_items JSONB;
   v_item  JSONB;
@@ -391,7 +393,7 @@ BEGIN
   END LOOP;
   RETURN TRUE;
 END;
-$func$;
+$$;
 
 -- ── 7d. IDEMPOTENCY KEYS TABLE ───────────────────────────────────
 
@@ -419,7 +421,7 @@ CREATE OR REPLACE FUNCTION create_order_idempotent(
 RETURNS TABLE(order_id UUID, order_number TEXT, is_duplicate BOOLEAN)
 LANGUAGE plpgsql
 SECURITY DEFINER
-AS $func$
+AS $$
 DECLARE
   v_existing_id UUID;
   v_new_id      UUID;
@@ -441,7 +443,7 @@ BEGIN
   INSERT INTO order_idempotency_keys (key, order_id) VALUES (p_idempotency_key, v_new_id);
   RETURN QUERY SELECT o.id, o.order_number, FALSE::BOOLEAN FROM orders o WHERE o.id = v_new_id;
 END;
-$func$;
+$$;
 -- ── 8. INCREMENT COUPON USAGE RPC ────────────────────────────────
 
 CREATE OR REPLACE FUNCTION increment_coupon_usage(p_code TEXT)
