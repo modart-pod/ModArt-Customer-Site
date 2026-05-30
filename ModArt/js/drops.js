@@ -25,13 +25,14 @@ export async function fetchDrops() {
       .order('launch_at', { ascending: false });
     if (error) throw error;
     if (data && data.length > 0) {
-      // Deduplicate by id — prevents duplicate rows if DB has duplicate entries
+      // Deduplicate by drop_number (true unique key) — handles DB duplicates with different IDs
       const seen = new Set();
       LIVE_DROPS = data.filter(d => {
-        if (seen.has(d.id)) return false;
-        seen.add(d.id);
+        const key = d.drop_number ?? d.id;
+        if (seen.has(key)) return false;
+        seen.add(key);
         return true;
-      });
+      }).slice(0, 10); // cap at 10 max
     }
   } catch (e) {
     console.warn('[Drops] Fetch failed:', e.message);
