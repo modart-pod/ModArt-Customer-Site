@@ -188,6 +188,13 @@ async function initApplication() {
     renderProducts(currentPage);
     if (currentPage === 'home') window._rebuildCarouselDots && window._rebuildCarouselDots();
   }
+
+  // 13. Hide the page loader now that everything is ready
+  const loader = document.getElementById('modart-loader');
+  if (loader) {
+    // Small delay so the 100% state is visible briefly
+    setTimeout(() => loader.classList.add('hidden'), 600);
+  }
 }
 
 /* ================================================================

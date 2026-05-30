@@ -55,6 +55,7 @@
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/responsive.css">
   <link rel="stylesheet" href="css/fixes.css">
+  <link rel="stylesheet" href="css/loader.css">
   <style>
     .fade-in-section{opacity:0;transform:translateY(20px);transition:opacity .55s ease,transform .55s ease}
     .fade-in-section.visible{opacity:1;transform:translateY(0)}
@@ -69,6 +70,127 @@
   </script>
 </head>
 <body>
+
+<!-- ============================================================
+     PAGE LOADER — shown until app is ready
+     ============================================================ -->
+<div id="modart-loader" role="status" aria-label="Loading ModArt">
+  <div class="lr-grid"></div>
+  <div class="lr-corner tl"></div>
+  <div class="lr-corner tr"></div>
+  <div class="lr-corner bl"></div>
+  <div class="lr-corner br"></div>
+  <div class="lr-content">
+    <div class="lr-logo-wrap">
+      <canvas class="lr-orbit-canvas" id="lr-orbit" width="160" height="160"></canvas>
+      <img class="lr-logo" src="assets/images/logo-black.png" alt="ModArt" id="lr-logo"/>
+    </div>
+    <div class="lr-headline">
+      <div class="lr-welcome" id="lr-welcome">Welcome to</div>
+      <div class="lr-brand">ModArt</div>
+      <div class="lr-tag">Apparel · Gifts · Accessories</div>
+    </div>
+    <div class="lr-progress-wrap">
+      <div class="lr-bar-track"><div class="lr-bar-fill" id="lr-fill"></div></div>
+      <div class="lr-bar-labels">
+        <span class="lr-msg" id="lr-msg">Curating the collection</span>
+        <span class="lr-pct" id="lr-pct">0%</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Loader orbit animation ──────────────────────────────────────
+(function() {
+  var canvas = document.getElementById('lr-orbit');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var W = 160, H = 160, cx = 80, cy = 80, R = 68;
+  var TAIL = 140 * Math.PI / 180;
+  var a1 = -Math.PI / 2;
+  var a2 = -Math.PI / 2 + Math.PI;
+  var spd = 0.018;
+
+  function drawComet(angle, color, tailLen) {
+    var tailStart = angle - tailLen;
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, tailStart, angle, false);
+    var hx = cx + R * Math.cos(angle);
+    var hy = cy + R * Math.sin(angle);
+    var tx = cx + R * Math.cos(tailStart);
+    var ty = cy + R * Math.sin(tailStart);
+    var g = ctx.createLinearGradient(tx, ty, hx, hy);
+    g.addColorStop(0, 'rgba(255,255,255,0)');
+    g.addColorStop(1, color);
+    ctx.strokeStyle = g;
+    ctx.lineWidth = 2.2;
+    ctx.lineCap = 'round';
+    ctx.stroke();
+    // Head glow
+    ctx.beginPath();
+    ctx.arc(hx, hy, 3.8, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.fill();
+    // White core
+    ctx.beginPath();
+    ctx.arc(hx, hy, 1.6, 0, Math.PI * 2);
+    ctx.fillStyle = '#ffffff';
+    ctx.fill();
+  }
+
+  function frame() {
+    ctx.clearRect(0, 0, W, H);
+    // Orbit ring
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+    drawComet(a1, 'rgba(255,255,255,1)', TAIL);
+    drawComet(a2, 'rgba(255,255,255,0.8)', TAIL);
+    a1 += spd;
+    a2 += spd;
+    requestAnimationFrame(frame);
+  }
+  frame();
+
+  // ── Progress bar ──────────────────────────────────────────────
+  var fill    = document.getElementById('lr-fill');
+  var pct     = document.getElementById('lr-pct');
+  var msg     = document.getElementById('lr-msg');
+  var welcome = document.getElementById('lr-welcome');
+  var logo    = document.getElementById('lr-logo');
+  var msgs    = ['Curating the collection', 'Loading the studio', 'Preparing your drops', 'Fetching catalogue'];
+  var progress = 0;
+  var last     = performance.now();
+  var done     = false;
+
+  // Invert logo to white since background is dark
+  if (logo) logo.style.filter = 'invert(1)';
+
+  function tick(now) {
+    var dt = (now - last) / 1000;
+    last = now;
+    if (progress < 100) {
+      var s = progress > 85 ? 0.2 : progress > 60 ? 0.48 : 0.62;
+      progress = Math.min(100, progress + s * dt * 20);
+      fill.style.width = progress.toFixed(1) + '%';
+      pct.textContent  = Math.round(progress) + '%';
+      msg.textContent  = msgs[Math.min(msgs.length - 1, Math.floor(progress / 26))];
+      requestAnimationFrame(tick);
+    } else if (!done) {
+      done = true;
+      fill.style.width = '100%';
+      pct.textContent  = '100%';
+      msg.textContent  = 'welcome to modart';
+      msg.classList.add('done');
+      welcome.classList.add('visible');
+    }
+  }
+  requestAnimationFrame(tick);
+})();
+</script>
 <a href="#main-content" class="skip-link">Skip to main content</a>
 
   <!-- ============================================================
