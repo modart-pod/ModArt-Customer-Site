@@ -112,11 +112,16 @@ function injectRequiredStyles() {
 /* ================================================================
    APPLICATION INITIALIZATION
    ================================================================ */
-async function initApplication() {
-  // 1. Show initial page immediately — don't block on network
-  initRouter();
 
-  // 2. Layout
+// Helper — calls loader progress if available, silently skips if not
+function lp(pct, msg) {
+  if (window.setLoaderProgress) window.setLoaderProgress(pct, msg);
+}
+
+async function initApplication() {
+  // 1. Router + Layout
+  lp(8, 'Initialising\u2026');
+  initRouter();
   initLayoutManager();
   function applyCorrectLayout() {
     const w = window.innerWidth;
@@ -131,33 +136,37 @@ async function initApplication() {
     layoutTimer = setTimeout(applyCorrectLayout, 100);
   });
 
-  // 3. Currency (fast, cached in sessionStorage)
+  // 2. Currency
+  lp(14, 'Loading settings\u2026');
   await initCurrency();
   const badge = document.getElementById('currency-badge');
   if (badge) badge.textContent = getCurrencyBadge();
 
-  // 4. Auth — must complete before cart sync
+  // 3. Auth
+  lp(22, 'Checking your account\u2026');
   await initAuth();
-  markAuthReady(); // signal cart-persist that auth is resolved
-  // Load user-specific wishlist after auth
+  markAuthReady();
   if (window.loadWishlistFromSupabase) await window.loadWishlistFromSupabase();
 
-  // 5. Cart — load local first, then merge with cloud
+  // 4. Cart
+  lp(38, 'Loading your cart\u2026');
   await initCartPersistence();
 
-  // 6. Products + inventory
+  // 5. Products + inventory
+  lp(52, 'Fetching products\u2026');
   await initProducts();
 
-  // 7. Real-time subscriptions (customer side)
+  // 6. Realtime + Drops
+  lp(70, 'Connecting live updates\u2026');
   initRealtime();
-
-  // 7b. Drops — fetch and render, then listen for live updates
   await initDrops();
 
   // 7. Customizer
+  lp(80, 'Loading studio\u2026');
   initCustomizer();
 
-  // 8. Render all pages — products re-rendered in step 12 after data loads
+  // 8. Render
+  lp(90, 'Rendering collection\u2026');
   initCarousel();
   renderBag();
   window.renderAccountPage  && window.renderAccountPage();
@@ -165,12 +174,12 @@ async function initApplication() {
   updateBadges();
   updateCost();
 
-  // 9. Timers
+  // 9. Timers + misc
+  lp(96, 'Almost ready\u2026');
   initCountdownTimer();
   initLiveOrdersCounter();
-
-  // 10. Misc
   window.initCookieBanner && window.initCookieBanner();
+
   const fadeObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -182,18 +191,18 @@ async function initApplication() {
   document.querySelectorAll('.section, .manifesto, .community, .reviews-section, .early-access, .drop-archive')
     .forEach(el => { el.classList.add('fade-in-section'); fadeObserver.observe(el); });
 
-  // 12. Re-render current page now that data is loaded
+  // 10. Re-render current page
   const currentPage = window.getCurrentPage ? window.getCurrentPage() : 'home';
   if (currentPage === 'home' || currentPage === 'shop') {
     renderProducts(currentPage);
     if (currentPage === 'home') window._rebuildCarouselDots && window._rebuildCarouselDots();
   }
 
-  // 13. Hide the page loader now that everything is ready
+  // 11. Done — animate to 100% then hide loader
+  lp(100, 'Welcome to ModArt');
   const loader = document.getElementById('modart-loader');
   if (loader) {
-    // Small delay so the 100% state is visible briefly
-    setTimeout(() => loader.classList.add('hidden'), 600);
+    setTimeout(() => loader.classList.add('hidden'), 800);
   }
 }
 

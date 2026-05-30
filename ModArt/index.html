@@ -155,39 +155,50 @@
   }
   frame();
 
-  // ── Progress bar ──────────────────────────────────────────────
+  // ── Progress bar — driven by real app steps via window.setLoaderProgress ──
   var fill    = document.getElementById('lr-fill');
   var pct     = document.getElementById('lr-pct');
   var msg     = document.getElementById('lr-msg');
   var welcome = document.getElementById('lr-welcome');
-  var logo    = document.getElementById('lr-logo');
-  var msgs    = ['Curating the collection', 'Loading the studio', 'Preparing your drops', 'Fetching catalogue'];
-  var progress = 0;
-  var last     = performance.now();
-  var done     = false;
+  var _current = 0;
 
-  // Invert logo removed — logo loader.png is already white on dark background
+  // Smoothly animate from current to target percentage
+  function animateTo(target, label) {
+    if (label && msg) msg.textContent = label;
+    var start = _current;
+    var startTime = null;
+    var duration = Math.max(200, (target - start) * 12); // faster for small jumps
 
-  function tick(now) {
-    var dt = (now - last) / 1000;
-    last = now;
-    if (progress < 100) {
-      var s = progress > 85 ? 0.2 : progress > 60 ? 0.48 : 0.62;
-      progress = Math.min(100, progress + s * dt * 20);
-      fill.style.width = progress.toFixed(1) + '%';
-      pct.textContent  = Math.round(progress) + '%';
-      msg.textContent  = msgs[Math.min(msgs.length - 1, Math.floor(progress / 26))];
-      requestAnimationFrame(tick);
-    } else if (!done) {
-      done = true;
-      fill.style.width = '100%';
-      pct.textContent  = '100%';
-      msg.textContent  = 'welcome to modart';
-      msg.classList.add('done');
-      welcome.classList.add('visible');
+    function step(now) {
+      if (!startTime) startTime = now;
+      var elapsed = now - startTime;
+      var progress = Math.min(1, elapsed / duration);
+      // Ease out
+      var eased = 1 - Math.pow(1 - progress, 3);
+      var value = start + (target - start) * eased;
+      _current = value;
+      if (fill) fill.style.width = value.toFixed(1) + '%';
+      if (pct)  pct.textContent  = Math.round(value) + '%';
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      } else {
+        _current = target;
+        if (target >= 100) {
+          if (msg) { msg.textContent = 'Welcome to ModArt'; msg.classList.add('done'); }
+          if (welcome) welcome.classList.add('visible');
+        }
+      }
     }
+    requestAnimationFrame(step);
   }
-  requestAnimationFrame(tick);
+
+  // Exposed globally so main.js can call it
+  window.setLoaderProgress = function(targetPct, label) {
+    animateTo(Math.min(100, Math.max(_current, targetPct)), label);
+  };
+
+  // Start at 5% immediately so bar isn't empty
+  animateTo(5, 'Starting up\u2026');
 })();
 </script>
 <a href="#main-content" class="skip-link">Skip to main content</a>
