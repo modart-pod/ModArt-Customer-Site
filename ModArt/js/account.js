@@ -86,18 +86,38 @@ export function renderAccountPage() {
   const email    = currentUser.email || '';
   const initials = name.trim().split(/\s+/).map(w => w[0]).join('').toUpperCase().slice(0, 2) || '?';
 
-  // Use textContent to avoid XSS
-  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  const set    = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
   const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
 
   set('account-avatar', initials);
   set('account-name',   name);
   set('account-email',  email);
+  set('acct-name-preview', name);
   setVal('profile-name',  name);
   setVal('profile-email', email);
 
   const wishCount = document.getElementById('acct-wish-count');
   if (wishCount) wishCount.textContent = wishlist.size;
+
+  // Update nav avatar
+  const avatarEl = document.getElementById('nav-avatar');
+  if (avatarEl) {
+    avatarEl.textContent = initials;
+    const btn = avatarEl.closest('button');
+    if (btn) btn.setAttribute('aria-label', `${name}'s account`);
+  }
+
+  // Load order count
+  const sb = getSB() || supabase;
+  if (sb && currentUser) {
+    sb.from('orders')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', currentUser.id)
+      .then(({ count }) => {
+        set('acct-orders-count', count ?? 0);
+      })
+      .catch(() => set('acct-orders-count', '—'));
+  }
 }
 
 /**
