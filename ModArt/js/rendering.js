@@ -33,12 +33,25 @@ let currentProductId = null;
 
 // Static review data keyed by product id (display only, not editable)
 const PRODUCT_REVIEWS = {
-  'vanta-tee':     { rating: 4.7, count: 128 },
-  'elfima-hoodie': { rating: 4.9, count: 214 },
-  'cargo-pants':   { rating: 4.5, count:  87 },
-  'vanta-hoodie':  { rating: 4.8, count: 302 },
-  'knit-sweater':  { rating: 4.6, count:  63 },
-  'neo-tee':       { rating: 4.4, count:  41 },
+  'regular-tee':         { rating: 4.7, count: 128 },
+  'full-sleeve-tee':     { rating: 4.6, count:  94 },
+  'oversized-tee':       { rating: 4.8, count: 214 },
+  'longline-curved-tee': { rating: 4.5, count:  63 },
+  'sweatshirt':          { rating: 4.7, count: 187 },
+  'weighted-sweatshirt': { rating: 4.9, count:  41 },
+  'hoodie':              { rating: 4.8, count: 302 },
+  'hooded-sweatshirt':   { rating: 4.7, count: 156 },
+  'zipper-hoodie':       { rating: 4.6, count: 112 },
+  'weighted-zipper':     { rating: 4.9, count:  38 },
+  'varsity-jacket':      { rating: 4.8, count:  77 },
+  'joggers':             { rating: 4.6, count: 143 },
+  'shorts':              { rating: 4.5, count:  89 },
+  'womens-tee':          { rating: 4.7, count: 201 },
+  'crop-top':            { rating: 4.6, count: 134 },
+  'crop-hoodie':         { rating: 4.8, count:  56 },
+  'crop-tank':           { rating: 4.5, count:  72 },
+  'tote-bag':            { rating: 4.4, count:  48 },
+  'drawstring-bag':      { rating: 4.3, count:  31 },
 };
 
 function renderStars(rating) {

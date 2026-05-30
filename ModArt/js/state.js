@@ -4,134 +4,177 @@
 
 /* ================================================================
    PRODUCTS STATE — fallback data used when Supabase is unavailable
-   Synced with database seed data from supabase_setup_complete.sql
+   Synced with supabase_setup.sql seed data — real ModArt catalogue
+   Images: placeholder until real photos uploaded to Supabase Storage
    ================================================================ */
+
+const PLACEHOLDER = (label) => `https://placehold.co/800x1000/f0f0f0/333?text=${encodeURIComponent(label)}`;
+
 export const PRODUCTS = [
+  // ── TEES ──────────────────────────────────────────────────────
   {
-    id: 'vanta-tee',
-    name: 'Vanta Black Tee',
-    series: 'Modart Studio',
-    price: 9999,
-    img: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800',
-    images: [
-      'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800',
-      'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=800'
-    ],
-    stock: 17,
-    badge: 'New',
-    description: 'A clean, structured tee built from 220 GSM ring-spun cotton. Minimal by design, maximum in quality.',
-    fabric_gsm: '220 GSM',
-    fabric_material: '100% Ring-Spun Cotton',
-    fabric_origin: 'India',
-    fabric_shrinkage: '<2%',
-    fabric_finish: 'Matte',
-    print_durability: '50+ Washes',
-    tags: ['tee', 'minimal', 'cotton', 'black']
+    id: 'regular-tee', name: 'Regular Tee', series: 'Modart Tees', price: 250,
+    img: PLACEHOLDER('Regular Tee'), images: [PLACEHOLDER('Regular Tee')],
+    stock: 300, badge: null,
+    description: 'Classic unisex regular fit tee. 180 GSM ring-spun cotton. Available in 15 colours.',
+    fabric_gsm: '180 GSM', fabric_material: '100% Ring-Spun Cotton',
+    tags: ['tee','regular','unisex','cotton']
   },
   {
-    id: 'elfima-hoodie',
-    name: 'Elfima Hoodie',
-    series: 'Craftsmanship',
-    price: 18199,
-    img: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800',
-    images: [
-      'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800',
-      'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=800'
-    ],
-    stock: 8,
-    badge: 'Low Stock',
-    description: 'Heavyweight hoodie with a structured silhouette. Brushed fleece interior for warmth without bulk.',
-    fabric_gsm: '380 GSM',
-    fabric_material: '80% Cotton 20% Polyester',
-    fabric_origin: 'Portugal',
-    fabric_shrinkage: '<3%',
-    fabric_finish: 'Brushed',
-    print_durability: '50+ Washes',
-    tags: ['hoodie', 'heavyweight', 'fleece', 'winter']
+    id: 'full-sleeve-tee', name: 'Full Sleeve Tee', series: 'Modart Tees', price: 300,
+    img: PLACEHOLDER('Full Sleeve Tee'), images: [PLACEHOLDER('Full Sleeve Tee')],
+    stock: 300, badge: null,
+    description: 'Unisex full sleeve tee in 180 GSM cotton. Clean silhouette, all-season wear.',
+    fabric_gsm: '180 GSM', fabric_material: '100% Ring-Spun Cotton',
+    tags: ['tee','full-sleeve','unisex','cotton']
   },
   {
-    id: 'cargo-pants',
-    name: 'Grid Cargo Pants',
-    series: 'Industrial Line',
-    price: 14599,
-    img: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=800',
-    images: [
-      'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=800',
-      'https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=800'
-    ],
-    stock: 15,
-    badge: null,
-    description: 'Utility-forward cargo pants with a relaxed fit. Reinforced seams and deep pockets built for everyday wear.',
-    fabric_gsm: '280 GSM',
-    fabric_material: '100% Cotton Twill',
-    fabric_origin: 'India',
-    fabric_shrinkage: '<2%',
-    fabric_finish: 'Washed',
-    print_durability: '60+ Washes',
-    tags: ['pants', 'cargo', 'utility', 'cotton']
+    id: 'oversized-tee', name: 'Oversized Tee', series: 'Modart Tees', price: 500,
+    img: PLACEHOLDER('Oversized Tee'), images: [PLACEHOLDER('Oversized Tee')],
+    stock: 300, badge: null,
+    description: 'Heavyweight 240 GSM oversized tee. Dropped shoulders, boxy fit. Available in 7 colours.',
+    fabric_gsm: '240 GSM', fabric_material: '100% Combed Cotton',
+    tags: ['tee','oversized','unisex','heavyweight']
   },
   {
-    id: 'vanta-hoodie',
-    name: 'Vanta Black Hoodie',
-    series: 'Vanta Collection',
-    price: 19999,
-    img: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800',
-    images: [
-      'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800',
-      'https://images.unsplash.com/photo-1578587018452-892bacefd3f2?w=800'
-    ],
-    stock: 22,
-    badge: 'Drop 02',
-    description: 'Engineered for the modern minimalist. Oversized silhouette crafted from rare high-density Supima cotton.',
-    fabric_gsm: '400 GSM',
-    fabric_material: '100% Supima Cotton',
-    fabric_origin: 'Portugal',
-    fabric_shrinkage: '<2%',
-    fabric_finish: 'Matte',
-    print_durability: '50+ Washes',
-    tags: ['hoodie', 'premium', 'supima', 'oversized', 'black']
+    id: 'longline-curved-tee', name: 'Longline Curved Tee', series: 'Modart Tees', price: 400,
+    img: PLACEHOLDER('Longline Curved Tee'), images: [PLACEHOLDER('Longline Curved Tee')],
+    stock: 300, badge: null,
+    description: 'Extended length curved hem tee. 180 GSM. Relaxed street-ready silhouette.',
+    fabric_gsm: '180 GSM', fabric_material: '100% Ring-Spun Cotton',
+    tags: ['tee','longline','curved','unisex']
+  },
+
+  // ── SWEATSHIRTS ───────────────────────────────────────────────
+  {
+    id: 'sweatshirt', name: 'Sweatshirt', series: 'Modart Fleece', price: 500,
+    img: PLACEHOLDER('Sweatshirt'), images: [PLACEHOLDER('Sweatshirt')],
+    stock: 300, badge: null,
+    description: 'Unisex crew-neck sweatshirt. 300 GSM fleece. Soft brushed interior, 15 colour options.',
+    fabric_gsm: '300 GSM', fabric_material: '80% Cotton 20% Polyester',
+    tags: ['sweatshirt','crewneck','unisex','fleece']
   },
   {
-    id: 'knit-sweater',
-    name: 'Boxy Knit Sweater',
-    series: 'Essential Knit',
-    price: 15399,
-    img: 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=800',
-    images: [
-      'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=800',
-      'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=800'
-    ],
-    stock: 21,
-    badge: null,
-    description: 'A relaxed boxy knit with a dropped shoulder. Made from a premium cotton-wool blend for year-round wear.',
-    fabric_gsm: '320 GSM',
-    fabric_material: '70% Cotton 30% Wool',
-    fabric_origin: 'Portugal',
-    fabric_shrinkage: '<3%',
-    fabric_finish: 'Natural',
-    print_durability: '40+ Washes',
-    tags: ['sweater', 'knit', 'wool', 'boxy']
+    id: 'weighted-sweatshirt', name: 'Weighted Sweatshirt', series: 'Modart Fleece', price: 600,
+    img: PLACEHOLDER('Weighted Sweatshirt'), images: [PLACEHOLDER('Weighted Sweatshirt')],
+    stock: 300, badge: 'New',
+    description: 'Premium 400 GSM heavyweight sweatshirt. Dense fleece, structured fit. 15 colours.',
+    fabric_gsm: '400 GSM', fabric_material: '80% Cotton 20% Polyester',
+    tags: ['sweatshirt','weighted','heavyweight','unisex']
+  },
+
+  // ── HOODIES ───────────────────────────────────────────────────
+  {
+    id: 'hoodie', name: 'Hoodie', series: 'Modart Hoodies', price: 600,
+    img: PLACEHOLDER('Hoodie'), images: [PLACEHOLDER('Hoodie')],
+    stock: 300, badge: null,
+    description: 'Classic pullover hoodie. 300 GSM. Kangaroo pocket, adjustable drawstring. 15 colours.',
+    fabric_gsm: '300 GSM', fabric_material: '80% Cotton 20% Polyester',
+    tags: ['hoodie','pullover','unisex','fleece']
   },
   {
-    id: 'neo-tee',
-    name: 'Neo-Tokyo Tee',
-    series: 'Cyber Core',
-    price: 7899,
-    img: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800',
-    images: [
-      'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800',
-      'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=800'
-    ],
-    stock: 0,
-    badge: 'Sold Out',
-    description: 'Inspired by the neon-lit streets of Tokyo. Lightweight and breathable with a subtle texture weave.',
-    fabric_gsm: '200 GSM',
-    fabric_material: '100% Combed Cotton',
-    fabric_origin: 'India',
-    fabric_shrinkage: '<2%',
-    fabric_finish: 'Smooth',
-    print_durability: '50+ Washes',
-    tags: ['tee', 'lightweight', 'cotton', 'graphic']
+    id: 'hooded-sweatshirt', name: 'Hooded Sweatshirt', series: 'Modart Hoodies', price: 650,
+    img: PLACEHOLDER('Hooded Sweatshirt'), images: [PLACEHOLDER('Hooded Sweatshirt')],
+    stock: 300, badge: null,
+    description: 'Hooded sweatshirt with premium 300 GSM fleece. Relaxed fit, 15 colour options.',
+    fabric_gsm: '300 GSM', fabric_material: '80% Cotton 20% Polyester',
+    tags: ['hoodie','hooded','sweatshirt','unisex']
+  },
+  {
+    id: 'zipper-hoodie', name: 'Zipper Hoodie', series: 'Modart Hoodies', price: 650,
+    img: PLACEHOLDER('Zipper Hoodie'), images: [PLACEHOLDER('Zipper Hoodie')],
+    stock: 300, badge: null,
+    description: 'Full-zip hoodie. 300 GSM. Metal zipper, kangaroo pocket. 15 colours.',
+    fabric_gsm: '300 GSM', fabric_material: '80% Cotton 20% Polyester',
+    tags: ['hoodie','zipper','zip-up','unisex']
+  },
+  {
+    id: 'weighted-zipper', name: 'Weighted Zipper Hoodie', series: 'Modart Hoodies', price: 700,
+    img: PLACEHOLDER('Weighted Zipper'), images: [PLACEHOLDER('Weighted Zipper')],
+    stock: 300, badge: 'New',
+    description: 'Premium 400 GSM full-zip hoodie. Heavy fleece, structured silhouette. 15 colours.',
+    fabric_gsm: '400 GSM', fabric_material: '80% Cotton 20% Polyester',
+    tags: ['hoodie','zipper','weighted','heavyweight']
+  },
+
+  // ── JACKETS ───────────────────────────────────────────────────
+  {
+    id: 'varsity-jacket', name: 'Varsity Jacket', series: 'Modart Jackets', price: 900,
+    img: PLACEHOLDER('Varsity Jacket'), images: [PLACEHOLDER('Varsity Jacket')],
+    stock: 300, badge: null,
+    description: 'Classic varsity jacket. 300 GSM body with contrast sleeves. Snap buttons. 15 colours.',
+    fabric_gsm: '300 GSM', fabric_material: '80% Cotton 20% Polyester',
+    tags: ['jacket','varsity','unisex','premium']
+  },
+
+  // ── BOTTOMS ───────────────────────────────────────────────────
+  {
+    id: 'joggers', name: 'Joggers', series: 'Modart Bottoms', price: 400,
+    img: PLACEHOLDER('Joggers'), images: [PLACEHOLDER('Joggers')],
+    stock: 300, badge: null,
+    description: 'Unisex joggers. 260 GSM. Elastic waistband, tapered fit, ribbed cuffs. 10 colours.',
+    fabric_gsm: '260 GSM', fabric_material: '80% Cotton 20% Polyester',
+    tags: ['joggers','bottoms','unisex','fleece']
+  },
+  {
+    id: 'shorts', name: 'Shorts', series: 'Modart Bottoms', price: 200,
+    img: PLACEHOLDER('Shorts'), images: [PLACEHOLDER('Shorts')],
+    stock: 300, badge: null,
+    description: 'Unisex fleece shorts. 280 GSM. Elastic waistband, relaxed fit. 10 colours.',
+    fabric_gsm: '280 GSM', fabric_material: '80% Cotton 20% Polyester',
+    tags: ['shorts','bottoms','unisex']
+  },
+
+  // ── WOMEN ─────────────────────────────────────────────────────
+  {
+    id: 'womens-tee', name: "Women's Tee", series: 'Modart Women', price: 250,
+    img: PLACEHOLDER("Women's Tee"), images: [PLACEHOLDER("Women's Tee")],
+    stock: 300, badge: null,
+    description: "Women's fitted tee. 180 GSM ring-spun cotton. Flattering cut. 15 colours.",
+    fabric_gsm: '180 GSM', fabric_material: '100% Ring-Spun Cotton',
+    tags: ['tee','women','fitted','cotton']
+  },
+  {
+    id: 'crop-top', name: 'Crop Top', series: 'Modart Women', price: 300,
+    img: PLACEHOLDER('Crop Top'), images: [PLACEHOLDER('Crop Top')],
+    stock: 300, badge: null,
+    description: "Women's crop top. 180 GSM. Cropped length, relaxed fit. 8 colours.",
+    fabric_gsm: '180 GSM', fabric_material: '100% Ring-Spun Cotton',
+    tags: ['crop','top','women','cotton']
+  },
+  {
+    id: 'crop-hoodie', name: 'Crop Hoodie', series: 'Modart Women', price: 500,
+    img: PLACEHOLDER('Crop Hoodie'), images: [PLACEHOLDER('Crop Hoodie')],
+    stock: 300, badge: null,
+    description: "Women's crop hoodie. 320 GSM premium fleece. Cropped silhouette. 8 colours.",
+    fabric_gsm: '320 GSM', fabric_material: '80% Cotton 20% Polyester',
+    tags: ['crop','hoodie','women','fleece']
+  },
+  {
+    id: 'crop-tank', name: 'Crop Tank', series: 'Modart Women', price: 300,
+    img: PLACEHOLDER('Crop Tank'), images: [PLACEHOLDER('Crop Tank')],
+    stock: 300, badge: null,
+    description: "Women's crop tank top. 180 GSM. Sleeveless, racerback style. 8 colours.",
+    fabric_gsm: '180 GSM', fabric_material: '100% Ring-Spun Cotton',
+    tags: ['crop','tank','women','sleeveless']
+  },
+
+  // ── ACCESSORIES ───────────────────────────────────────────────
+  {
+    id: 'tote-bag', name: 'Cotton Tote Bag', series: 'Modart Accessories', price: 100,
+    img: PLACEHOLDER('Tote Bag'), images: [PLACEHOLDER('Tote Bag')],
+    stock: 100, badge: null,
+    description: 'Natural cotton tote bag. Spacious main compartment. Available in various sizes.',
+    fabric_gsm: null, fabric_material: '100% Natural Cotton',
+    tags: ['bag','tote','accessories','cotton']
+  },
+  {
+    id: 'drawstring-bag', name: 'Drawstring Backpack', series: 'Modart Accessories', price: 150,
+    img: PLACEHOLDER('Drawstring Bag'), images: [PLACEHOLDER('Drawstring Bag')],
+    stock: 100, badge: null,
+    description: 'Natural cotton drawstring backpack. Lightweight and versatile. Various sizes.',
+    fabric_gsm: null, fabric_material: '100% Natural Cotton',
+    tags: ['bag','drawstring','backpack','accessories']
   },
 ];
 

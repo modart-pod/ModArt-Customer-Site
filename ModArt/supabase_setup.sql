@@ -1,4 +1,4 @@
--- ================================================================
+﻿-- ================================================================
 -- ModArt Complete Enhanced Supabase Setup
 -- Paste this entire file into Supabase SQL Editor and click Run
 -- ================================================================
@@ -202,56 +202,98 @@ CREATE INDEX IF NOT EXISTS idx_products_tags ON products USING GIN(tags);
 CREATE INDEX IF NOT EXISTS idx_coupon_uses_user_id ON coupon_uses(user_id);
 CREATE INDEX IF NOT EXISTS idx_coupon_uses_coupon_id ON coupon_uses(coupon_id);
 
--- ── 3. SEED PRODUCTS WITH IMAGES ─────────────────────────────────
+-- ── 3. SEED PRODUCTS — MODART CATALOGUE ─────────────────────────
+-- Images: placeholder until real product photos are uploaded to Supabase Storage
+-- Colors stored as tags; images array will be updated via admin panel
 
-INSERT INTO products (id, name, series, price_inr, images, badge, description, fabric_gsm, fabric_material, fabric_origin, fabric_shrinkage, fabric_finish, print_durability, tags, is_active)
+INSERT INTO products (id, name, series, price_inr, images, badge, description, fabric_gsm, fabric_material, tags, is_active)
 VALUES
-  ('vanta-tee', 'Vanta Black Tee', 'Modart Studio', 9999, 
-   ARRAY['https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800', 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=800'],
-   'New', 'A clean, structured tee built from 220 GSM ring-spun cotton. Minimal by design, maximum in quality.',
-   '220 GSM', '100% Ring-Spun Cotton', 'India', '<2%', 'Matte', '50+ Washes',
-   ARRAY['tee', 'minimal', 'cotton', 'black'], TRUE),
-   
-  ('elfima-hoodie', 'Elfima Hoodie', 'Craftsmanship', 18199,
-   ARRAY['https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800', 'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=800'],
-   'Low Stock', 'Heavyweight hoodie with a structured silhouette. Brushed fleece interior for warmth without bulk.',
-   '380 GSM', '80% Cotton 20% Polyester', 'Portugal', '<3%', 'Brushed', '50+ Washes',
-   ARRAY['hoodie', 'heavyweight', 'fleece', 'winter'], TRUE),
-   
-  ('cargo-pants', 'Grid Cargo Pants', 'Industrial Line', 14599,
-   ARRAY['https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=800', 'https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=800'],
-   NULL, 'Utility-forward cargo pants with a relaxed fit. Reinforced seams and deep pockets built for everyday wear.',
-   '280 GSM', '100% Cotton Twill', 'India', '<2%', 'Washed', '60+ Washes',
-   ARRAY['pants', 'cargo', 'utility', 'cotton'], TRUE),
-   
-  ('vanta-hoodie', 'Vanta Black Hoodie', 'Vanta Collection', 19999,
-   ARRAY['https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800', 'https://images.unsplash.com/photo-1578587018452-892bacefd3f2?w=800'],
-   'Drop 02', 'Engineered for the modern minimalist. Oversized silhouette crafted from rare high-density Supima cotton.',
-   '400 GSM', '100% Supima Cotton', 'Portugal', '<2%', 'Matte', '50+ Washes',
-   ARRAY['hoodie', 'premium', 'supima', 'oversized', 'black'], TRUE),
-   
-  ('knit-sweater', 'Boxy Knit Sweater', 'Essential Knit', 15399,
-   ARRAY['https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=800', 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=800'],
-   NULL, 'A relaxed boxy knit with a dropped shoulder. Made from a premium cotton-wool blend for year-round wear.',
-   '320 GSM', '70% Cotton 30% Wool', 'Portugal', '<3%', 'Natural', '40+ Washes',
-   ARRAY['sweater', 'knit', 'wool', 'boxy'], TRUE),
-   
-  ('neo-tee', 'Neo-Tokyo Tee', 'Cyber Core', 7899,
-   ARRAY['https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800', 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=800'],
-   'Sold Out', 'Inspired by the neon-lit streets of Tokyo. Lightweight and breathable with a subtle texture weave.',
-   '200 GSM', '100% Combed Cotton', 'India', '<2%', 'Smooth', '50+ Washes',
-   ARRAY['tee', 'lightweight', 'cotton', 'graphic'], FALSE)
-ON CONFLICT (id) DO NOTHING;
+  -- TEES
+  ('regular-tee',        'Regular Tee',           'Modart Tees',        250,  ARRAY['https://placehold.co/800x1000/f0f0f0/333?text=Regular+Tee'],        NULL,  'Classic unisex regular fit tee. 180 GSM ring-spun cotton. Available in 15 colours.',          '180 GSM', '100% Ring-Spun Cotton',       ARRAY['tee','regular','unisex','cotton'],                TRUE),
+  ('full-sleeve-tee',    'Full Sleeve Tee',        'Modart Tees',        300,  ARRAY['https://placehold.co/800x1000/f0f0f0/333?text=Full+Sleeve+Tee'],    NULL,  'Unisex full sleeve tee in 180 GSM cotton. Clean silhouette, all-season wear.',             '180 GSM', '100% Ring-Spun Cotton',       ARRAY['tee','full-sleeve','unisex','cotton'],            TRUE),
+  ('oversized-tee',      'Oversized Tee',          'Modart Tees',        500,  ARRAY['https://placehold.co/800x1000/f0f0f0/333?text=Oversized+Tee'],      NULL,  'Heavyweight 240 GSM oversized tee. Dropped shoulders, boxy fit. Available in 7 colours.',   '240 GSM', '100% Combed Cotton',          ARRAY['tee','oversized','unisex','heavyweight'],         TRUE),
+  ('longline-curved-tee','Longline Curved Tee',    'Modart Tees',        400,  ARRAY['https://placehold.co/800x1000/f0f0f0/333?text=Longline+Tee'],       NULL,  'Extended length curved hem tee. 180 GSM. Relaxed street-ready silhouette.',               '180 GSM', '100% Ring-Spun Cotton',       ARRAY['tee','longline','curved','unisex'],               TRUE),
+
+  -- SWEATSHIRTS
+  ('sweatshirt',         'Sweatshirt',             'Modart Fleece',      500,  ARRAY['https://placehold.co/800x1000/f0f0f0/333?text=Sweatshirt'],         NULL,  'Unisex crew-neck sweatshirt. 300 GSM fleece. Soft brushed interior, 15 colour options.',    '300 GSM', '80% Cotton 20% Polyester',    ARRAY['sweatshirt','crewneck','unisex','fleece'],        TRUE),
+  ('weighted-sweatshirt','Weighted Sweatshirt',    'Modart Fleece',      600,  ARRAY['https://placehold.co/800x1000/f0f0f0/333?text=Weighted+Sweatshirt'],'New', 'Premium 400 GSM heavyweight sweatshirt. Dense fleece, structured fit. 15 colours.',        '400 GSM', '80% Cotton 20% Polyester',    ARRAY['sweatshirt','weighted','heavyweight','unisex'],   TRUE),
+
+  -- HOODIES
+  ('hoodie',             'Hoodie',                 'Modart Hoodies',     600,  ARRAY['https://placehold.co/800x1000/f0f0f0/333?text=Hoodie'],             NULL,  'Classic pullover hoodie. 300 GSM. Kangaroo pocket, adjustable drawstring. 15 colours.',    '300 GSM', '80% Cotton 20% Polyester',    ARRAY['hoodie','pullover','unisex','fleece'],            TRUE),
+  ('hooded-sweatshirt',  'Hooded Sweatshirt',      'Modart Hoodies',     650,  ARRAY['https://placehold.co/800x1000/f0f0f0/333?text=Hooded+Sweatshirt'],  NULL,  'Hooded sweatshirt with premium 300 GSM fleece. Relaxed fit, 15 colour options.',           '300 GSM', '80% Cotton 20% Polyester',    ARRAY['hoodie','hooded','sweatshirt','unisex'],          TRUE),
+  ('zipper-hoodie',      'Zipper Hoodie',          'Modart Hoodies',     650,  ARRAY['https://placehold.co/800x1000/f0f0f0/333?text=Zipper+Hoodie'],      NULL,  'Full-zip hoodie. 300 GSM. Metal zipper, kangaroo pocket. 15 colours.',                    '300 GSM', '80% Cotton 20% Polyester',    ARRAY['hoodie','zipper','zip-up','unisex'],              TRUE),
+  ('weighted-zipper',    'Weighted Zipper Hoodie', 'Modart Hoodies',     700,  ARRAY['https://placehold.co/800x1000/f0f0f0/333?text=Weighted+Zipper'],    'New', 'Premium 400 GSM full-zip hoodie. Heavy fleece, structured silhouette. 15 colours.',       '400 GSM', '80% Cotton 20% Polyester',    ARRAY['hoodie','zipper','weighted','heavyweight'],       TRUE),
+
+  -- JACKETS
+  ('varsity-jacket',     'Varsity Jacket',         'Modart Jackets',     900,  ARRAY['https://placehold.co/800x1000/f0f0f0/333?text=Varsity+Jacket'],     NULL,  'Classic varsity jacket. 300 GSM body with contrast sleeves. Snap buttons. 15 colours.',   '300 GSM', '80% Cotton 20% Polyester',    ARRAY['jacket','varsity','unisex','premium'],            TRUE),
+
+  -- BOTTOMS
+  ('joggers',            'Joggers',                'Modart Bottoms',     400,  ARRAY['https://placehold.co/800x1000/f0f0f0/333?text=Joggers'],            NULL,  'Unisex joggers. 260 GSM. Elastic waistband, tapered fit, ribbed cuffs. 10 colours.',      '260 GSM', '80% Cotton 20% Polyester',    ARRAY['joggers','bottoms','unisex','fleece'],            TRUE),
+  ('shorts',             'Shorts',                 'Modart Bottoms',     200,  ARRAY['https://placehold.co/800x1000/f0f0f0/333?text=Shorts'],             NULL,  'Unisex fleece shorts. 280 GSM. Elastic waistband, relaxed fit. 10 colours.',              '280 GSM', '80% Cotton 20% Polyester',    ARRAY['shorts','bottoms','unisex'],                     TRUE),
+
+  -- WOMEN
+  ('womens-tee',         'Women''s Tee',           'Modart Women',       250,  ARRAY['https://placehold.co/800x1000/f0f0f0/333?text=Womens+Tee'],         NULL,  'Women''s fitted tee. 180 GSM ring-spun cotton. Flattering cut. 15 colours.',              '180 GSM', '100% Ring-Spun Cotton',       ARRAY['tee','women','fitted','cotton'],                  TRUE),
+  ('crop-top',           'Crop Top',               'Modart Women',       300,  ARRAY['https://placehold.co/800x1000/f0f0f0/333?text=Crop+Top'],           NULL,  'Women''s crop top. 180 GSM. Cropped length, relaxed fit. 8 colours.',                    '180 GSM', '100% Ring-Spun Cotton',       ARRAY['crop','top','women','cotton'],                    TRUE),
+  ('crop-hoodie',        'Crop Hoodie',            'Modart Women',       500,  ARRAY['https://placehold.co/800x1000/f0f0f0/333?text=Crop+Hoodie'],        NULL,  'Women''s crop hoodie. 320 GSM premium fleece. Cropped silhouette. 8 colours.',           '320 GSM', '80% Cotton 20% Polyester',    ARRAY['crop','hoodie','women','fleece'],                 TRUE),
+  ('crop-tank',          'Crop Tank',              'Modart Women',       300,  ARRAY['https://placehold.co/800x1000/f0f0f0/333?text=Crop+Tank'],          NULL,  'Women''s crop tank top. 180 GSM. Sleeveless, racerback style. 8 colours.',               '180 GSM', '100% Ring-Spun Cotton',       ARRAY['crop','tank','women','sleeveless'],               TRUE),
+
+  -- ACCESSORIES
+  ('tote-bag',           'Cotton Tote Bag',        'Modart Accessories', 100,  ARRAY['https://placehold.co/800x1000/f0f0f0/333?text=Tote+Bag'],           NULL,  'Natural cotton tote bag. Spacious main compartment. Available in various sizes.',         NULL,      '100% Natural Cotton',         ARRAY['bag','tote','accessories','cotton'],              TRUE),
+  ('drawstring-bag',     'Drawstring Backpack',    'Modart Accessories', 150,  ARRAY['https://placehold.co/800x1000/f0f0f0/333?text=Drawstring+Bag'],     NULL,  'Natural cotton drawstring backpack. Lightweight and versatile. Various sizes.',           NULL,      '100% Natural Cotton',         ARRAY['bag','drawstring','backpack','accessories'],      TRUE)
+
+ON CONFLICT (id) DO UPDATE SET
+  name        = EXCLUDED.name,
+  series      = EXCLUDED.series,
+  price_inr   = EXCLUDED.price_inr,
+  description = EXCLUDED.description,
+  fabric_gsm  = EXCLUDED.fabric_gsm,
+  fabric_material = EXCLUDED.fabric_material,
+  tags        = EXCLUDED.tags,
+  updated_at  = NOW();
 
 -- ── 4. SEED INVENTORY ────────────────────────────────────────────
+-- Default stock: 50 per size for apparel, 100 for accessories
+-- Sizes: XS S M L XL XXL for apparel | One Size for accessories
 
 INSERT INTO inventory (product_id, size, stock) VALUES
-  ('vanta-tee',     'XS', 2), ('vanta-tee',     'S',  3), ('vanta-tee',     'M',  5), ('vanta-tee',     'L',  4), ('vanta-tee',     'XL', 2), ('vanta-tee',     'XXL',1),
-  ('elfima-hoodie', 'XS', 1), ('elfima-hoodie', 'S',  1), ('elfima-hoodie', 'M',  3), ('elfima-hoodie', 'L',  2), ('elfima-hoodie', 'XL', 1), ('elfima-hoodie', 'XXL',0),
-  ('cargo-pants',   'XS', 2), ('cargo-pants',   'S',  3), ('cargo-pants',   'M',  4), ('cargo-pants',   'L',  3), ('cargo-pants',   'XL', 2), ('cargo-pants',   'XXL',1),
-  ('vanta-hoodie',  'XS', 2), ('vanta-hoodie',  'S',  3), ('vanta-hoodie',  'M',  7), ('vanta-hoodie',  'L',  5), ('vanta-hoodie',  'XL', 3), ('vanta-hoodie',  'XXL',2),
-  ('knit-sweater',  'XS', 3), ('knit-sweater',  'S',  4), ('knit-sweater',  'M',  5), ('knit-sweater',  'L',  4), ('knit-sweater',  'XL', 3), ('knit-sweater',  'XXL',2),
-  ('neo-tee',       'XS', 0), ('neo-tee',       'S',  0), ('neo-tee',       'M',  0), ('neo-tee',       'L',  0), ('neo-tee',       'XL', 0), ('neo-tee',       'XXL',0)
+  -- Regular Tee
+  ('regular-tee','XS',50),('regular-tee','S',50),('regular-tee','M',50),('regular-tee','L',50),('regular-tee','XL',50),('regular-tee','XXL',50),
+  -- Full Sleeve Tee
+  ('full-sleeve-tee','XS',50),('full-sleeve-tee','S',50),('full-sleeve-tee','M',50),('full-sleeve-tee','L',50),('full-sleeve-tee','XL',50),('full-sleeve-tee','XXL',50),
+  -- Oversized Tee
+  ('oversized-tee','XS',50),('oversized-tee','S',50),('oversized-tee','M',50),('oversized-tee','L',50),('oversized-tee','XL',50),('oversized-tee','XXL',50),
+  -- Longline Curved Tee
+  ('longline-curved-tee','XS',50),('longline-curved-tee','S',50),('longline-curved-tee','M',50),('longline-curved-tee','L',50),('longline-curved-tee','XL',50),('longline-curved-tee','XXL',50),
+  -- Sweatshirt
+  ('sweatshirt','XS',50),('sweatshirt','S',50),('sweatshirt','M',50),('sweatshirt','L',50),('sweatshirt','XL',50),('sweatshirt','XXL',50),
+  -- Weighted Sweatshirt
+  ('weighted-sweatshirt','XS',50),('weighted-sweatshirt','S',50),('weighted-sweatshirt','M',50),('weighted-sweatshirt','L',50),('weighted-sweatshirt','XL',50),('weighted-sweatshirt','XXL',50),
+  -- Hoodie
+  ('hoodie','XS',50),('hoodie','S',50),('hoodie','M',50),('hoodie','L',50),('hoodie','XL',50),('hoodie','XXL',50),
+  -- Hooded Sweatshirt
+  ('hooded-sweatshirt','XS',50),('hooded-sweatshirt','S',50),('hooded-sweatshirt','M',50),('hooded-sweatshirt','L',50),('hooded-sweatshirt','XL',50),('hooded-sweatshirt','XXL',50),
+  -- Zipper Hoodie
+  ('zipper-hoodie','XS',50),('zipper-hoodie','S',50),('zipper-hoodie','M',50),('zipper-hoodie','L',50),('zipper-hoodie','XL',50),('zipper-hoodie','XXL',50),
+  -- Weighted Zipper Hoodie
+  ('weighted-zipper','XS',50),('weighted-zipper','S',50),('weighted-zipper','M',50),('weighted-zipper','L',50),('weighted-zipper','XL',50),('weighted-zipper','XXL',50),
+  -- Varsity Jacket
+  ('varsity-jacket','XS',50),('varsity-jacket','S',50),('varsity-jacket','M',50),('varsity-jacket','L',50),('varsity-jacket','XL',50),('varsity-jacket','XXL',50),
+  -- Joggers
+  ('joggers','XS',50),('joggers','S',50),('joggers','M',50),('joggers','L',50),('joggers','XL',50),('joggers','XXL',50),
+  -- Shorts
+  ('shorts','XS',50),('shorts','S',50),('shorts','M',50),('shorts','L',50),('shorts','XL',50),('shorts','XXL',50),
+  -- Women's Tee
+  ('womens-tee','XS',50),('womens-tee','S',50),('womens-tee','M',50),('womens-tee','L',50),('womens-tee','XL',50),('womens-tee','XXL',50),
+  -- Crop Top
+  ('crop-top','XS',50),('crop-top','S',50),('crop-top','M',50),('crop-top','L',50),('crop-top','XL',50),('crop-top','XXL',50),
+  -- Crop Hoodie
+  ('crop-hoodie','XS',50),('crop-hoodie','S',50),('crop-hoodie','M',50),('crop-hoodie','L',50),('crop-hoodie','XL',50),('crop-hoodie','XXL',50),
+  -- Crop Tank
+  ('crop-tank','XS',50),('crop-tank','S',50),('crop-tank','M',50),('crop-tank','L',50),('crop-tank','XL',50),('crop-tank','XXL',50),
+  -- Accessories (One Size)
+  ('tote-bag','One Size',100),
+  ('drawstring-bag','One Size',100)
+
 ON CONFLICT (product_id, size) DO NOTHING;
 
 -- ── 5. SEED COUPONS ──────────────────────────────────────────────
@@ -280,12 +322,13 @@ ON CONFLICT DO NOTHING;
 CREATE OR REPLACE FUNCTION decrement_stock(
   p_product_id TEXT,
   p_size       TEXT,
-  p_quantity   INT
+  p_quantity   INT,
+  p_order_id   UUID DEFAULT NULL
 )
 RETURNS BOOLEAN
 LANGUAGE plpgsql
 SECURITY DEFINER
-AS $$
+AS $func$
 DECLARE
   current_stock INT;
 BEGIN
@@ -293,19 +336,112 @@ BEGIN
   FROM inventory
   WHERE product_id = p_product_id AND size = p_size
   FOR UPDATE;
-  
   IF current_stock IS NULL OR current_stock < p_quantity THEN
     RETURN FALSE;
   END IF;
-  
   UPDATE inventory
   SET stock = stock - p_quantity, updated_at = NOW()
   WHERE product_id = p_product_id AND size = p_size;
-  
   RETURN TRUE;
 END;
-$$;
+$func$;
 
+-- ── 7b. STOCK ROLLBACK RPC ───────────────────────────────────────
+
+CREATE OR REPLACE FUNCTION rollback_stock(
+  p_product_id TEXT,
+  p_size       TEXT,
+  p_quantity   INT,
+  p_order_id   UUID DEFAULT NULL,
+  p_reason     TEXT DEFAULT 'Order failed'
+)
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $func$
+BEGIN
+  UPDATE inventory
+  SET stock = stock + p_quantity, updated_at = NOW()
+  WHERE product_id = p_product_id AND size = p_size;
+  RETURN FOUND;
+END;
+$func$;
+
+-- ── 7c. ORDER-LEVEL STOCK ROLLBACK RPC ──────────────────────────
+
+CREATE OR REPLACE FUNCTION rollback_order_stock(
+  p_order_id UUID,
+  p_reason   TEXT DEFAULT 'Order failed'
+)
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $func$
+DECLARE
+  v_items JSONB;
+  v_item  JSONB;
+BEGIN
+  SELECT items::JSONB INTO v_items FROM orders WHERE id = p_order_id;
+  IF v_items IS NULL THEN RETURN FALSE; END IF;
+  FOR v_item IN SELECT * FROM jsonb_array_elements(v_items)
+  LOOP
+    UPDATE inventory
+    SET stock = stock + (v_item->>'qty')::INT, updated_at = NOW()
+    WHERE product_id = v_item->>'productId' AND size = v_item->>'size';
+  END LOOP;
+  RETURN TRUE;
+END;
+$func$;
+
+-- ── 7d. IDEMPOTENCY KEYS TABLE ───────────────────────────────────
+
+CREATE TABLE IF NOT EXISTS order_idempotency_keys (
+  key        TEXT PRIMARY KEY,
+  order_id   UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- ── 7e. IDEMPOTENT ORDER CREATION RPC ───────────────────────────
+
+CREATE OR REPLACE FUNCTION create_order_idempotent(
+  p_idempotency_key  TEXT,
+  p_order_number     TEXT,
+  p_user_id          UUID,
+  p_guest_email      TEXT,
+  p_items            TEXT,
+  p_shipping_address TEXT,
+  p_subtotal_inr     INT,
+  p_discount_inr     INT,
+  p_shipping_inr     INT,
+  p_total_inr        INT,
+  p_payment_method   TEXT DEFAULT 'cod'
+)
+RETURNS TABLE(order_id UUID, order_number TEXT, is_duplicate BOOLEAN)
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $func$
+DECLARE
+  v_existing_id UUID;
+  v_new_id      UUID;
+BEGIN
+  SELECT oik.order_id INTO v_existing_id
+  FROM order_idempotency_keys oik
+  WHERE oik.key = p_idempotency_key;
+  IF v_existing_id IS NOT NULL THEN
+    RETURN QUERY SELECT o.id, o.order_number, TRUE::BOOLEAN FROM orders o WHERE o.id = v_existing_id;
+    RETURN;
+  END IF;
+  INSERT INTO orders (
+    order_number, user_id, guest_email, items, shipping_address,
+    subtotal_inr, discount_inr, shipping_inr, total_inr, status, payment_method
+  ) VALUES (
+    p_order_number, p_user_id, p_guest_email, p_items, p_shipping_address,
+    p_subtotal_inr, p_discount_inr, p_shipping_inr, p_total_inr, 'pending', p_payment_method
+  ) RETURNING id INTO v_new_id;
+  INSERT INTO order_idempotency_keys (key, order_id) VALUES (p_idempotency_key, v_new_id);
+  RETURN QUERY SELECT o.id, o.order_number, FALSE::BOOLEAN FROM orders o WHERE o.id = v_new_id;
+END;
+$func$;
 -- ── 8. INCREMENT COUPON USAGE RPC ────────────────────────────────
 
 CREATE OR REPLACE FUNCTION increment_coupon_usage(p_code TEXT)
