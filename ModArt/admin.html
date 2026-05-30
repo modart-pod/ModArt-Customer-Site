@@ -3505,14 +3505,16 @@ function openProductModal(data) {
   // ── Image zone setup ─────────────────────────────────────────
   const imgZone = document.getElementById('pm-img-zone');
   if (imgZone) {
-    // Clear all state
+    // Clear state
     imgZone._pendingFile = null;
     imgZone._uploadedUrl = null;
 
-    // Remove old listeners by cloning
-    const fresh = imgZone.cloneNode(false); // cloneNode(false) = no children
+    // Remove old event listeners cleanly by replacing with a clone that keeps the id
+    const fresh = imgZone.cloneNode(false); // cloneNode(false) keeps attributes, drops children
     imgZone.parentNode.replaceChild(fresh, imgZone);
+    // Re-query after DOM replacement
     const zone = document.getElementById('pm-img-zone');
+    if (!zone) { console.error('pm-img-zone not found after clone'); return; }
 
     // Show existing image if editing, otherwise show default prompt
     const existingImg = isEdit && data.images && data.images[0] ? data.images[0] : null;
@@ -3525,10 +3527,10 @@ function openProductModal(data) {
       zone.innerHTML = `
         <span class="icon material-symbols-outlined">add_photo_alternate</span>
         <div class="img-upload-label">Upload Product Image</div>
-        <div class="img-upload-sub">Click or drag & drop — PNG, JPG, WebP — Max 8MB</div>`;
+        <div class="img-upload-sub">Click or drag &amp; drop — PNG, JPG, WebP — Max 8MB</div>`;
     }
 
-    // Click to open file picker
+    // Click → open file picker
     zone.addEventListener('click', function() {
       _activeImgZone = zone;
       const inp = _getSharedFileInput();
@@ -3536,7 +3538,7 @@ function openProductModal(data) {
       inp.click();
     });
 
-    // Drag & drop support
+    // Drag & drop
     zone.addEventListener('dragover', function(e) {
       e.preventDefault();
       zone.style.borderColor = 'var(--red)';
@@ -3551,10 +3553,7 @@ function openProductModal(data) {
       zone.style.borderColor = '';
       zone.style.background  = '';
       const file = e.dataTransfer?.files?.[0];
-      if (file) {
-        _activeImgZone = zone;
-        handleImgUploadFile(file, zone);
-      }
+      if (file) handleImgUploadFile(file, zone);
     });
   }
 
