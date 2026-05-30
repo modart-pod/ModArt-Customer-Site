@@ -15,13 +15,18 @@ CREATE TABLE IF NOT EXISTS profiles (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- Auto-create profile on signup
+-- Auto-create profile on signup — fault-tolerant version
 CREATE OR REPLACE FUNCTION handle_new_user()
 RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER AS $$
 BEGIN
-  INSERT INTO profiles (id, full_name)
-  VALUES (NEW.id, NEW.raw_user_meta_data->>'full_name')
-  ON CONFLICT (id) DO NOTHING;
+  BEGIN
+    INSERT INTO profiles (id, full_name)
+    VALUES (NEW.id, NEW.raw_user_meta_data->>'full_name')
+    ON CONFLICT (id) DO NOTHING;
+  EXCEPTION WHEN OTHERS THEN
+    -- Never block signup even if profile insert fails
+    NULL;
+  END;
   RETURN NEW;
 END;
 $$;
