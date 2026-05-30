@@ -26,6 +26,20 @@
   <script src="/assets/supabase.min.js"></script>
   <!-- Inject Supabase credentials from server at runtime (no hardcoded keys) -->
   <script>
+    // ✅ Capture OAuth hash IMMEDIATELY before any module or redirect clears it
+    // Supabase returns #access_token=... after Google OAuth
+    (function() {
+      var hash = window.location.hash;
+      if (hash && hash.includes('access_token')) {
+        try { sessionStorage.setItem('modart_oauth_hash', hash); } catch(e) {}
+      }
+      // Also handle error redirects
+      if (hash && hash.includes('error=')) {
+        var params = new URLSearchParams(hash.slice(1));
+        var desc = params.get('error_description') || params.get('error') || 'Sign in failed';
+        sessionStorage.setItem('modart_oauth_error', decodeURIComponent(desc.replace(/\+/g,' ')));
+      }
+    })();
     (function(){
       fetch('/api/config')
         .then(function(r){ return r.json(); })

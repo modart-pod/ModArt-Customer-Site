@@ -171,29 +171,48 @@ export async function initAuth() {
   if (!client) return;
   
   try {
-    // ✅ FIX: After OAuth redirect, the token is in the URL hash.
-    // Supabase's detectSessionInUrl:true handles this automatically,
-    // but we must call getSession() FIRST to let it parse the hash
-    // before we do any validation — otherwise session appears empty.
+    // Check for OAuth error first (e.g. Database error saving new user)
+    const oauthError = sessionStorage.getItem('modart_oauth_error');
+    if (oauthError) {
+      sessionStorage.removeItem('modart_oauth_error');
+      // Show error on login page if visible, otherwise show as alert
+      const errEl = document.getElementById('login-error');
+      if (errEl) {
+        errEl.textContent = 'Sign in failed: ' + oauthError + '. Please try again.';
+        errEl.style.display = 'block';
+      }
+      if (window.goTo) window.goTo('login');
+    }
+
+    // Restore OAuth hash if it was captured before module loaded
+    const storedHash = sessionStorage.getItem('modart_oauth_hash');
+    if (storedHash && storedHash.includes('access_token')) {
+      sessionStorage.removeItem('modart_oauth_hash');
+      // Temporarily restore hash so Supabase can parse it
+      if (!window.location.hash.includes('access_token')) {
+        history.replaceState(null, '', window.location.pathname + storedHash);
+      }
+    }
+
+    // getSession() triggers Supabase to parse the URL hash token
     const { data: { session: initialSession } } = await client.auth.getSession();
     
+    // Clean the URL hash immediately after Supabase reads it
+    if (window.location.hash && window.location.hash.includes('access_token')) {
+      history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
+
     if (initialSession) {
-      // Session found (either existing or just parsed from OAuth hash)
       currentUser = initialSession.user ?? null;
       window.currentUser = currentUser;
       updateAuthUI();
       startTokenRefreshInterval();
-      
-      // Clean the URL hash after OAuth redirect so token isn't exposed
-      if (window.location.hash && window.location.hash.includes('access_token')) {
-        history.replaceState(null, '', window.location.pathname + window.location.search);
-      }
     } else {
       currentUser = null;
       updateAuthUI();
     }
     
-    // Listen for auth state changes (login, logout, token refresh)
+    // Listen for auth state changes (login, logout, token refresh, OAuth callback)
     client.auth.onAuthStateChange((event, session) => {
       currentUser = session?.user ?? null;
       window.currentUser = currentUser;
@@ -201,11 +220,19 @@ export async function initAuth() {
 
       if (event === 'SIGNED_IN') {
         startTokenRefreshInterval();
-        // Redirect back to checkout if that's where they came from
-        const checkoutRedirect = sessionStorage.getItem('modart_checkout_redirect');
-        if (checkoutRedirect) {
-          sessionStorage.removeItem('modart_checkout_redirect');
-          if (window.goTo) window.goTo('checkout');
+        // Navigate to account page after successful sign-in
+        if (window.goTo) {
+          const checkoutRedirect = sessionStorage.getItem('modart_checkout_redirect');
+          if (checkoutRedirect) {
+            sessionStorage.removeItem('modart_checkout_redirect');
+            window.goTo('checkout');
+          } else if (window.location.pathname === '/' || window.location.pathname === '/login') {
+            // Only redirect if on home or login page — don't interrupt other pages
+            const currentPage = window.getCurrentPage ? window.getCurrentPage() : 'home';
+            if (currentPage === 'login' || currentPage === 'home') {
+              window.goTo('account');
+            }
+          }
         }
       } else if (event === 'SIGNED_OUT') {
         stopTokenRefreshInterval();
