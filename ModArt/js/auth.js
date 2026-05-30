@@ -165,53 +165,48 @@ function stopTokenRefreshInterval() {
 
 /**
  * Initialises auth state. Call once on app load.
- * ✅ UPDATED: Now includes token validation and auto-refresh
  */
 export async function initAuth() {
   const client = getSupabase();
   if (!client) return;
   
   try {
-    // Validate token on init
-    const isValid = await validateAndRefreshToken();
+    // ✅ FIX: After OAuth redirect, the token is in the URL hash.
+    // Supabase's detectSessionInUrl:true handles this automatically,
+    // but we must call getSession() FIRST to let it parse the hash
+    // before we do any validation — otherwise session appears empty.
+    const { data: { session: initialSession } } = await client.auth.getSession();
     
-    if (!isValid) {
-      console.log('No valid session on init');
+    if (initialSession) {
+      // Session found (either existing or just parsed from OAuth hash)
+      currentUser = initialSession.user ?? null;
+      window.currentUser = currentUser;
+      updateAuthUI();
+      startTokenRefreshInterval();
+      
+      // Clean the URL hash after OAuth redirect so token isn't exposed
+      if (window.location.hash && window.location.hash.includes('access_token')) {
+        history.replaceState(null, '', window.location.pathname + window.location.search);
+      }
+    } else {
       currentUser = null;
       updateAuthUI();
-      return;
     }
     
-    const { data: { session } } = await client.auth.getSession();
-    currentUser = session?.user ?? null;
-    window.currentUser = currentUser;
-    updateAuthUI();
-    
-    // Start token refresh interval if logged in
-    if (currentUser) {
-      startTokenRefreshInterval();
-    }
-    
-    // Listen for auth state changes
+    // Listen for auth state changes (login, logout, token refresh)
     client.auth.onAuthStateChange((event, session) => {
-      console.log('Auth state changed:', event);
-      
       currentUser = session?.user ?? null;
       window.currentUser = currentUser;
       updateAuthUI();
 
-      // If user just logged in and was redirected from checkout, go back
       if (event === 'SIGNED_IN') {
+        startTokenRefreshInterval();
+        // Redirect back to checkout if that's where they came from
         const checkoutRedirect = sessionStorage.getItem('modart_checkout_redirect');
         if (checkoutRedirect) {
           sessionStorage.removeItem('modart_checkout_redirect');
           if (window.goTo) window.goTo('checkout');
         }
-      }
-      
-      // Manage refresh interval based on auth state
-      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-        startTokenRefreshInterval();
       } else if (event === 'SIGNED_OUT') {
         stopTokenRefreshInterval();
       }
