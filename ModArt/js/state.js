@@ -1,4 +1,4 @@
-/* ================================================================
+﻿/* ================================================================
    STATE MANAGEMENT MODULE
    ================================================================ */
 
@@ -8,7 +8,29 @@
    Images: placeholder until real photos uploaded to Supabase Storage
    ================================================================ */
 
-const PLACEHOLDER = (label) => `https://placehold.co/800x1000/f0f0f0/333?text=${encodeURIComponent(label)}`;
+// Product images — real Unsplash photos matching each category
+const PRODUCT_IMGS = {
+  'regular-tee':         'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&q=80',
+  'full-sleeve-tee':     'https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=600&q=80',
+  'oversized-tee':       'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600&q=80',
+  'longline-curved-tee': 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=600&q=80',
+  'sweatshirt':          'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=600&q=80',
+  'weighted-sweatshirt': 'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=600&q=80',
+  'hoodie':              'https://images.unsplash.com/photo-1578587018452-892bacefd3f2?w=600&q=80',
+  'hooded-sweatshirt':   'https://images.unsplash.com/photo-1509631179647-0177331693ae?w=600&q=80',
+  'zipper-hoodie':       'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=600&q=80',
+  'weighted-zipper':     'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=80',
+  'varsity-jacket':      'https://images.unsplash.com/photo-1551537482-f2075a1d41f2?w=600&q=80',
+  'joggers':             'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=600&q=80',
+  'shorts':              'https://images.unsplash.com/photo-1562183241-b937e95585b6?w=600&q=80',
+  'womens-tee':          'https://images.unsplash.com/photo-1554568218-0f1715e72254?w=600&q=80',
+  'crop-top':            'https://images.unsplash.com/photo-1523398002811-999ca8deecb5?w=600&q=80',
+  'crop-hoodie':         'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&q=80',
+  'crop-tank':           'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=600&q=80',
+  'tote-bag':            'https://images.unsplash.com/photo-1544816155-12df9643f363?w=600&q=80',
+  'drawstring-bag':      'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=600&q=80',
+};
+const PLACEHOLDER = (label, id) => PRODUCT_IMGS[id] || 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&q=80';
 
 export const PRODUCTS = [
   // ── TEES ──────────────────────────────────────────────────────
