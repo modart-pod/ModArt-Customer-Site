@@ -408,6 +408,32 @@
       </div>
     </div>
 
+    <!-- NEW ARRIVALS -->
+    <section style="padding:clamp(32px,5vw,64px) 0;background:var(--bg)">
+      <div class="container">
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:clamp(16px,3vw,28px)">
+          <div>
+            <div class="eyebrow eyebrow-red" style="margin-bottom:6px">Drop 02</div>
+            <h2 class="section-title">New Arrivals</h2>
+          </div>
+          <button onclick="goTo('shop')" style="display:flex;align-items:center;gap:4px;background:none;border:none;font-family:var(--font);font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--g2);cursor:pointer;white-space:nowrap">View All <span class="material-symbols-outlined" style="font-size:16px">arrow_forward</span></button>
+        </div>
+        <!-- Horizontal scroll carousel on mobile, grid on desktop -->
+        <div id="home-product-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(clamp(140px,40vw,220px),1fr));gap:clamp(10px,2vw,20px);overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch"></div>
+        <!-- Carousel dots (mobile) -->
+        <div id="carousel-dots" style="display:flex;justify-content:center;gap:6px;margin-top:16px"></div>
+        <style>
+          @media(min-width:600px){#carousel-dots{display:none}}
+          @media(max-width:599px){
+            #home-product-grid{grid-template-columns:repeat(4,calc(50vw - 24px))!important;overflow-x:auto;padding-bottom:4px}
+            #home-product-grid .product-card{scroll-snap-align:start}
+            .carousel-dot{width:6px;height:6px;border-radius:50%;background:var(--border);border:none;cursor:pointer;padding:0;transition:background var(--t)}
+            .carousel-dot.active{background:var(--black);width:18px;border-radius:3px}
+          }
+        </style>
+      </div>
+    </section>
+
     <!-- CUSTOMIZER CTA BANNER -->
     <section style="background:var(--red);padding:clamp(36px,6vw,64px) 0">
       <div class="container" style="text-align:center">
@@ -483,14 +509,20 @@
     <!-- REVIEWS -->
     <section class="reviews-section">
       <div class="container">
-        <div class="section-hdr">
-          <div><div class="eyebrow eyebrow-muted" style="margin-bottom:6px">Real Buyers</div><h2 class="section-title">4.9 Stars. No BS.</h2></div>
-          <div style="font-size:clamp(28px,4.5vw,44px);font-weight:900;font-style:italic">4.9<span style="font-size:14px;color:var(--g3);font-style:normal;font-weight:500"> / 5.0</span></div>
+        <div class="section-hdr" style="align-items:center">
+          <div>
+            <div class="eyebrow eyebrow-muted" style="margin-bottom:6px">Real Buyers</div>
+            <h2 class="section-title">4.9 Stars. No BS.</h2>
+          </div>
+          <div style="display:flex;align-items:center;gap:4px;flex-shrink:0">
+            <span style="font-size:clamp(22px,4vw,36px);font-weight:900;font-style:italic">4.9</span>
+            <span style="font-size:12px;color:var(--g3);font-weight:500"> / 5.0</span>
+          </div>
         </div>
         <div class="review-grid">
-          <div class="review-card"><div class="review-stars"><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span></div><p class="review-text">"The Vanta Hoodie is worth every cent. 600gsm feels like wearing a building. The DTG print is sharp and hasn't faded after 10 washes."</p><div class="review-author"><img class="review-avatar" src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=80&q=80" alt="Kira S" loading="lazy"/><div><div class="review-name">Kira S.</div><div class="review-date">Oct 12, 2023</div></div><span class="review-verified">? Verified</span></div></div>
-          <div class="review-card"><div class="review-stars"><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span></div><p class="review-text">"My custom drop sold 38 units in 48 hours. The studio tool is actually usable, the puff print looks incredible IRL."</p><div class="review-author"><img class="review-avatar" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&q=80" alt="Zane M" loading="lazy"/><div><div class="review-name">Zane M.</div><div class="review-date">Sep 28, 2023</div></div><span class="review-verified">? Verified</span></div></div>
-          <div class="review-card"><div class="review-stars"><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star_half</span></div><p class="review-text">"Never seen quality this good from a streetwear brand. Looks exactly like the render — somehow better in hand."</p><div class="review-author"><img class="review-avatar" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=80&q=80" alt="Alex R" loading="lazy"/><div><div class="review-name">Alex R.</div><div class="review-date">Oct 5, 2023</div></div><span class="review-verified">? Verified</span></div></div>
+          <div class="review-card"><div class="review-stars"><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span></div><p class="review-text">"The Vanta Hoodie is worth every cent. 600gsm feels like wearing a building. The DTG print is sharp and hasn't faded after 10 washes."</p><div class="review-author"><img class="review-avatar" src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=80&q=80" alt="Kira S" loading="lazy"/><div><div class="review-name">Kira S.</div><div class="review-date">Oct 12, 2023</div></div><span class="review-verified"><span class="material-symbols-outlined" style="font-size:12px;vertical-align:middle">verified</span> Verified</span></div></div>
+          <div class="review-card"><div class="review-stars"><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span></div><p class="review-text">"My custom drop sold 38 units in 48 hours. The studio tool is actually usable, the puff print looks incredible IRL."</p><div class="review-author"><img class="review-avatar" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&q=80" alt="Zane M" loading="lazy"/><div><div class="review-name">Zane M.</div><div class="review-date">Sep 28, 2023</div></div><span class="review-verified"><span class="material-symbols-outlined" style="font-size:12px;vertical-align:middle">verified</span> Verified</span></div></div>
+          <div class="review-card"><div class="review-stars"><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star_half</span></div><p class="review-text">"Never seen quality this good from a streetwear brand. Looks exactly like the render — somehow better in hand."</p><div class="review-author"><img class="review-avatar" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=80&q=80" alt="Alex R" loading="lazy"/><div><div class="review-name">Alex R.</div><div class="review-date">Oct 5, 2023</div></div><span class="review-verified"><span class="material-symbols-outlined" style="font-size:12px;vertical-align:middle">verified</span> Verified</span></div></div>
         </div>
         <div class="ugc-grid">
           <div class="ugc-card"><img class="ugc-photo" src="https://images.unsplash.com/photo-1523398002811-999ca8deecb5?w=400&q=80" alt="UGC" loading="lazy"/><div class="ugc-overlay"><span class="ugc-overlay-handle">@kirasato</span><button class="ugc-overlay-remix" onclick="goTo('customize')">Remix</button></div></div>

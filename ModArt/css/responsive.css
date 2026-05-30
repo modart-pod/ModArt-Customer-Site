@@ -115,122 +115,215 @@ body.layout-desktop #page-home         { padding-top: 0; }
   }
 }
 
-/* Footer — compact on mobile */
-@media (max-width: 599px) {
-  .site-footer { padding: 32px 0 16px; }
-  .footer-grid {
-    grid-template-columns: 1fr 1fr !important;
-    gap: 20px !important;
-    margin-bottom: 24px !important;
-  }
-  .footer-brand-col { grid-column: 1 / -1; }
-  .footer-brand-logo { font-size: 18px; }
-  .footer-brand-desc { font-size: 11px; max-width: 100%; }
-  .footer-col-title { font-size: 9px; }
-  .footer-link { font-size: 11px; }
-  .footer-bottom { flex-direction: column; gap: 8px; padding-top: 16px; }
-  .footer-copy { font-size: 10px; }
-  .footer-legal-link { font-size: 10px; }
-}
-
-/* Search overlay — full width on mobile */
-@media (max-width: 599px) {
-  #search-overlay { padding-top: 60px; }
-  #search-overlay > div { padding: 0 12px; }
-  #search-input { font-size: 16px; } /* prevent iOS zoom */
-}
-
-/* Bag items — larger tap targets */
-@media (max-width: 599px) {
-  .bag-item { grid-template-columns: 72px 1fr auto; gap: 10px; padding: 16px 0; }
-  .bag-item-name { font-size: 12px; }
-  .bag-item-price { font-size: 14px; }
-}
-
 /* =================================================================
-   SMALL MOBILE ADJUSTMENTS (<600px)
+   MOBILE HOMEPAGE — Zara/H&M editorial style
    ================================================================= */
 @media (max-width: 599px) {
-  /* Hero section adjustments */
+
+  /* ── Fix blank white gap: page flex stretching ── */
+  #page-home {
+    min-height: unset;
+  }
+  #page-home > * {
+    flex-shrink: 0;
+  }
+
+  /* ── Hero ── */
   .home-hero { min-height: 100svh; }
-  .home-hero-content { padding-top: calc(var(--nav-h) + 20px); }
-  .hero-actions { flex-direction: column; align-items: flex-start; }
+  .home-hero-content {
+    padding-top: calc(var(--nav-h) + 20px);
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 32px;
+  }
+  .hero-title {
+    font-size: clamp(44px, 13vw, 64px);
+    line-height: .9;
+    margin-bottom: 14px;
+  }
+  .hero-sub {
+    font-size: 13px;
+    line-height: 1.6;
+    max-width: 280px;
+    margin-bottom: 20px;
+  }
+  .hero-actions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .hero-actions .btn-red-pill,
+  .hero-actions .btn-outline {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+    padding: 15px 20px;
+    font-size: 12px;
+  }
+  .live-orders-ticker { font-size: 10px; margin-top: 16px; }
+  .hero-countdown { margin-top: 20px; }
+  .hero-cd-label { font-size: 9px; letter-spacing: .18em; }
+  .hero-cd-unit { font-size: 28px; }
 
-  /* Manifesto stats grid */
-  .manifesto-stats { grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  /* ── Trust strip — single row scroll ── */
+  .trust-strip { padding: 12px 0; overflow-x: auto; }
+  .trust-items {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    gap: 0;
+    padding: 0 16px;
+    width: max-content;
+  }
+  .trust-item {
+    flex-shrink: 0;
+    padding: 0 16px;
+    border-right: 1px solid rgba(255,255,255,.08);
+  }
+  .trust-item:last-child { border-right: none; }
+  .trust-item .icon { font-size: 16px; }
+  .trust-item-txt { font-size: 10px; white-space: nowrap; }
 
-  /* Creator grid - 2 columns on small mobile */
-  .creator-grid { grid-template-columns: repeat(2, 1fr); }
+  /* ── Ticker ── */
+  .ticker-bar { padding: 10px 0; }
 
-  /* Drop archive row layout */
-  .drop-row { grid-template-columns: 48px 1fr auto; }
-  .drop-num { font-size: 26px; min-width: 48px; }
+  /* ── Creator CTA banner ── */
+  #page-home > section[style*="background:var(--red)"],
+  #page-home > section[style*="background: var(--red)"] {
+    padding: 36px 0;
+  }
+  #page-home > section[style*="background:var(--red)"] h2,
+  #page-home > section[style*="background: var(--red)"] h2 {
+    font-size: clamp(28px, 9vw, 44px);
+    margin-bottom: 12px;
+  }
+  #page-home > section[style*="background:var(--red)"] p,
+  #page-home > section[style*="background: var(--red)"] p {
+    font-size: 13px;
+    margin-bottom: 20px;
+  }
 
-  /* Form layout adjustments */
-  .form-row-2 { grid-template-columns: 1fr; }
-
-  /* Shopping bag item layout */
-  .bag-item { grid-template-columns: 80px 1fr auto; gap: 12px; }
-
-  /* Fabric specs grid - 2 columns */
-  .fabric-grid { grid-template-columns: repeat(2, 1fr); }
-
-  /* ΓöÇΓöÇ SHOP PAGE: Amazon-style 2-column grid ΓöÇΓöÇ */
+  /* ── Product grid ── */
   #shop-product-grid,
   #home-product-grid {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 10px !important;
   }
-
-  /* Compact product card for 2-col mobile */
   #shop-product-grid .product-card-img,
   #home-product-grid .product-card-img {
     aspect-ratio: 3/4;
     margin-bottom: 8px;
     border-radius: var(--r-sm);
   }
-
   #shop-product-grid .product-card-series,
-  #home-product-grid .product-card-series {
-    font-size: 9px;
-    margin-bottom: 2px;
-  }
-
+  #home-product-grid .product-card-series { font-size: 9px; margin-bottom: 2px; }
   #shop-product-grid .product-card-name,
-  #home-product-grid .product-card-name {
-    font-size: 11px;
-    font-weight: 700;
-    margin-bottom: 4px;
-    line-height: 1.2;
-  }
-
+  #home-product-grid .product-card-name { font-size: 11px; font-weight: 700; margin-bottom: 4px; line-height: 1.2; }
   #shop-product-grid .product-card-price,
-  #home-product-grid .product-card-price {
-    font-size: 13px;
-    font-weight: 800;
-  }
-
+  #home-product-grid .product-card-price { font-size: 13px; font-weight: 800; }
   #shop-product-grid .product-card-badge,
-  #home-product-grid .product-card-badge {
-    font-size: 8px;
-    padding: 3px 6px;
-    top: 8px;
-    left: 8px;
-  }
-
-  /* Always show overlay on mobile (no hover) */
+  #home-product-grid .product-card-badge { font-size: 8px; padding: 3px 6px; top: 8px; left: 8px; }
   #shop-product-grid .product-card-overlay,
   #home-product-grid .product-card-overlay {
     opacity: 1;
     background: linear-gradient(to top, rgba(0,0,0,.6) 0%, transparent 60%);
   }
 
-  /* ΓöÇΓöÇ CUSTOMIZER: Fix mobile layout ΓöÇΓöÇ */
-  .customizer-body {
-    flex-direction: column !important;
-  }
+  /* ── Manifesto ── */
+  .manifesto { padding: 44px 0; }
+  .manifesto-title { font-size: clamp(32px, 10vw, 48px); margin-bottom: 16px; }
+  .manifesto-body { font-size: 13px; line-height: 1.65; margin-bottom: 20px; }
+  .manifesto-stats { grid-template-columns: repeat(3, 1fr); gap: 12px; padding-top: 24px; margin-top: 24px; }
+  .manifesto-stat-num { font-size: 26px; }
+  .manifesto-stat-lbl { font-size: 9px; }
+  /* Hide the image on mobile — text-only manifesto like Zara */
+  .manifesto-layout > div:last-child { display: none; }
 
+  /* ── Drop archive ── */
+  .drop-archive { padding: 36px 0; }
+  .drop-row { grid-template-columns: 44px 1fr auto; gap: 12px; padding: 16px 0; }
+  .drop-num { font-size: 24px; min-width: 44px; }
+  .drop-name { font-size: 15px; }
+  .drop-meta { font-size: 10px; }
+  .drop-status { font-size: 8px; padding: 4px 10px; }
+  /* Drop archive cards (when JS loads) */
+  .drop-archive-grid { display: flex; flex-direction: column; gap: 12px; }
+  .drop-archive-card { border-radius: var(--r-lg); overflow: hidden; }
+  .drop-archive-cover { min-height: 140px; }
+
+  /* ── Reviews ── */
+  .reviews-section { padding: 36px 0; }
+  .review-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .review-card { padding: 16px; border-radius: var(--r-lg); }
+  .review-text { font-size: 13px; margin-bottom: 14px; }
+  .review-stars .icon { font-size: 14px; }
+  .review-avatar { width: 32px; height: 32px; }
+  .review-name { font-size: 11px; }
+  .review-date { font-size: 10px; }
+
+  /* ── UGC grid — 2 col, fixed height to prevent collapse ── */
+  .ugc-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-top: 20px;
+  }
+  .ugc-card { min-height: 150px; border-radius: var(--r-sm); }
+  .ugc-photo { min-height: 150px; }
+  /* Show overlay always on mobile */
+  .ugc-card .ugc-overlay { opacity: 1; background: rgba(0,0,0,.35); }
+  .ugc-overlay-handle { font-size: 10px; }
+  .ugc-overlay-remix { font-size: 9px; padding: 4px 10px; }
+
+  /* ── Early access ── */
+  .early-access { padding: 44px 0; }
+  .early-access-title { font-size: clamp(30px, 10vw, 44px); margin-bottom: 12px; }
+  .early-access-sub { font-size: 13px; margin-bottom: 24px; }
+  .early-access-form {
+    flex-direction: column;
+    gap: 10px;
+    padding: 0 4px;
+  }
+  .early-input {
+    width: 100%;
+    min-width: unset;
+    padding: 15px 18px;
+    font-size: 16px; /* prevent iOS zoom */
+  }
+  .early-access-form .btn-red-pill {
+    width: 100%;
+    padding: 15px;
+    font-size: 12px;
+    justify-content: center;
+  }
+  .spots-counter { font-size: 10px; margin-bottom: 20px; }
+  .early-privacy { font-size: 9px; }
+
+  /* ── Section headers ── */
+  .section-hdr { margin-bottom: 20px; }
+  .section-title { font-size: clamp(20px, 6vw, 28px); }
+  .eyebrow { font-size: 9px; letter-spacing: .16em; }
+
+  /* ── Manifesto stats grid ── */
+  .manifesto-stats { grid-template-columns: repeat(3, 1fr); gap: 12px; }
+
+  /* ── Drop archive row layout ── */
+  .drop-row { grid-template-columns: 48px 1fr auto; }
+  .drop-num { font-size: 26px; min-width: 48px; }
+
+  /* ── Form layout adjustments ── */
+  .form-row-2 { grid-template-columns: 1fr; }
+
+  /* ── Shopping bag item layout ── */
+  .bag-item { grid-template-columns: 80px 1fr; gap: 12px; }
+
+  /* ── Fabric specs grid - 2 columns ── */
+  .fabric-grid { grid-template-columns: repeat(2, 1fr); }
+
+  /* ── Customizer ── */
+  .customizer-body { flex-direction: column !important; }
   .customizer-tools-col {
     width: 100% !important;
     border-right: none !important;
@@ -239,79 +332,38 @@ body.layout-desktop #page-home         { padding-top: 0; }
     max-height: 280px;
     overflow-y: auto;
   }
-
-  .customizer-canvas-col {
-    order: 1;
-    padding: 12px !important;
-    min-height: 260px;
-  }
-
-  .canvas-wrap {
-    width: clamp(180px, 70vw, 280px) !important;
-    height: clamp(220px, 85vw, 340px) !important;
-  }
-
-  /* Hide layers panel on mobile */
+  .customizer-canvas-col { order: 1; padding: 12px !important; min-height: 260px; }
+  .canvas-wrap { width: clamp(180px, 70vw, 280px) !important; height: clamp(220px, 85vw, 340px) !important; }
   .customizer-layers-col { display: none; }
 
-  /* ΓöÇΓöÇ FOOTER: Compact mobile ΓöÇΓöÇ */
-  .site-footer {
-    padding: 28px 0 16px !important;
-  }
-
-  .footer-grid {
-    grid-template-columns: 1fr 1fr !important;
-    gap: 20px !important;
-    margin-bottom: 20px !important;
-  }
-
-  .footer-brand-col {
-    grid-column: 1 / -1;
-  }
-
-  .footer-brand-desc {
-    font-size: 11px;
-    margin-bottom: 12px;
-    max-width: 100%;
-  }
-
-  .footer-brand-logo {
-    font-size: 18px;
-    margin-bottom: 8px;
-  }
-
+  /* ── Footer ── */
+  .site-footer { padding: 28px 0 16px !important; }
+  .footer-grid { grid-template-columns: 1fr 1fr !important; gap: 20px !important; margin-bottom: 20px !important; }
+  .footer-brand-col { grid-column: 1 / -1; }
+  .footer-brand-desc { font-size: 11px; margin-bottom: 12px; max-width: 100%; }
+  .footer-brand-logo { font-size: 18px; margin-bottom: 8px; }
   .footer-social { gap: 8px; }
-
-  .footer-social-btn {
-    width: 30px;
-    height: 30px;
-  }
-
+  .footer-social-btn { width: 30px; height: 30px; }
   .footer-social-btn .icon { font-size: 15px; }
-
-  .footer-col-title {
-    font-size: 9px;
-    margin-bottom: 10px;
-  }
-
+  .footer-col-title { font-size: 9px; margin-bottom: 10px; }
   .footer-links { gap: 7px; }
-
-  .footer-link {
-    font-size: 11px;
-  }
-
-  .footer-bottom {
-    padding-top: 16px;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-
+  .footer-link { font-size: 11px; }
+  .footer-bottom { padding-top: 16px; flex-direction: column; align-items: flex-start; gap: 8px; }
   .footer-copy { font-size: 10px; }
-
   .footer-legal { gap: 14px; }
-
   .footer-legal-link { font-size: 10px; }
+
+  /* ── Search overlay ── */
+  #search-overlay { padding-top: 60px; }
+  #search-overlay > div { padding: 0 12px; }
+  #search-input { font-size: 16px; }
+
+  /* ── Checkout form ── */
+  .form-group { margin-bottom: 16px; }
+  .form-input { padding: 14px 16px; font-size: 16px; }
+  .form-section { margin-bottom: 28px; }
+  .checkout-layout { gap: 24px; }
+  #pay-now-btn { font-size: 15px; padding: 18px; }
 }
 
 /* =================================================================
