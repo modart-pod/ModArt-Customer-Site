@@ -231,7 +231,7 @@
       <ul class="nav-links" role="list">
         <li><button class="nav-link active" id="nl-home" onclick="goTo('home')">Home</button></li>
         <li><button class="nav-link" id="nl-shop" onclick="goTo('shop')">Shop</button></li>
-        <li><button class="nav-link" id="nl-drops" onclick="goTo('home');setTimeout(()=>{const s=document.getElementById('drop-archive-section');if(s)s.scrollIntoView({behavior:'smooth'});},80)">Drops <span class="nav-live-badge">Live</span></button></li>
+        <li><button class="nav-link" id="nl-drops" onclick="goTo('drops')">Drops <span class="nav-live-badge">Live</span></button></li>
         <li><button class="nav-link" id="nl-customize" onclick="goTo('customize')">Customize</button></li>
       </ul>
       <div class="nav-actions">
@@ -646,6 +646,48 @@
             <span class="material-symbols-outlined" style="font-size:16px">arrow_upward</span> Back to top
           </button>
         </div>
+      </div>
+    </div>
+    <div class="mob-nav-spacer"></div>
+  </main>
+
+  <!-- PAGE: DROPS -->
+  <main class="page" id="page-drops" aria-label="Drops">
+    <div class="container">
+      <div style="padding:clamp(24px,4vw,48px) 0 clamp(48px,7vw,80px)">
+
+        <!-- Header -->
+        <div style="margin-bottom:clamp(28px,4vw,48px)">
+          <div class="eyebrow eyebrow-red" style="margin-bottom:8px">Limited Releases</div>
+          <h1 style="font-size:clamp(32px,6vw,64px);font-weight:900;font-style:italic;text-transform:uppercase;letter-spacing:-.02em;line-height:.92;margin-bottom:12px">Drop Archive</h1>
+          <p style="font-size:clamp(13px,1.4vw,16px);color:var(--g2);max-width:480px;line-height:1.65">Every ModArt drop is limited to 200 units. No restocks. No exceptions. Once it's gone, it's gone.</p>
+        </div>
+
+        <!-- LIVE NOW -->
+        <div id="drops-section-live" style="margin-bottom:clamp(40px,6vw,64px)">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+            <span style="width:8px;height:8px;border-radius:50%;background:var(--red);animation:blink 1s ease infinite;flex-shrink:0"></span>
+            <h2 style="font-size:13px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--red)">Live Now</h2>
+          </div>
+          <div id="drops-page-live" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(clamp(280px,40vw,400px),1fr));gap:clamp(16px,2.5vw,24px)"></div>
+        </div>
+
+        <!-- UPCOMING -->
+        <div id="drops-section-upcoming" style="margin-bottom:clamp(40px,6vw,64px)">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+            <h2 style="font-size:13px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--g2)">Upcoming</h2>
+          </div>
+          <div id="drops-page-upcoming" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(clamp(280px,40vw,400px),1fr));gap:clamp(16px,2.5vw,24px)"></div>
+        </div>
+
+        <!-- ENDED -->
+        <div id="drops-section-ended">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+            <h2 style="font-size:13px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--g3)">Past Drops</h2>
+          </div>
+          <div id="drops-page-ended" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(clamp(280px,40vw,400px),1fr));gap:clamp(16px,2.5vw,24px)"></div>
+        </div>
+
       </div>
     </div>
     <div class="mob-nav-spacer"></div>

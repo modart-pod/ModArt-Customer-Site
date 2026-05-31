@@ -6,6 +6,7 @@
 const PAGES = {
   home:             'page-home',
   shop:             'page-shop',
+  drops:            'page-drops',
   product:          'page-product',
   customize:        'page-customize',
   bag:              'page-bag',
@@ -74,6 +75,9 @@ export function showPage(pageName) {
 
 function triggerPageRender(pageName) {
   switch (pageName) {
+    case 'drops':
+      window.renderDropsPage && window.renderDropsPage();
+      break;
     case 'home':
     case 'shop':
       window.renderProducts && window.renderProducts(pageName);
@@ -111,7 +115,7 @@ function triggerPageRender(pageName) {
 
 function updateNavState(pageName) {
   document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-  const desktopMap = { home:'nl-home', shop:'nl-shop', customize:'nl-customize' };
+  const desktopMap = { home:'nl-home', shop:'nl-shop', drops:'nl-drops', customize:'nl-customize' };
   const dlEl = desktopMap[pageName] && document.getElementById(desktopMap[pageName]);
   if (dlEl) dlEl.classList.add('active');
 
@@ -237,12 +241,12 @@ if (typeof window !== 'undefined') {
 
 const META_MAP = {
   home:        { title: 'ModArt — Premium Custom Garment Studio',     desc: 'Design your own limited drop. Wear art that means something. Built for creators, worn by culture.' },
+  drops:       { title: 'Drops — ModArt',                               desc: 'Limited edition drops. Live now, upcoming, and archive. First access every release.' },
   shop:        { title: 'Shop — ModArt',                               desc: 'Browse the latest limited drops. Premium streetwear, made in-house.' },
   product:     { title: 'Product — ModArt',                            desc: 'Limited release. Premium quality. Made to order.' },
   customize:   { title: 'Design Studio — ModArt',                      desc: 'Upload your art, generate AI designs, and create your own limited drop.' },
   bag:         { title: 'Your Bag — ModArt',                           desc: 'Review your selected items and proceed to checkout.' },
   checkout:    { title: 'Checkout — ModArt',                           desc: 'Secure checkout. SSL encrypted.' },
-  confirmation:{ title: 'Order Confirmed — ModArt',                    desc: 'Your order has been placed successfully.' },
   orders:      { title: 'My Orders — ModArt',                          desc: 'Track your ModArt orders.' },
   account:     { title: 'My Account — ModArt',                         desc: 'Manage your orders, profile, and preferences.' },
   wishlist:    { title: 'Wishlist — ModArt',                           desc: 'Your saved ModArt pieces.' },
