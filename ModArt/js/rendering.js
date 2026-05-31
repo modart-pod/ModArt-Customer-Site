@@ -78,7 +78,7 @@ export function renderProducts(page) {
     const rev  = PRODUCT_REVIEWS[p.id] || { rating: 4.5, count: 0 };
 
     const starsRow = isShop ? `
-      <div class="card-stars" style="display:flex;align-items:center;gap:2px;padding:4px 10px 0">
+      <div class="card-stars" style="display:flex;align-items:center;gap:2px;padding:4px 0 0">
         ${renderStars(rev.rating)}
         <span class="card-stars-count" style="font-size:10px;color:var(--g2);margin-left:3px">${rev.count > 0 ? '(' + rev.count + ')' : 'New'}</span>
       </div>` : '';
@@ -90,7 +90,7 @@ export function renderProducts(page) {
         <div class="product-card-overlay">
           ${sold
             ? `<button class="card-quick-cta" style="opacity:.5;cursor:not-allowed" disabled>Sold Out</button>`
-            : `<button class="card-quick-cta" onclick="event.stopPropagation();window.goTo&&window.goTo('customize')">Customize</button>`
+            : `<button class="card-quick-cta" onclick="event.stopPropagation();showAddToCartPicker('${esc(p.id)}','${esc(p.name)}')">Add to Bag</button>`
           }
           <button class="wishlist-icon-btn${wish ? ' wishlisted' : ''}" aria-label="${wish ? 'Remove from wishlist' : 'Add to wishlist'}: ${esc(p.name)}" onclick="event.stopPropagation();window.toggleWishlist && window.toggleWishlist('${esc(p.id)}',this)">
             <span class="material-symbols-outlined icon">${wish ? 'favorite' : 'favorite_border'}</span>
@@ -112,6 +112,12 @@ export function renderProducts(page) {
   // Rebuild carousel dots after home cards are injected
   if (isShop === false && window._rebuildCarouselDots) {
     window._rebuildCarouselDots();
+  }
+
+  // Update product count on shop page
+  if (isShop) {
+    const countEl = document.getElementById('shop-product-count');
+    if (countEl) countEl.textContent = `${prods.length} product${prods.length !== 1 ? 's' : ''}`;
   }
 }
 
@@ -230,6 +236,53 @@ export function renderProductDetail() {
       icon.textContent = isWished ? 'favorite' : 'favorite_border';
       icon.style.color = isWished ? 'var(--red)' : '';
     }
+  }
+
+  // Update breadcrumb
+  const breadcrumb = document.getElementById('pdp-breadcrumb-name');
+  if (breadcrumb) breadcrumb.textContent = p.name;
+
+  // Update sticky bar
+  const stickyName  = document.getElementById('pdp-sticky-name');
+  const stickyPrice = document.getElementById('pdp-sticky-price');
+  if (stickyName)  stickyName.textContent  = p.name;
+  if (stickyPrice) stickyPrice.textContent = formatPrice(p.price);
+
+  // Fix add-to-bag button — use dynamic product ID, not hardcoded
+  const addBtn = document.getElementById('add-to-bag-btn');
+  if (addBtn) {
+    addBtn.onclick = () => {
+      const sz = document.querySelector('#size-options-dynamic .size-btn.sel');
+      if (!sz) {
+        const opts = document.getElementById('size-options-dynamic');
+        if (opts) {
+          opts.style.outline = '2px solid var(--red)';
+          opts.style.borderRadius = '8px';
+          setTimeout(() => { opts.style.outline = ''; }, 1500);
+        }
+        if (window.showCustomerToast) window.showCustomerToast('Please select a size', 'error');
+        return;
+      }
+      if (window.addToCart) window.addToCart(p.id, sz.dataset.size);
+      if (window.goTo) window.goTo('bag');
+    };
+    addBtn.disabled = sold;
+    if (sold) {
+      addBtn.textContent = 'Sold Out';
+      addBtn.style.opacity = '0.5';
+      addBtn.style.cursor = 'not-allowed';
+    }
+  }
+
+  // Sticky bar — show when add-to-bag scrolls out of view
+  const stickyBar = document.getElementById('pdp-sticky-bar');
+  if (stickyBar && addBtn) {
+    // Remove old observer if any
+    if (window._pdpStickyObserver) window._pdpStickyObserver.disconnect();
+    window._pdpStickyObserver = new IntersectionObserver(([entry]) => {
+      stickyBar.style.display = entry.isIntersecting ? 'none' : 'flex';
+    }, { threshold: 0.1 });
+    window._pdpStickyObserver.observe(addBtn);
   }
 }
 
@@ -600,6 +653,14 @@ export function filterShop(type, btn) {
   // Show/hide empty state
   if (emptyEl) emptyEl.style.display = visibleCount === 0 ? 'block' : 'none';
 
+  // Update product count
+  const countEl = document.getElementById('shop-product-count');
+  if (countEl) {
+    countEl.textContent = visibleCount > 0
+      ? `${visibleCount} product${visibleCount !== 1 ? 's' : ''}${type !== 'all' ? ' in ' + type : ''}`
+      : '';
+  }
+
   // Update scarcity count from live inventory
   const scarcityEl = document.getElementById('shop-scarcity-count');
   if (scarcityEl && window.LIVE_INVENTORY) {
@@ -751,16 +812,23 @@ export function renderSizeOptions(productId) {
         { size:'XL', stock:0, available:false },
       ];
 
-  container.innerHTML = sizes.map((s, i) =>
-    `<button
-      class="size-btn${i === 0 && s.available ? ' sel' : ''}${!s.available ? ' dis' : ''}"
+  container.innerHTML = sizes.map((s, i) => {
+    const isFirst = i === 0 && s.available;
+    const lowStock = s.stock > 0 && s.stock <= 3;
+    return `<button
+      class="size-btn${isFirst ? ' sel' : ''}${!s.available ? ' dis' : ''}"
       onclick="selSize(this)"
       data-size="${s.size}"
-      ${!s.available ? 'disabled title="Out of stock"' : ''}>
-      ${s.size}
-      ${s.stock <= 3 && s.available ? `<span style="display:block;font-size:8px;color:var(--red);font-weight:700;letter-spacing:.06em">${s.stock} left</span>` : ''}
-    </button>`
-  ).join('');
+      ${!s.available ? 'disabled aria-label="' + s.size + ' — Out of stock"' : 'aria-label="Size ' + s.size + (lowStock ? ', only ' + s.stock + ' left' : '') + '"'}
+      style="position:relative;flex-direction:column;gap:1px">
+      <span>${s.size}</span>
+      ${!s.available
+        ? `<span style="display:block;font-size:7px;color:var(--g3);font-weight:600;letter-spacing:.04em;text-transform:uppercase">Out</span>`
+        : lowStock
+          ? `<span style="display:block;font-size:7px;color:var(--red);font-weight:700;letter-spacing:.04em">${s.stock} left</span>`
+          : ''}
+    </button>`;
+  }).join('');
 }
 
 if (typeof window !== 'undefined') {

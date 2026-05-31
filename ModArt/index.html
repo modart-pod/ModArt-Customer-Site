@@ -609,7 +609,7 @@
 
         <!-- Filter + Sort bar -->
         <div id="shop-filter-bar" class="shop-filter-bar">
-          <div class="shop-filter-btns">
+          <div class="shop-filter-btns" style="overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px">
             <button class="shop-filter-btn active" onclick="filterShop('all',this)">All</button>
             <button class="shop-filter-btn" onclick="filterShop('tees',this)">Tees</button>
             <button class="shop-filter-btn" onclick="filterShop('hoodies',this)">Hoodies</button>
@@ -626,6 +626,8 @@
             <option value="name-asc">Name: A → Z</option>
           </select>
         </div>
+        <!-- Product count -->
+        <div id="shop-product-count" style="font-size:11px;color:var(--g3);font-weight:600;letter-spacing:.06em;margin-bottom:16px"></div>
 
         <!-- Product grid -->
         <div class="product-grid shop-grid" id="shop-product-grid"></div>
@@ -651,9 +653,24 @@
 
   <!-- PAGE: PRODUCT DETAIL -->
   <main class="page" id="page-product" aria-label="Product detail">
+    <!-- Sticky mobile CTA bar — shown when add-to-bag button scrolls out of view -->
+    <div id="pdp-sticky-bar" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:800;background:rgba(247,245,241,.97);backdrop-filter:blur(12px);border-top:1px solid var(--border);padding:12px 16px;padding-bottom:calc(12px + env(safe-area-inset-bottom));gap:10px;align-items:center">
+      <div style="flex:1;min-width:0">
+        <div id="pdp-sticky-name" style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
+        <div id="pdp-sticky-price" style="font-size:13px;font-weight:800;color:var(--black)"></div>
+      </div>
+      <button onclick="document.getElementById('add-to-bag-btn')&&document.getElementById('add-to-bag-btn').click()" style="flex-shrink:0;padding:13px 24px;background:var(--black);color:#fff;border:none;border-radius:var(--r-full);font-family:var(--font);font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;cursor:pointer">Add to Bag</button>
+    </div>
     <div class="container">
       <div class="section" style="padding-top:clamp(20px,3vw,40px)">
-        <button class="btn-outline" style="margin-bottom:24px;width:auto;padding:10px 16px" onclick="goTo('shop')"><span class="material-symbols-outlined icon" style="font-size:16px">arrow_back</span> Back</button>
+        <!-- Breadcrumb -->
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:20px;font-size:11px;color:var(--g3);font-weight:600;letter-spacing:.06em;text-transform:uppercase">
+          <button onclick="goTo('home')" style="background:none;border:none;cursor:pointer;font-family:var(--font);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--g3);padding:0" onmouseover="this.style.color='var(--black)'" onmouseout="this.style.color='var(--g3)'">Home</button>
+          <span class="material-symbols-outlined" style="font-size:14px">chevron_right</span>
+          <button onclick="goTo('shop')" style="background:none;border:none;cursor:pointer;font-family:var(--font);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--g3);padding:0" onmouseover="this.style.color='var(--black)'" onmouseout="this.style.color='var(--g3)'">Shop</button>
+          <span class="material-symbols-outlined" style="font-size:14px">chevron_right</span>
+          <span id="pdp-breadcrumb-name" style="color:var(--black)">Product</span>
+        </div>
         <div class="product-detail-grid">
           <div class="product-img-stack">
             <div style="position:relative">
@@ -666,7 +683,12 @@
             </div>
           </div>
           <div>
-            <div class="eyebrow eyebrow-red" style="margin-bottom:10px">Vanta Collection</div>
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px">
+              <div class="eyebrow eyebrow-red">Vanta Collection</div>
+              <button onclick="(function(){const url=window.location.href;const name=document.querySelector('#page-product .product-detail-title')?.textContent||'ModArt Product';if(navigator.share){navigator.share({title:name,url:url});}else{navigator.clipboard?.writeText(url).then(()=>{if(window.showCustomerToast)window.showCustomerToast('Link copied','success');});}})();" style="background:none;border:1.5px solid var(--border);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:border-color var(--t)" onmouseover="this.style.borderColor='var(--black)'" onmouseout="this.style.borderColor='var(--border)'" aria-label="Share product">
+                <span class="material-symbols-outlined" style="font-size:18px;color:var(--g2)">share</span>
+              </button>
+            </div>
             <h1 class="product-detail-title">Vanta Black<br>Hoodie</h1>
             <div class="product-detail-subtitle">600 GSM Supima Cotton / Limited Release / Drop 02</div>
             <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:10px">
@@ -703,14 +725,15 @@
               <div class="size-options" id="size-options-dynamic"><button class="size-btn sel" onclick="selSize(this)" data-size="M">M</button></div>
             </div>
             <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
-              <button class="btn-black btn-red-full" style="padding:18px;border-radius:var(--r-full)" onclick="addToCart('vanta-hoodie');goTo('bag')">Add to Bag — <span id="detail-price-btn">19,999</span></button>
+              <button class="btn-black btn-red-full" id="add-to-bag-btn" style="padding:18px;border-radius:var(--r-full);font-size:13px;font-weight:800;letter-spacing:.1em;display:flex;align-items:center;justify-content:center;gap:8px" onclick="(function(){const sz=document.querySelector('#size-options-dynamic .size-btn.sel');if(!sz){const opts=document.getElementById('size-options-dynamic');if(opts){opts.style.outline='2px solid var(--red)';opts.style.borderRadius='8px';setTimeout(()=>{opts.style.outline='';},1500);}if(window.showCustomerToast)window.showCustomerToast('Please select a size','error');return;}window.addToCart&&window.addToCart(window._currentProductId,sz.dataset.size);window.goTo&&window.goTo('bag');})()"><span class="material-symbols-outlined icon" style="font-size:18px">shopping_bag</span> Add to Bag — <span id="detail-price-btn">₹19,999</span></button>
               <button class="btn-red btn-red-full btn-red-pill" onclick="goTo('customize')"><span class="material-symbols-outlined icon" style="font-size:18px">palette</span> Customise This Piece</button>
-              <button class="btn-outline" style="border-radius:var(--r-full);width:100%;padding:16px" id="wishlist-detail-btn" onclick="toggleWishlistDetail(this)"><span class="material-symbols-outlined icon" style="font-size:17px">favorite_border</span> Wishlist</button>
+              <button class="btn-outline" style="border-radius:var(--r-full);width:100%;padding:16px" id="wishlist-detail-btn" onclick="toggleWishlistDetail(this)"><span class="material-symbols-outlined icon" style="font-size:17px">favorite_border</span> Save to Wishlist</button>
             </div>
             <div class="product-trust">
               <div class="trust-row"><span class="material-symbols-outlined icon">verified</span><span class="trust-row-txt">Print Guarantee — Fades or cracks, we reprint free</span></div>
               <div class="trust-row"><span class="material-symbols-outlined icon">local_shipping</span><span class="trust-row-txt">Ships in 4—6 days — Express 2-day available</span></div>
-              <div class="trust-row"><span class="material-symbols-outlined icon">replay</span><span class="trust-row-txt">30-day returns on unworn items</span></div>
+              <div class="trust-row"><span class="material-symbols-outlined icon">swap_horiz</span><span class="trust-row-txt">Size exchange within 7 days — unworn, tags intact</span></div>
+              <div class="trust-row"><span class="material-symbols-outlined icon">lock</span><span class="trust-row-txt">Secure checkout — SSL encrypted, COD available</span></div>
             </div>
           </div>
         </div>
@@ -1009,7 +1032,7 @@
           <button class="btn-red btn-red-full btn-red-pill" id="pay-now-btn" style="padding:18px;font-size:14px" onclick="handleCheckoutSubmit()">Place Order — Cash on Delivery</button>
           <div style="display:flex;justify-content:center;gap:clamp(16px,3vw,36px);margin-top:20px">
             <div style="display:flex;flex-direction:column;align-items:center;gap:4px"><span class="material-symbols-outlined" style="font-size:22px;color:var(--g3)">lock</span><span style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g3)">SSL Secure</span></div>
-            <div style="display:flex;flex-direction:column;align-items:center;gap:4px"><span class="material-symbols-outlined" style="font-size:22px;color:var(--g3)">replay</span><span style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g3)">30-Day Returns</span></div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:4px"><span class="material-symbols-outlined" style="font-size:22px;color:var(--g3)">swap_horiz</span><span style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g3)">Size Exchange</span></div>
             <div style="display:flex;flex-direction:column;align-items:center;gap:4px"><span class="material-symbols-outlined" style="font-size:22px;color:var(--g3)">verified</span><span style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g3)">Print Guarantee</span></div>
           </div>
         </div>
@@ -1483,7 +1506,7 @@
         <h1 class="section-title" style="margin-bottom:40px">FAQ</h1>
         <div class="acc-list">
           <div class="faq-item acc-item"><button class="faq-q acc-hdr" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">How long does production take?<span class="material-symbols-outlined icon">expand_more</span></button><div class="faq-a acc-body">Standard orders ship in 4—6 business days. Express orders ship in 1—2 days. All garments are made-to-order — we don't hold stock.</div></div>
-          <div class="faq-item acc-item"><button class="faq-q acc-hdr" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">What is your return policy?<span class="material-symbols-outlined icon">expand_more</span></button><div class="faq-a acc-body">We accept returns on unworn, unwashed items within 30 days. Custom-designed pieces are non-returnable unless there's a print defect.</div></div>
+          <div class="faq-item acc-item"><button class="faq-q acc-hdr" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">What is your exchange policy?<span class="material-symbols-outlined icon">expand_more</span></button><div class="faq-a acc-body">Since all ModArt pieces are made-to-order, we do not accept returns for change of mind. However, we offer <strong>size exchanges within 7 days</strong> of delivery on unworn, unwashed items with tags intact. If your item has a print defect or manufacturing fault, we will reprint or replace it free of charge — no questions asked. Custom-designed pieces are non-exchangeable unless defective.</div></div>
           <div class="faq-item acc-item"><button class="faq-q acc-hdr" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">What fabric do you use?<span class="material-symbols-outlined icon">expand_more</span></button><div class="faq-a acc-body">All ModArt garments use 600 GSM 100% Supima cotton. This is significantly heavier than standard streetwear (typically 280—380 GSM), giving a structured, premium feel.</div></div>
           <div class="faq-item acc-item"><button class="faq-q acc-hdr" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">How do I become a creator?<span class="material-symbols-outlined icon">expand_more</span></button><div class="faq-a acc-body">Create an account, open the Design Studio, upload your artwork, and launch your drop. You earn 15% commission on every sale of your design.</div></div>
           <div class="faq-item acc-item"><button class="faq-q acc-hdr" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">Do you ship internationally?<span class="material-symbols-outlined icon">expand_more</span></button><div class="faq-a acc-body">Yes — we ship to 40+ countries. International orders typically arrive in 8—14 business days. Customs duties may apply depending on your country.</div></div>
@@ -1520,7 +1543,7 @@
         <div style="font-size:15px;line-height:1.75;color:var(--g2)">
           <p style="margin-bottom:20px"><strong style="color:var(--black)">Products:</strong> All ModArt garments are made-to-order. Once production begins, orders cannot be cancelled. Sizes and colors are as described — minor variations in print placement (—5mm) are within acceptable tolerance.</p>
           <p style="margin-bottom:20px"><strong style="color:var(--black)">Creator Drops:</strong> Creators retain full rights to their uploaded artwork. By listing a design on ModArt, you grant us a non-exclusive licence to reproduce it on garments sold through the platform. Creator commission is 15% of net revenue per unit sold.</p>
-          <p style="margin-bottom:20px"><strong style="color:var(--black)">Returns:</strong> Unworn items may be returned within 30 days for a full refund. Custom-designed pieces are non-refundable unless defective. Shipping costs for returns are the customer's responsibility.</p>
+          <p style="margin-bottom:20px"><strong style="color:var(--black)">Returns &amp; Exchanges:</strong> All ModArt pieces are made-to-order. We offer size exchanges within 7 days of delivery on unworn, unwashed items with tags intact. Custom-designed pieces are non-exchangeable unless defective. If your item has a print defect or manufacturing fault, we will reprint or replace it free of charge.</p>
           <p><strong style="color:var(--black)">Governing Law:</strong> These terms are governed by the laws of India. Disputes shall be resolved in the courts of Mumbai, Maharashtra.</p>
         </div>
       </div>

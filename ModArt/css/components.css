@@ -591,6 +591,11 @@
 
 .product-card {
   cursor: pointer;
+  transition: transform var(--t);
+}
+
+.product-card:hover {
+  transform: translateY(-2px);
 }
 
 .product-card-img {
@@ -603,15 +608,29 @@
   transition: box-shadow var(--t);
 }
 
-.product-card-img:hover {
-  box-shadow: var(--sh-md);
+/* Skeleton shimmer while image loads */
+.product-card-img::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--bg-d) 25%, var(--bg-c) 50%, var(--bg-d) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease infinite;
+  z-index: 0;
 }
 
 .product-card-img img {
+  position: relative;
+  z-index: 1;
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform .5s ease;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
 .product-card:hover .product-card-img img {
@@ -623,8 +642,8 @@
   bottom: 0;
   left: 0;
   right: 0;
-  padding: 16px;
-  background: linear-gradient(to top, rgba(0, 0, 0, .75) 0%, transparent 100%);
+  padding: 12px;
+  background: linear-gradient(to top, rgba(0, 0, 0, .7) 0%, rgba(0,0,0,.2) 60%, transparent 100%);
   opacity: 0;
   transition: opacity var(--t);
   display: flex;
@@ -634,6 +653,16 @@
 
 .product-card:hover .product-card-overlay {
   opacity: 1;
+}
+
+/* Always show wishlist heart on mobile */
+@media (hover: none) {
+  .product-card-overlay {
+    opacity: 1;
+    background: linear-gradient(to top, rgba(0,0,0,.3) 0%, transparent 50%);
+    justify-content: flex-end;
+  }
+  .card-quick-cta { display: none; }
 }
 
 .card-quick-cta {
@@ -1620,7 +1649,7 @@
 
 .size-btn {
   min-width: clamp(44px, 7vw, 56px);
-  padding: clamp(10px, 1.5vw, 13px) 8px;
+  padding: clamp(8px, 1.5vw, 11px) 8px;
   border: 1.5px solid var(--border);
   background: var(--white);
   font-family: var(--font);
@@ -1632,6 +1661,11 @@
   border-radius: var(--r-sm);
   transition: all var(--t);
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  cursor: pointer;
 }
 
 .size-btn:hover {

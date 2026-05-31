@@ -308,28 +308,62 @@ window.declineCookies     = declineCookies;
 // ================================================================
 
 async function notifyMe(productId, btn) {
-  const email = prompt('Enter your email to be notified when this item is back in stock:');
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) return;
+  // Use logged-in user's email if available, otherwise show inline input
+  const userEmail = window.currentUser?.email;
 
-  if (btn) { btn.textContent = 'Saving…'; btn.disabled = true; }
-
-  try {
-    const { getSupabase } = await import('./auth.js');
-    const client = getSupabase();
-    if (client) {
-      await client.from('waitlist').upsert(
-        { email: email.trim().toLowerCase(), drop_id: productId },
-        { onConflict: 'email,drop_id' }
-      );
+  if (userEmail) {
+    // Already have email — save directly
+    if (btn) { btn.textContent = 'Saving…'; btn.disabled = true; }
+    try {
+      const { getSupabase } = await import('./auth.js');
+      const client = getSupabase();
+      if (client) {
+        await client.from('waitlist').upsert(
+          { email: userEmail, drop_id: productId },
+          { onConflict: 'email,drop_id' }
+        );
+      }
+      if (btn) {
+        btn.textContent = '✓ You\'ll be notified';
+        btn.style.color = 'var(--green)';
+        btn.style.borderColor = 'var(--green)';
+      }
+      if (window.showCustomerToast) window.showCustomerToast('We\'ll notify you when it\'s back', 'success');
+    } catch {
+      if (btn) { btn.textContent = 'Notify Me'; btn.disabled = false; }
     }
-    if (btn) {
-      btn.textContent = '✓ You\'ll be notified';
-      btn.style.color = 'var(--green)';
-      btn.style.borderColor = 'var(--green)';
-    }
-  } catch {
-    if (btn) { btn.textContent = 'Notify Me'; btn.disabled = false; }
+    return;
   }
+
+  // No user — show inline email input replacing the button
+  if (!btn) return;
+  const container = btn.parentElement;
+  if (!container) return;
+
+  const wrapper = document.createElement('div');
+  wrapper.style.cssText = 'display:flex;gap:6px;margin-top:8px;width:100%';
+  wrapper.innerHTML = `
+    <input type="email" placeholder="your@email.com" autocomplete="email"
+      style="flex:1;padding:10px 14px;font-family:var(--font);font-size:13px;border:1.5px solid var(--border);border-radius:var(--r-full);outline:none;background:var(--white);color:var(--black)"
+      id="notify-email-${productId}"/>
+    <button onclick="(async function(){
+      const inp=document.getElementById('notify-email-${productId}');
+      const email=inp?.value?.trim();
+      if(!email||!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)){inp.style.borderColor='var(--red)';return;}
+      inp.disabled=true;
+      try{
+        const {getSupabase}=await import('./auth.js');
+        const c=getSupabase();
+        if(c)await c.from('waitlist').upsert({email,drop_id:'${productId}'},{onConflict:'email,drop_id'});
+      }catch(e){}
+      inp.closest('div').outerHTML='<div style=\\'font-size:11px;font-weight:700;color:var(--green);padding:10px 0;letter-spacing:.06em\\'>✓ We\\'ll notify you when it\\'s back</div>';
+    })()"
+      style="padding:10px 16px;background:var(--black);color:#fff;border:none;border-radius:var(--r-full);font-family:var(--font);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;white-space:nowrap">
+      Notify Me
+    </button>`;
+
+  btn.replaceWith(wrapper);
+  wrapper.querySelector('input')?.focus();
 }
 
 window.notifyMe = notifyMe;

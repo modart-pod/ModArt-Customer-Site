@@ -229,22 +229,6 @@ body.layout-desktop #page-home         { padding-top: 0; }
   #home-product-grid .product-card-price { font-size: 13px; font-weight: 800; }
   #shop-product-grid .product-card-badge,
   #home-product-grid .product-card-badge { font-size: 8px; padding: 3px 6px; top: 8px; left: 8px; }
-  /* On mobile: hide the CTA button, only show wishlist heart */
-  #shop-product-grid .product-card-overlay,
-  #home-product-grid .product-card-overlay {
-    opacity: 1;
-    background: linear-gradient(to top, rgba(0,0,0,.3) 0%, transparent 50%);
-    justify-content: flex-end;
-    align-items: flex-end;
-    padding: 8px;
-  }
-  #shop-product-grid .card-quick-cta,
-  #home-product-grid .card-quick-cta { display: none; }
-  .product-card-overlay .wishlist-icon-btn {
-    width: 30px;
-    height: 30px;
-  }
-  .product-card-overlay .wishlist-icon-btn .icon { font-size: 15px; }
 
   /* ── Manifesto ── */
   .manifesto { padding: 40px 0; }
