@@ -337,9 +337,16 @@ export async function initDrops() {
 
 function _updateManifestoCounter() {
   const el = document.getElementById('manifesto-drops-live');
-  if (!el) return;
-  const liveCount = LIVE_DROPS.filter(d => d.status === 'live').length;
-  el.textContent = liveCount > 0 ? liveCount : '—';
+  if (el) {
+    const liveCount = LIVE_DROPS.filter(d => d.status === 'live').length;
+    el.textContent = liveCount > 0 ? liveCount : '—';
+  }
+  // Show live badge on mobile nav drops button
+  const liveBadge = document.getElementById('drops-live-badge');
+  if (liveBadge) {
+    const hasLive = LIVE_DROPS.some(d => d.status === 'live');
+    liveBadge.style.display = hasLive ? '' : 'none';
+  }
 }
 
 if (typeof window !== 'undefined') {

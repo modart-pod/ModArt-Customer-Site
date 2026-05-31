@@ -120,7 +120,7 @@ function updateNavState(pageName) {
   if (dlEl) dlEl.classList.add('active');
 
   document.querySelectorAll('.mob-nav-item').forEach(i => i.classList.remove('active'));
-  const mobileMap = { home:'mob-nav-home', shop:'mob-nav-shop', customize:'mob-nav-customize', bag:'mob-nav-bag', account:'mob-nav-account' };
+  const mobileMap = { home:'mob-nav-home', shop:'mob-nav-shop', customize:'mob-nav-customize', drops:'mob-nav-drops', account:'mob-nav-account' };
   const mlEl = mobileMap[pageName] && document.getElementById(mobileMap[pageName]);
   if (mlEl) mlEl.classList.add('active');
 
