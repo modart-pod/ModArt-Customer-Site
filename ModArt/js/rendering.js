@@ -87,14 +87,19 @@ export function renderProducts(page) {
       <div class="product-card-img">
         <img src="${esc(p.img)}" alt="${esc(p.name)}" loading="lazy"/>
         ${p.badge ? `<div class="product-card-badge${sold ? ' badge-sold' : low ? ' badge-low' : ''}">${esc(p.badge)}</div>` : ''}
+        <!-- Wishlist heart — always visible, top-right corner -->
+        <button class="wishlist-icon-btn${wish ? ' wishlisted' : ''}"
+          style="position:absolute;top:8px;right:8px;z-index:2;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.92);backdrop-filter:blur(4px);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .2s ease,background .2s ease;box-shadow:0 2px 8px rgba(0,0,0,.12)"
+          aria-label="${wish ? 'Remove from wishlist' : 'Add to wishlist'}: ${esc(p.name)}"
+          onclick="event.stopPropagation();window.toggleWishlist && window.toggleWishlist('${esc(p.id)}',this)"
+          onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'">
+          <span class="material-symbols-outlined" style="font-size:16px;color:${wish ? 'var(--red)' : 'var(--g2)'};font-variation-settings:'FILL' ${wish ? 1 : 0},'wght' 600,'GRAD' 0,'opsz' 24">${wish ? 'favorite' : 'favorite_border'}</span>
+        </button>
         <div class="product-card-overlay">
           ${sold
             ? `<button class="card-quick-cta" style="opacity:.5;cursor:not-allowed" disabled>Sold Out</button>`
             : `<button class="card-quick-cta" onclick="event.stopPropagation();showAddToCartPicker('${esc(p.id)}','${esc(p.name)}')">Add to Bag</button>`
           }
-          <button class="wishlist-icon-btn${wish ? ' wishlisted' : ''}" aria-label="${wish ? 'Remove from wishlist' : 'Add to wishlist'}: ${esc(p.name)}" onclick="event.stopPropagation();window.toggleWishlist && window.toggleWishlist('${esc(p.id)}',this)">
-            <span class="material-symbols-outlined icon">${wish ? 'favorite' : 'favorite_border'}</span>
-          </button>
         </div>
       </div>
       <div class="product-card-series">${esc(p.series)}</div>
@@ -436,8 +441,15 @@ export function toggleWishlist(id, btn) {
   toggleWishlistItem(id);
   const isWished = wishlist.has(id);
   btn.classList.toggle('wishlisted', isWished);
-  btn.querySelector('.icon').textContent = isWished ? 'favorite' : 'favorite_border';
+  const icon = btn.querySelector('.material-symbols-outlined');
+  if (icon) {
+    icon.textContent = isWished ? 'favorite' : 'favorite_border';
+    icon.style.color = isWished ? 'var(--red)' : 'var(--g2)';
+    icon.style.fontVariationSettings = `'FILL' ${isWished ? 1 : 0},'wght' 600,'GRAD' 0,'opsz' 24`;
+  }
   btn.setAttribute('aria-label', (isWished ? 'Remove from wishlist' : 'Add to wishlist'));
+  // Sync wishlist to Supabase
+  if (window.syncWishlistToSupabase) window.syncWishlistToSupabase();
 }
 
 /**
