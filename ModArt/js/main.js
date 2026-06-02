@@ -211,6 +211,10 @@ async function initApplication() {
   initLiveOrdersCounter();
   window.initCookieBanner && window.initCookieBanner();
 
+  // Dynamic footer year
+  const footerYear = document.getElementById('footer-year');
+  if (footerYear) footerYear.textContent = new Date().getFullYear();
+
   const fadeObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {

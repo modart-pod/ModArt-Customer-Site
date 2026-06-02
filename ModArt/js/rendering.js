@@ -174,7 +174,10 @@ export function renderProductDetail() {
 
   // Update eyebrow series label
   const eyebrowEl = document.querySelector('#page-product .eyebrow-red');
-  if (eyebrowEl) eyebrowEl.textContent = p.series;
+  if (eyebrowEl) {
+    eyebrowEl.textContent = p.series;
+    eyebrowEl.style.visibility = 'visible';
+  }
 
   const priceFormatted = formatPrice(p.price);
   const priceEl = document.getElementById('detail-price');

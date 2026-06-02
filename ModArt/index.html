@@ -10,7 +10,7 @@
   <meta property="og:title" content="ModArt — Premium Custom Garment Studio"/>
   <meta property="og:description" content="Design your own limited drop. Wear art that means something. Built for creators, worn by culture."/>
   <meta property="og:image" content="https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=1200&q=85"/>
-  <meta property="og:url" content="https://modart.com"/>
+  <meta property="og:url" content="https://modart-modart-pods-projects.vercel.app"/>
   <meta property="og:site_name" content="ModArt"/>
   <meta name="twitter:card" content="summary_large_image"/>
   <meta name="twitter:title" content="ModArt — Premium Custom Garment Studio"/>
@@ -362,20 +362,12 @@
         sizes="100vw" alt="ModArt campaign" loading="eager"/>
       <div class="home-hero-overlay" aria-hidden="true"></div>
       <div class="home-hero-content">
-        <div class="hero-badge"><span class="material-symbols-outlined icon">local_fire_department</span> Drop 02 — Live Now</div>
+        <div class="hero-badge" id="hero-drop-badge" style="display:none"><span class="material-symbols-outlined icon">local_fire_department</span> <span id="hero-drop-label">Live Now</span></div>
         <h1 class="hero-title">Custom<br>Garment<br>Studio</h1>
         <p class="hero-sub">Design your own limited drop. Wear art that means something. Built for creators, worn by culture.</p>
         <div class="hero-actions">
           <button class="btn-red btn-red-pill" onclick="goTo('customize')">Create Your Drop <span class="material-symbols-outlined icon" style="font-size:16px">arrow_forward</span></button>
           <button class="btn-outline" style="color:rgba(255,255,255,.8);border-color:rgba(255,255,255,.22);border-radius:var(--r-full)" onclick="goTo('shop')">Browse Collection</button>
-        </div>
-        <div class="hero-countdown" aria-label="Drop timer">
-          <span class="hero-cd-label">Drop Closes</span>
-          <div class="hero-cd-timer">
-            <span class="hero-cd-unit" id="h-h">02</span><span class="hero-cd-colon">:</span>
-            <span class="hero-cd-unit" id="h-m">45</span><span class="hero-cd-colon">:</span>
-            <span class="hero-cd-unit hero-cd-unit-sec" id="h-s">18</span>
-          </div>
         </div>
       </div>
     </section>
@@ -459,16 +451,16 @@
             <p class="manifesto-body">We don't chase trends — we architect them. Every ModArt piece starts with a single question: what does the modern anti-consumer wear? The answer is always the same. Something that refuses to disappear.</p>
             <button class="btn-red btn-red-pill" onclick="goTo('shop')">Explore the Collection</button>
             <div class="manifesto-stats">
-              <div><div class="manifesto-stat-num" id="manifesto-drops-live">ΓÇö</div><div class="manifesto-stat-lbl">Drops Live</div></div>
+              <div><div class="manifesto-stat-num" id="manifesto-drops-live">—</div><div class="manifesto-stat-lbl">Drops Live</div></div>
               <div><div class="manifesto-stat-num">200</div><div class="manifesto-stat-lbl">Units Per Drop</div></div>
               <div><div class="manifesto-stat-num">100%</div><div class="manifesto-stat-lbl">In-House</div></div>
             </div>
           </div>
           <div style="position:relative">
             <img class="manifesto-img" src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=800&q=85" alt="Craftsmanship" loading="lazy"/>
-            <div class="manifesto-img-badge">
-              <div class="manifesto-img-badge-title">Drop 02 — Cyber Core Series</div>
-              <div class="manifesto-img-badge-sub">600 GSM — Limited to 200 Units — Own Manufacture</div>
+            <div class="manifesto-img-badge" id="manifesto-drop-badge" style="display:none">
+              <div class="manifesto-img-badge-title" id="manifesto-drop-name">—</div>
+              <div class="manifesto-img-badge-sub" id="manifesto-drop-sub">Limited Release — Own Manufacture</div>
             </div>
           </div>
         </div>
@@ -487,19 +479,19 @@
           <div class="drop-list" id="drop-list-fallback">
             <div class="drop-row" onclick="goTo('shop')">
               <div class="drop-num">08</div>
-              <div class="drop-info"><div class="drop-name">Void Edition</div><div class="drop-meta">Live Now ┬╖ 120 Units ┬╖ 88 Sold</div></div>
+              <div class="drop-info"><div class="drop-name">Void Edition</div><div class="drop-meta">Live Now · 120 Units · 88 Sold</div></div>
               <div class="drop-status drop-live">Live Now</div>
               <span class="material-symbols-outlined" style="font-size:20px;color:var(--g3)">arrow_forward</span>
             </div>
             <div class="drop-row">
               <div class="drop-num">09</div>
-              <div class="drop-info"><div class="drop-name">Origin Series</div><div class="drop-meta">Upcoming ┬╖ 150 Units ┬╖ Where it all began</div></div>
+              <div class="drop-info"><div class="drop-name">Origin Series</div><div class="drop-meta">Upcoming · 150 Units · Where it all began</div></div>
               <div class="drop-status" style="color:var(--amber)">Upcoming</div>
               <span class="material-symbols-outlined" style="font-size:20px;color:var(--g3)">arrow_forward</span>
             </div>
             <div class="drop-row" style="opacity:.5">
               <div class="drop-num">07</div>
-              <div class="drop-info"><div class="drop-name">Chrome Core</div><div class="drop-meta">Sold out in 4h 12m ┬╖ 100 Units</div></div>
+              <div class="drop-info"><div class="drop-name">Chrome Core</div><div class="drop-meta">Sold out in 4h 12m · 100 Units</div></div>
               <div class="drop-status drop-sold">Sold Out</div>
               <span class="material-symbols-outlined" style="font-size:20px;color:var(--g3)">arrow_forward</span>
             </div>
@@ -518,9 +510,9 @@
           </div>
         </div>
         <div class="review-grid">
-          <div class="review-card"><div class="review-stars"><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span></div><p class="review-text">"The Vanta Hoodie is worth every cent. 600gsm feels like wearing a building. The DTG print is sharp and hasn't faded after 10 washes."</p><div class="review-author"><img class="review-avatar" src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=80&q=80" alt="Kira S" loading="lazy"/><div><div class="review-name">Kira S.</div><div class="review-date">Oct 12, 2023</div></div><span class="review-verified"><span class="material-symbols-outlined" style="font-size:12px;vertical-align:middle">verified</span> Verified</span></div></div>
-          <div class="review-card"><div class="review-stars"><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span></div><p class="review-text">"My custom drop sold 38 units in 48 hours. The studio tool is actually usable, the puff print looks incredible IRL."</p><div class="review-author"><img class="review-avatar" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&q=80" alt="Zane M" loading="lazy"/><div><div class="review-name">Zane M.</div><div class="review-date">Sep 28, 2023</div></div><span class="review-verified"><span class="material-symbols-outlined" style="font-size:12px;vertical-align:middle">verified</span> Verified</span></div></div>
-          <div class="review-card"><div class="review-stars"><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star_half</span></div><p class="review-text">"Never seen quality this good from a streetwear brand. Looks exactly like the render — somehow better in hand."</p><div class="review-author"><img class="review-avatar" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=80&q=80" alt="Alex R" loading="lazy"/><div><div class="review-name">Alex R.</div><div class="review-date">Oct 5, 2023</div></div><span class="review-verified"><span class="material-symbols-outlined" style="font-size:12px;vertical-align:middle">verified</span> Verified</span></div></div>
+          <div class="review-card"><div class="review-stars"><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span></div><p class="review-text">"The Vanta Hoodie is worth every cent. 600gsm feels like wearing a building. The DTG print is sharp and hasn't faded after 10 washes."</p><div class="review-author"><img class="review-avatar" src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=80&q=80" alt="Kira S" loading="lazy"/><div><div class="review-name">Kira S.</div><div class="review-date">Mar 14, 2025</div></div><span class="review-verified"><span class="material-symbols-outlined" style="font-size:12px;vertical-align:middle">verified</span> Verified</span></div></div>
+          <div class="review-card"><div class="review-stars"><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span></div><p class="review-text">"My custom drop sold 38 units in 48 hours. The studio tool is actually usable, the puff print looks incredible IRL."</p><div class="review-author"><img class="review-avatar" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&q=80" alt="Zane M" loading="lazy"/><div><div class="review-name">Zane M.</div><div class="review-date">Apr 2, 2025</div></div><span class="review-verified"><span class="material-symbols-outlined" style="font-size:12px;vertical-align:middle">verified</span> Verified</span></div></div>
+          <div class="review-card"><div class="review-stars"><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star</span><span class="material-symbols-outlined icon">star_half</span></div><p class="review-text">"Never seen quality this good from a streetwear brand. Looks exactly like the render — somehow better in hand."</p><div class="review-author"><img class="review-avatar" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=80&q=80" alt="Alex R" loading="lazy"/><div><div class="review-name">Alex R.</div><div class="review-date">May 19, 2025</div></div><span class="review-verified"><span class="material-symbols-outlined" style="font-size:12px;vertical-align:middle">verified</span> Verified</span></div></div>
         </div>
       </div>
     </section>
@@ -528,7 +520,7 @@
     <!-- EARLY ACCESS -->
     <section class="early-access">
       <div class="container">
-        <div class="spots-counter"><span id="spots-left">347</span> of 500 Spots Remaining</div>
+        <div class="spots-counter">Limited Spots Remaining</div>
         <h2 class="early-access-title">Get In Before<br>It Sells Out.</h2>
         <p class="early-access-sub">First access every drop. Creator revenue share. Zero spam.</p>
         <div class="early-access-form">
@@ -547,17 +539,15 @@
             <div class="footer-brand-logo">ModArt</div>
             <p class="footer-brand-desc">Premium custom garment studio. Limited drops. No restocks. Creator-driven.</p>
             <div class="footer-social">
-              <button class="footer-social-btn" aria-label="Instagram" onclick="window.open('https://instagram.com/modart','_blank')"><span class="material-symbols-outlined icon">photo_camera</span></button>
-              <button class="footer-social-btn" aria-label="Twitter" onclick="window.open('https://twitter.com/modart','_blank')"><span class="material-symbols-outlined icon">tag</span></button>
-              <button class="footer-social-btn" aria-label="Discord" onclick="window.open('https://discord.gg/modart','_blank')"><span class="material-symbols-outlined icon">forum</span></button>
+              <button class="footer-social-btn" aria-label="Instagram" onclick="window.open('https://www.instagram.com/modart.studio','_blank')"><span class="material-symbols-outlined icon">photo_camera</span></button>
             </div>
           </div>
           <div>
             <div class="footer-col-title">Shop</div>
             <div class="footer-links">
               <button class="footer-link" onclick="goTo('shop')">All Products</button>
-              <button class="footer-link" onclick="goTo('shop')">New Drops</button>
-              <button class="footer-link" onclick="goTo('shop');setTimeout(()=>{window.filterShop&&window.filterShop('instock',null)},100)">Sold Out Archive</button>
+              <button class="footer-link" onclick="goTo('drops')">Drop Archive</button>
+              <button class="footer-link" onclick="goTo('shop');setTimeout(()=>{window.filterShop&&window.filterShop('instock',null)},100)">In Stock Now</button>
               <button class="footer-link" onclick="openModal('sizefinder')">Size Guide</button>
             </div>
           </div>
@@ -567,12 +557,11 @@
               <button class="footer-link" onclick="goTo('orders')">Track Order</button>
               <button class="footer-link" onclick="goTo('faq')">FAQ</button>
               <button class="footer-link" onclick="goTo('contact')">Contact</button>
-              <button class="footer-link" onclick="goTo('admin')">Admin</button>
             </div>
           </div>
         </div>
         <div class="footer-bottom">
-          <span class="footer-copy">— 2025 ModArt. All rights reserved.</span>
+          <span class="footer-copy">© <span id="footer-year"></span> ModArt. All rights reserved.</span>
           <div class="footer-legal">
             <button class="footer-legal-link" onclick="goTo('privacy')">Privacy</button>
             <button class="footer-legal-link" onclick="goTo('terms')">Terms</button>
@@ -726,16 +715,16 @@
           </div>
           <div>
             <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px">
-              <div class="eyebrow eyebrow-red">Vanta Collection</div>
+              <div class="eyebrow eyebrow-red" style="visibility:hidden" id="pdp-eyebrow"> </div>
               <button onclick="(function(){const url=window.location.href;const name=document.querySelector('#page-product .product-detail-title')?.textContent||'ModArt Product';if(navigator.share){navigator.share({title:name,url:url});}else{navigator.clipboard?.writeText(url).then(()=>{if(window.showCustomerToast)window.showCustomerToast('Link copied','success');});}})();" style="background:none;border:1.5px solid var(--border);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:border-color var(--t)" onmouseover="this.style.borderColor='var(--black)'" onmouseout="this.style.borderColor='var(--border)'" aria-label="Share product">
                 <span class="material-symbols-outlined" style="font-size:18px;color:var(--g2)">share</span>
               </button>
             </div>
-            <h1 class="product-detail-title">Vanta Black<br>Hoodie</h1>
-            <div class="product-detail-subtitle">600 GSM Supima Cotton / Limited Release / Drop 02</div>
+            <h1 class="product-detail-title"> </h1>
+            <div class="product-detail-subtitle"> </div>
             <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:10px">
-              <div class="product-detail-price" id="detail-price">19,999</div>
-              <div class="scarcity-pill" style="font-size:9px;padding:4px 10px" aria-live="polite"><span class="scarcity-dot"></span> 7 Left</div>
+              <div class="product-detail-price" id="detail-price"> </div>
+              <div class="scarcity-pill" style="font-size:9px;padding:4px 10px;display:none" aria-live="polite"><span class="scarcity-dot"></span> <span>—</span></div>
             </div>
             <div class="prod-timeline">
               <span class="material-symbols-outlined icon">schedule</span>
@@ -1520,6 +1509,21 @@
         <div style="max-width:560px">
           <div id="contact-error" style="display:none;background:rgba(215,38,56,.08);border:1px solid rgba(215,38,56,.25);color:var(--red);font-size:12px;font-weight:600;padding:10px 14px;border-radius:var(--r-sm);margin-bottom:16px"></div>
           <div id="contact-success" style="display:none;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.25);color:var(--green);font-size:12px;font-weight:600;padding:10px 14px;border-radius:var(--r-sm);margin-bottom:16px"></div>
+          <!-- Business info -->
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:32px;padding:20px;background:var(--bg-c);border:1px solid var(--border);border-radius:var(--r-lg)">
+            <div>
+              <div style="font-size:9px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--g3);margin-bottom:4px">Email</div>
+              <div style="font-size:13px;font-weight:600;color:var(--black)">modart.pod@gmail.com</div>
+            </div>
+            <div>
+              <div style="font-size:9px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--g3);margin-bottom:4px">Response Time</div>
+              <div style="font-size:13px;font-weight:600;color:var(--black)">Within 24 hours</div>
+            </div>
+            <div>
+              <div style="font-size:9px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--g3);margin-bottom:4px">Business Hours</div>
+              <div style="font-size:13px;font-weight:600;color:var(--black)">Mon–Sat, 10am–6pm IST</div>
+            </div>
+          </div>
           <div class="form-group"><label class="form-label">Name</label><input id="contact-name" class="form-input" type="text" placeholder="Your name"/></div>
           <div class="form-group"><label class="form-label">Email</label><input id="contact-email" class="form-input" type="email" placeholder="you@email.com"/></div>
           <div class="form-group"><label class="form-label">Subject</label>
@@ -1568,8 +1572,8 @@
           <p style="margin-bottom:20px"><strong style="color:var(--black)">Data We Collect:</strong> We collect your name, email, shipping address, and order history when you make a purchase or create an account. We do not store payment card details — all payments are processed by Stripe or Razorpay.</p>
           <p style="margin-bottom:20px"><strong style="color:var(--black)">How We Use It:</strong> Your data is used solely to process orders, send shipping updates, and improve your experience. We do not sell your data to third parties.</p>
           <p style="margin-bottom:20px"><strong style="color:var(--black)">Cookies:</strong> We use essential cookies for session management and optional analytics cookies. You can decline analytics cookies via the cookie banner.</p>
-          <p style="margin-bottom:20px"><strong style="color:var(--black)">Your Rights:</strong> You can request deletion of your account and all associated data at any time by contacting us at privacy@modart.com.</p>
-          <p><strong style="color:var(--black)">Contact:</strong> For privacy concerns, email privacy@modart.com.</p>
+          <p style="margin-bottom:20px"><strong style="color:var(--black)">Your Rights:</strong> You can request deletion of your account and all associated data at any time by contacting us at modart.pod@gmail.com.</p>
+          <p><strong style="color:var(--black)">Contact:</strong> For privacy concerns, email modart.pod@gmail.com.</p>
         </div>
       </div>
     </div>
@@ -1624,7 +1628,7 @@
         <div class="modal-header" style="text-align:center;margin-bottom:24px">
           <div style="font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--g3);margin-bottom:8px" id="modal-brand-lbl">Modart</div>
           <div class="modal-title" style="font-size:clamp(20px,3vw,28px);font-weight:900;font-style:italic;text-transform:uppercase;margin-bottom:8px">Get Early Access</div>
-          <div class="modal-subtitle" style="font-size:13px;color:var(--g3)"><span id="modal-spots">347</span> spots remaining</div>
+          <div class="modal-subtitle" style="font-size:13px;color:var(--g3)">Get first access to every drop</div>
         </div>
         <input id="modal-waitlist-email" class="modal-input" type="email" placeholder="your@email.com" style="width:100%;padding:14px 16px;border:1.5px solid var(--border);background:var(--white);font-family:var(--font);font-size:14px;color:var(--black);border-radius:var(--r-sm);outline:none;margin-bottom:14px"/>
         <button class="btn-red btn-red-full btn-red-pill modal-cta" style="padding:16px" onclick="joinList()">Secure My Spot</button>

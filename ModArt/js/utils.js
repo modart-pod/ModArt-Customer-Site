@@ -126,7 +126,7 @@ export async function handleContactSubmit() {
   }
 
   const btn = document.querySelector('#page-contact .btn-red');
-  if (btn) { btn.textContent='SendingGǪ'; btn.disabled=true; }
+  if (btn) { btn.textContent = 'Sending\u2026'; btn.disabled = true; }
 
   try {
     const res = await fetch('/api/send-contact-email', {

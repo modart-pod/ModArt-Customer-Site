@@ -347,6 +347,36 @@ function _updateManifestoCounter() {
     const hasLive = LIVE_DROPS.some(d => d.status === 'live');
     liveBadge.style.display = hasLive ? '' : 'none';
   }
+  // Update hero badge dynamically
+  const heroBadge = document.getElementById('hero-drop-badge');
+  const heroLabel = document.getElementById('hero-drop-label');
+  if (heroBadge) {
+    const liveDrop = LIVE_DROPS.find(d => d.status === 'live');
+    if (liveDrop) {
+      heroBadge.style.display = '';
+      if (heroLabel) heroLabel.textContent = `Drop ${liveDrop.drop_number || ''} — Live Now`.trim();
+    } else {
+      const upcoming = LIVE_DROPS.find(d => d.status === 'upcoming');
+      if (upcoming) {
+        heroBadge.style.display = '';
+        if (heroLabel) heroLabel.textContent = `Drop ${upcoming.drop_number || ''} — Coming Soon`.trim();
+      } else {
+        heroBadge.style.display = 'none';
+      }
+    }
+  }
+  // Update manifesto drop badge
+  const manifestoBadge = document.getElementById('manifesto-drop-badge');
+  const manifestoName  = document.getElementById('manifesto-drop-name');
+  const manifestoSub   = document.getElementById('manifesto-drop-sub');
+  if (manifestoBadge) {
+    const liveDrop = LIVE_DROPS.find(d => d.status === 'live') || LIVE_DROPS.find(d => d.status === 'upcoming');
+    if (liveDrop) {
+      manifestoBadge.style.display = '';
+      if (manifestoName) manifestoName.textContent = `Drop ${liveDrop.drop_number || ''} — ${liveDrop.name}`;
+      if (manifestoSub) manifestoSub.textContent = `${liveDrop.total_units || 200} Units — ${liveDrop.status === 'live' ? 'Live Now' : 'Upcoming'} — Own Manufacture`;
+    }
+  }
 }
 
 if (typeof window !== 'undefined') {
