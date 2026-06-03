@@ -523,3 +523,52 @@ textarea:focus-visible {
 [data-theme="dark"] .mobile-logo-btn span {
   color: var(--white) !important;
 }
+
+/* =================================================================
+   SKELETON LOADING — product grids, cards
+   Prevents blank white flash while products load from Supabase.
+   ================================================================= */
+
+@keyframes skeleton-shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position:  400px 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--bg-c) 25%, var(--bg-d) 50%, var(--bg-c) 75%);
+  background-size: 800px 100%;
+  animation: skeleton-shimmer 1.4s infinite linear;
+  border-radius: var(--r-sm);
+}
+
+/* Skeleton product card — same dimensions as real card */
+.skeleton-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+}
+
+.skeleton-card-img {
+  aspect-ratio: 4 / 5;
+  width: 100%;
+}
+
+.skeleton-card-body {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.skeleton-card-line {
+  height: 10px;
+  border-radius: 4px;
+}
+
+.skeleton-card-line.short  { width: 50%; }
+.skeleton-card-line.medium { width: 75%; }
+.skeleton-card-line.full   { width: 100%; }
+.skeleton-card-line.price  { width: 40%; height: 14px; }

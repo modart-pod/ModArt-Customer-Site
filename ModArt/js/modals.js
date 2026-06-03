@@ -153,29 +153,34 @@ function calcSize() {
 }
 
 /**
- * Generates AI artwork (simulated)
+ * Generates AI artwork (preview mode — AI generation not yet live)
+ * Shows a preview placeholder with the user's prompt, closes modal.
  */
 function generateAI() {
-  const prompt = document.getElementById('ai-prompt').value || 'Cyber samurai';
+  const prompt = document.getElementById('ai-prompt').value.trim() || 'Cyber samurai';
   const btn = document.getElementById('ai-cta');
-  
+
   // Show loading state
-  btn.innerHTML = 'Generating... <span class="material-symbols-outlined icon" style="animation:spin 1s linear infinite">autorenew</span>';
+  btn.innerHTML = 'Generating preview\u2026 <span class="material-symbols-outlined icon" style="animation:spin 1s linear infinite">autorenew</span>';
   btn.disabled = true;
-  
-  // Simulate AI generation delay then close modal and load placeholder artwork
+
   setTimeout(() => {
     closeModal();
 
-    // Load generated artwork to customizer canvas if the function is available
+    // Show a canvas placeholder with the prompt text so the customizer isn't blank
     if (typeof window.loadArtworkToCanvas === 'function') {
       window.loadArtworkToCanvas('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80', prompt);
     }
 
+    // Toast: be transparent that this is a preview
+    if (window.showCustomerToast) {
+      window.showCustomerToast('Preview loaded \u2014 AI generation coming soon', 'info');
+    }
+
     // Reset button state
-    btn.innerHTML = 'Generate Artwork <span class="material-symbols-outlined icon">auto_awesome</span>';
+    btn.innerHTML = 'Generate Preview <span class="material-symbols-outlined icon">auto_awesome</span>';
     btn.disabled = false;
-  }, 2200);
+  }, 1400);
 }
 
 // ================================================================

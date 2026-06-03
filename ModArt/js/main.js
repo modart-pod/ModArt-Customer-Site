@@ -4,7 +4,7 @@
  */
 
 import { initRouter } from './router.js';
-import { renderProducts, renderBag, updateBadges, populateCheckoutSummary } from './rendering.js';
+import { renderProducts, renderBag, updateBadges, populateCheckoutSummary, renderSkeletonProducts } from './rendering.js';
 import { initCustomizer, updateCost } from './customizer.js';
 import { initLayoutManager } from './layouts/LayoutManager.js';
 import { applyMobileLayout  } from './layouts/MobileLayout.js';
@@ -138,6 +138,10 @@ async function initApplication() {
   lp(8, 'Initialising\u2026');
   initRouter();
   initLayoutManager();
+
+  // Inject skeleton cards immediately so grids are never blank while loading
+  renderSkeletonProducts('home-product-grid', 4);
+  renderSkeletonProducts('shop-product-grid', 12);
   function applyCorrectLayout() {
     const w = window.innerWidth;
     if (w < 768)       applyMobileLayout();

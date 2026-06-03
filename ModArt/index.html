@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <link rel="icon" href="assets/images/modart-logo.png" type="image/png">
-  <link rel="apple-touch-icon" href="assets/images/modart-logo.png">
+  <link rel="icon" href="assets/images/logo-loader.png" type="image/png">
+  <link rel="apple-touch-icon" href="assets/images/logo-loader.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="description" content="Premium in-house garment studio — Design your own limited drops. Owned manufacturing, culture-first streetwear, built for creators.">
   <meta property="og:type" content="website"/>
@@ -282,7 +282,7 @@
   <nav id="mobile-menu-drawer" style="display:none;position:fixed;top:0;left:0;width:80%;max-width:300px;height:100%;background:var(--black);z-index:999;flex-direction:column;padding:24px 20px;overflow-y:auto" aria-label="Mobile navigation drawer">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:32px">
       <span style="font-size:14px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#fff">Menu</span>
-      <button onclick="toggleMobileMenu()" style="background:none;border:none;cursor:pointer;color:rgba(255,255,255,.5);font-size:22px;line-height:1;padding:4px">?</button>
+      <button onclick="toggleMobileMenu()" style="background:none;border:none;cursor:pointer;color:rgba(255,255,255,.5);font-size:22px;line-height:1;padding:4px" aria-label="Close menu">&#x2715;</button>
     </div>
     <div style="display:flex;flex-direction:column;gap:4px">
       <button onclick="goTo('home');toggleMobileMenu()" style="text-align:left;background:none;border:none;cursor:pointer;font-family:var(--font);font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#fff;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.07)">Home</button>
@@ -524,8 +524,8 @@
         <h2 class="early-access-title">Get In Before<br>It Sells Out.</h2>
         <p class="early-access-sub">First access every drop. Creator revenue share. Zero spam.</p>
         <div class="early-access-form">
-          <input class="early-input" type="email" placeholder="name@domain.com" aria-label="Email address"/>
-          <button class="btn-red btn-red-pill" onclick="openModal('waitlist')">Secure Access</button>
+          <input class="early-input" type="email" id="early-access-email" placeholder="name@domain.com" aria-label="Email address"/>
+          <button class="btn-red btn-red-pill" onclick="(function(){var v=document.getElementById('early-access-email');var e=v&&v.value.trim();openModal('waitlist');if(e){var inp=document.getElementById('modal-waitlist-email');if(inp)inp.value=e;}})()">Secure Access</button>
         </div>
         <div class="early-privacy">Private & Encrypted. Unsubscribe anytime.</div>
       </div>
@@ -1605,18 +1605,12 @@
           <div style="font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--g3);margin-bottom:8px">ModArt</div>
           <div style="font-size:20px;font-weight:900;font-style:italic;text-transform:uppercase">Admin Access</div>
         </div>
-        <div id="admin-login-error" style="display:none;background:rgba(215,38,56,.08);border:1px solid rgba(215,38,56,.25);color:var(--red);font-size:12px;font-weight:600;padding:10px 14px;border-radius:var(--r-sm);margin-bottom:16px"></div>
-        <div class="form-group"><label class="form-label">Email</label><input id="admin-email" class="form-input" type="email" placeholder="admin@modart.co"/></div>
-        <div class="form-group"><label class="form-label">Password</label><input id="admin-password" class="form-input" type="password" placeholder="————————"/></div>
-        <button class="btn-red btn-red-full btn-red-pill" style="padding:16px;margin-top:8px" onclick="window.location.href='/admin'">Access Dashboard</button>
+        <p style="font-size:13px;color:var(--g2);text-align:center;margin-bottom:24px;line-height:1.6">The admin dashboard is a separate app.<br>Open it directly to sign in.</p>
+        <button class="btn-red btn-red-full btn-red-pill" style="padding:16px;margin-bottom:12px" onclick="window.open('/admin.html','_blank')">
+          <span class="material-symbols-outlined icon" style="font-size:16px">open_in_new</span> Open Admin Dashboard
+        </button>
+        <button class="btn-ghost" style="width:100%;padding:12px;font-size:11px;letter-spacing:.1em" onclick="goTo('home')">Back to Site</button>
       </div>
-    </div>
-    <div id="admin-dashboard" style="display:none;padding:32px;min-height:100vh">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:32px">
-        <div style="font-size:20px;font-weight:900;font-style:italic;text-transform:uppercase">Admin Dashboard</div>
-        <button class="btn-ghost" onclick="goTo('home')">? Back to Site</button>
-      </div>
-      <p style="color:var(--g2)">Full admin panel is in <button class="btn-ghost" onclick="window.open('admin.html','_blank')" style="color:var(--red)">admin.html</button></p>
     </div>
   </main>
 
@@ -1646,10 +1640,11 @@
       <div id="modal-ai" style="display:none">
         <div class="modal-header" style="text-align:center;margin-bottom:24px">
           <div class="modal-title" style="font-size:clamp(20px,3vw,28px);font-weight:900;font-style:italic;text-transform:uppercase;margin-bottom:8px">AI Artwork</div>
-          <div class="modal-subtitle" style="font-size:13px;color:var(--g3)">Describe your design idea</div>
+          <div class="modal-subtitle" style="font-size:13px;color:var(--g3)">Describe your design idea — preview loads instantly</div>
         </div>
         <textarea id="ai-prompt" class="form-input" rows="3" placeholder="e.g. Cyber samurai in neon Tokyo rain—" style="margin-bottom:14px"></textarea>
-        <button id="ai-cta" class="btn-red btn-red-full btn-red-pill" style="padding:14px;display:flex;align-items:center;justify-content:center;gap:8px" onclick="generateAI()">Generate Artwork <span class="material-symbols-outlined icon">auto_awesome</span></button>
+        <button id="ai-cta" class="btn-red btn-red-full btn-red-pill" style="padding:14px;display:flex;align-items:center;justify-content:center;gap:8px" onclick="generateAI()">Generate Preview <span class="material-symbols-outlined icon">auto_awesome</span></button>
+        <div style="margin-top:10px;font-size:10px;color:var(--g3);text-align:center;letter-spacing:.04em">Full AI generation — coming soon</div>
       </div>
     </div>
   </div>

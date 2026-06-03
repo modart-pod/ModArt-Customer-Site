@@ -25,6 +25,34 @@ function esc(str) {
 }
 
 /* ================================================================
+   SKELETON LOADING
+   ================================================================ */
+
+/**
+ * Renders skeleton placeholder cards into a product grid.
+ * Called before real products are fetched so the grid is never blank.
+ * @param {string} gridId - DOM id of the grid element
+ * @param {number} count - Number of skeleton cards to render
+ */
+export function renderSkeletonProducts(gridId, count = 8) {
+  const grid = document.getElementById(gridId);
+  if (!grid || grid.children.length > 0) return; // don't overwrite existing content
+  grid.innerHTML = Array.from({ length: count }, () => `
+    <div class="skeleton-card" aria-hidden="true">
+      <div class="skeleton-card-img skeleton"></div>
+      <div class="skeleton-card-body">
+        <div class="skeleton-card-line short skeleton"></div>
+        <div class="skeleton-card-line medium skeleton"></div>
+        <div class="skeleton-card-line price skeleton"></div>
+      </div>
+    </div>`).join('');
+}
+
+if (typeof window !== 'undefined') {
+  window.renderSkeletonProducts = renderSkeletonProducts;
+}
+
+/* ================================================================
    PRODUCT GRID RENDERING
    ================================================================ */
 

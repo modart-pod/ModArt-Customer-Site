@@ -2,49 +2,44 @@
 <footer class="site-footer">
   <div class="container">
     <div class="footer-grid">
-      <div>
-        <div class="footer-brand-logo">Modart</div>
+      <div class="footer-brand-col">
+        <div class="footer-brand-logo">ModArt</div>
         <p class="footer-brand-desc">Premium custom garment studio. Limited drops. No restocks. Creator-driven.</p>
         <div class="footer-social">
-          <button class="footer-social-btn" aria-label="Instagram"><span class="material-symbols-outlined icon">photo_camera</span></button>
-          <button class="footer-social-btn" aria-label="Twitter"><span class="material-symbols-outlined icon">tag</span></button>
-          <button class="footer-social-btn" aria-label="Discord"><span class="material-symbols-outlined icon">forum</span></button>
+          <button class="footer-social-btn" aria-label="Instagram" onclick="window.open('https://www.instagram.com/modart.studio','_blank')"><span class="material-symbols-outlined icon">photo_camera</span></button>
         </div>
       </div>
       <div>
         <div class="footer-col-title">Shop</div>
         <div class="footer-links">
           <button class="footer-link" onclick="goTo('shop')">All Products</button>
-          <button class="footer-link" onclick="goTo('shop')">New Drops</button>
-          <button class="footer-link">Sold Out Archive</button>
-          <button class="footer-link">Size Guide</button>
+          <button class="footer-link" onclick="goTo('drops')">Drop Archive</button>
+          <button class="footer-link" onclick="goTo('shop');setTimeout(()=>{window.filterShop&&window.filterShop('instock',null)},100)">In Stock Now</button>
+          <button class="footer-link" onclick="openModal('sizefinder')">Size Guide</button>
         </div>
       </div>
       <div>
         <div class="footer-col-title">Create</div>
         <div class="footer-links">
           <button class="footer-link" onclick="goTo('customize')">Open Studio</button>
-          <button class="footer-link" onclick="goTo('community')">Creators</button>
-          <button class="footer-link">Revenue Share</button>
-          <button class="footer-link">Wholesale</button>
+          <button class="footer-link" onclick="goTo('about')">About ModArt</button>
         </div>
       </div>
       <div>
         <div class="footer-col-title">Support</div>
         <div class="footer-links">
           <button class="footer-link" onclick="goTo('orders')">Track Order</button>
-          <button class="footer-link">Returns</button>
-          <button class="footer-link">Shipping</button>
-          <button class="footer-link" onclick="goTo('admin')">Admin</button>
+          <button class="footer-link" onclick="goTo('faq')">FAQ</button>
+          <button class="footer-link" onclick="goTo('contact')">Contact</button>
         </div>
       </div>
     </div>
     <div class="footer-bottom">
-      <span class="footer-copy">© 2024 ModArt. All rights reserved.</span>
+      <span class="footer-copy">© <span id="footer-year"></span> ModArt. All rights reserved.</span>
       <div class="footer-legal">
-        <button class="footer-legal-link">Privacy</button>
-        <button class="footer-legal-link">Terms</button>
-        <button class="footer-legal-link">Cookies</button>
+        <button class="footer-legal-link" onclick="goTo('privacy')">Privacy</button>
+        <button class="footer-legal-link" onclick="goTo('terms')">Terms</button>
+        <button class="footer-legal-link" onclick="acceptCookies()">Cookies</button>
       </div>
     </div>
   </div>
