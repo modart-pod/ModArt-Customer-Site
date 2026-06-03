@@ -1733,3 +1733,92 @@ textarea:focus-visible,
   padding-top: clamp(36px, 5vw, 64px) !important;
   padding-bottom: clamp(36px, 5vw, 64px) !important;
 }
+
+/* =================================================================
+   DROPS / ACCOUNT / CUSTOMIZE — GAP REMOVAL
+   ================================================================= */
+
+/* ── DROPS PAGE — remove double top gap ── */
+#page-drops {
+  /* .page adds padding-top: var(--nav-h). The inner div now uses
+     clamp(16px,...) so total top gap = nav-h + 16px = ~84px. Fine. */
+}
+
+#page-drops .container > div {
+  padding-top: clamp(16px, 2.5vw, 28px) !important;
+  padding-bottom: clamp(28px, 4vw, 48px) !important;
+}
+
+/* Section sub-gaps inside drops page */
+#drops-section-live,
+#drops-section-upcoming {
+  margin-bottom: clamp(20px, 3vw, 36px) !important;
+}
+
+/* ── CUSTOMIZE PAGE — flush topbar, no double nav gap ── */
+/* The .page class adds padding-top: var(--nav-h) via responsive.css.
+   The customizer has its own sticky topbar. We must cancel the page
+   padding so the topbar sits flush under the nav, not 68px below it. */
+body.layout-desktop #page-customize,
+body.layout-tablet  #page-customize {
+  padding-top: 0 !important;
+}
+
+/* The customizer-page div fills the remaining viewport height */
+#page-customize .customizer-page {
+  min-height: calc(100vh - var(--nav-h));
+  flex: 1;
+}
+
+/* Mobile: page-customize already has no top-nav, but mobile bottom nav
+   is hidden on customize page (handled by router.js). Ensure full height. */
+body.layout-mobile #page-customize {
+  padding-top: var(--nav-h) !important; /* mobile header still shows */
+}
+
+body.layout-mobile #page-customize .customizer-page {
+  min-height: calc(100vh - var(--nav-h));
+}
+
+/* ── ACCOUNT PAGE — remove over-padded dark hero ── */
+#page-account #account-logged-in > div:first-child {
+  /* Profile hero — already reduced to clamp(16px,...) inline.
+     Ensure no extra space from page padding stacking. */
+  padding-top: clamp(14px, 2vw, 20px) !important;
+}
+
+#page-account #account-logged-out > div {
+  padding-top: clamp(24px, 3.5vw, 40px) !important;
+  padding-bottom: clamp(24px, 3.5vw, 40px) !important;
+}
+
+/* Account menu sections — tighter top gap */
+#page-account #account-logged-in .container {
+  padding-top: 0 !important;
+  padding-bottom: clamp(24px, 4vw, 40px) !important;
+}
+
+/* Quick action grid — tighter top padding */
+#page-account #account-logged-in .container > div[style*="grid-template-columns:1fr 1fr"] {
+  padding-top: 12px !important;
+  padding-bottom: 4px !important;
+}
+
+/* Mobile account page — additional reductions */
+@media (max-width: 599px) {
+  #page-drops .container > div {
+    padding-top: 12px !important;
+    padding-bottom: 24px !important;
+  }
+  #drops-section-live,
+  #drops-section-upcoming {
+    margin-bottom: 20px !important;
+  }
+  #page-account #account-logged-in > div:first-child {
+    padding-top: 12px !important;
+  }
+  #page-account #account-logged-out > div {
+    padding-top: 20px !important;
+    padding-bottom: 20px !important;
+  }
+}
