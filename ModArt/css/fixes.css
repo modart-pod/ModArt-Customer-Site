@@ -1528,3 +1528,208 @@ textarea:focus-visible,
   height: 16px;
   flex-shrink: 0;
 }
+
+/* =================================================================
+   GAP & SPACING CLEANUP
+   Remove unwanted whitespace between sections, over-padded areas,
+   and double-padding caused by stacked .section + inline padding.
+   ================================================================= */
+
+/* ── HOME PAGE — eliminate excess vertical whitespace ── */
+
+/* .page has min-height: calc(100vh - nav-h) which forces blank space
+   on the home page when the hero fills the viewport. Remove it. */
+#page-home {
+  min-height: unset !important;
+}
+
+/* Home sections stack with no extra breathing room beyond what they declare */
+#page-home .section,
+#page-shop .section {
+  padding-top: clamp(32px, 4vw, 56px);
+  padding-bottom: clamp(32px, 4vw, 56px);
+}
+
+/* New Arrivals section — tighter top/bottom */
+#page-home > section:nth-child(4) {
+  padding-top: clamp(28px, 4vw, 48px) !important;
+  padding-bottom: clamp(28px, 4vw, 48px) !important;
+}
+
+/* Customizer CTA banner — tighter padding */
+#page-home > section[style*="background:var(--red)"],
+#page-home > section[style*="background: var(--red)"] {
+  padding-top: clamp(36px, 5vw, 56px) !important;
+  padding-bottom: clamp(36px, 5vw, 56px) !important;
+}
+
+/* Manifesto — tighter */
+.manifesto {
+  padding-top: clamp(48px, 6vw, 80px) !important;
+  padding-bottom: clamp(48px, 6vw, 80px) !important;
+}
+
+/* Drop archive section */
+.drop-archive {
+  padding-top: clamp(36px, 5vw, 64px) !important;
+  padding-bottom: clamp(36px, 5vw, 64px) !important;
+}
+
+/* Reviews */
+.reviews-section {
+  padding-top: clamp(36px, 5vw, 64px) !important;
+  padding-bottom: clamp(36px, 5vw, 64px) !important;
+}
+
+/* Early access */
+.early-access {
+  padding-top: clamp(48px, 6vw, 80px) !important;
+  padding-bottom: clamp(48px, 6vw, 80px) !important;
+}
+
+/* ── FOOTER — reduce top gap ── */
+.site-footer {
+  padding-top: clamp(36px, 5vw, 60px) !important;
+  padding-bottom: clamp(20px, 3vw, 32px) !important;
+}
+
+.footer-grid {
+  margin-bottom: 32px !important;
+  gap: 32px !important;
+}
+
+@media (min-width: 1024px) {
+  .footer-grid {
+    gap: 40px !important;
+  }
+}
+
+/* ── SHOP PAGE — section padding inside .section class ── */
+#page-shop .section {
+  padding-top: clamp(20px, 3vw, 32px) !important;
+  padding-bottom: clamp(32px, 5vw, 56px) !important;
+}
+
+/* ── PRODUCT DETAIL PAGE — tighter top padding ── */
+#page-product .section {
+  padding-top: clamp(16px, 2.5vw, 28px) !important;
+  padding-bottom: clamp(32px, 5vw, 56px) !important;
+}
+
+/* Related products section */
+#page-product div[style*="margin-top:clamp(40px"] {
+  margin-top: clamp(28px, 4vw, 48px) !important;
+}
+
+/* ── BAG PAGE — header padding cleanup ── */
+#page-bag .bag-layout {
+  padding-top: 12px !important;
+  padding-bottom: clamp(24px, 4vw, 48px) !important;
+}
+
+/* ── CHECKOUT PAGE ── */
+#page-checkout .checkout-layout {
+  padding-top: 12px !important;
+  padding-bottom: clamp(24px, 4vw, 48px) !important;
+}
+
+/* ── ORDERS PAGE ── */
+.orders-page-layout {
+  padding-top: clamp(20px, 3vw, 40px) !important;
+  padding-bottom: clamp(32px, 5vw, 56px) !important;
+}
+
+/* ── AUTH PAGES — login/register/forgot ── */
+#page-login .section,
+#page-register .section,
+#page-forgot-password .section {
+  padding-top: clamp(28px, 4vw, 48px) !important;
+  padding-bottom: clamp(32px, 5vw, 64px) !important;
+}
+
+/* ── ACCOUNT PAGE — dark hero section ── */
+#page-account #account-logged-in > div[style*="background:var(--dark)"] {
+  padding-top: clamp(20px, 3vw, 36px) !important;
+}
+
+/* ── WISHLIST PAGE ── */
+#page-wishlist .section {
+  padding-top: clamp(20px, 3vw, 36px) !important;
+  padding-bottom: clamp(32px, 5vw, 56px) !important;
+}
+
+/* ── ABOUT / CONTACT / FAQ / LEGAL pages ── */
+#page-about section,
+#page-contact .section,
+#page-faq .section,
+#page-privacy .section,
+#page-terms .section {
+  padding-top: clamp(28px, 4vw, 52px) !important;
+  padding-bottom: clamp(32px, 5vw, 64px) !important;
+}
+
+/* ── DROPS PAGE ── */
+#page-drops .container > div {
+  padding-top: clamp(20px, 3vw, 36px) !important;
+  padding-bottom: clamp(36px, 5vw, 60px) !important;
+}
+
+/* ── CONFIRMATION PAGE ── */
+.confirmation-hero {
+  padding-top: clamp(36px, 5vw, 64px) !important;
+  padding-bottom: clamp(36px, 5vw, 64px) !important;
+}
+
+/* ── MOBILE — all section padding further reduced ── */
+@media (max-width: 599px) {
+  .manifesto           { padding-top: 36px !important; padding-bottom: 36px !important; }
+  .drop-archive        { padding-top: 28px !important; padding-bottom: 28px !important; }
+  .reviews-section     { padding-top: 28px !important; padding-bottom: 28px !important; }
+  .early-access        { padding-top: 36px !important; padding-bottom: 36px !important; }
+  .site-footer         { padding-top: 28px !important; padding-bottom: 16px !important; }
+  .confirmation-hero   { padding-top: 28px !important; padding-bottom: 28px !important; }
+  .orders-page-layout  { padding-top: 16px !important; }
+  #page-bag .bag-layout       { padding-top: 8px !important; }
+  #page-checkout .checkout-layout { padding-top: 8px !important; }
+}
+
+/* ── DESKTOP NAV BRAND NAME — color transitions with logo ── */
+#nav-brand-name {
+  color: inherit;
+  font-family: var(--font);
+  background: none;
+  border: none;
+  pointer-events: none; /* click handled by parent button */
+}
+
+/* On transparent hero nav — white brand name */
+/* (inherits from .nav-logo color set by router.js) */
+
+/* ── HERO — remove empty space at bottom on home desktop ── */
+.home-hero {
+  /* Remove bottom gap that appears before trust strip */
+  margin-bottom: 0;
+}
+
+/* Trust strip sits flush against hero */
+.trust-strip {
+  margin-top: 0;
+}
+
+/* ── TICKER — no extra margin ── */
+.ticker-bar {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* ── SECTION FLOW — ensure no stray margins between direct children of #page-home ── */
+#page-home > * {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* ── COMMUNITY / CREATOR SECTION (if present) ── */
+.community {
+  padding-top: clamp(36px, 5vw, 64px) !important;
+  padding-bottom: clamp(36px, 5vw, 64px) !important;
+}
