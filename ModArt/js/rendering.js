@@ -151,6 +151,11 @@ export function renderProducts(page) {
   if (isShop) {
     const countEl = document.getElementById('shop-product-count');
     if (countEl) countEl.textContent = `${prods.length} product${prods.length !== 1 ? 's' : ''}`;
+    // Keep shop ticker in sync
+    ['shop-ticker-count', 'shop-ticker-count-2'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = prods.length;
+    });
   }
 }
 
@@ -842,8 +847,10 @@ if (typeof window !== 'undefined') {
    ================================================================ */
 
 export function renderSizeOptions(productId) {
+  // Populate both the product detail page and the customizer size selectors
   const container = document.getElementById('size-options-dynamic');
-  if (!container) return;
+  const custContainer = document.getElementById('customizer-size-options');
+  if (!container && !custContainer) return;
 
   const sizes = (window.getSizesForProduct && productId)
     ? window.getSizesForProduct(productId)
@@ -855,7 +862,7 @@ export function renderSizeOptions(productId) {
         { size:'XL', stock:0, available:false },
       ];
 
-  container.innerHTML = sizes.map((s, i) => {
+  const html = sizes.map((s, i) => {
     const isFirst = i === 0 && s.available;
     const lowStock = s.stock > 0 && s.stock <= 3;
     return `<button
@@ -872,6 +879,9 @@ export function renderSizeOptions(productId) {
           : ''}
     </button>`;
   }).join('');
+
+  if (container) container.innerHTML = html;
+  if (custContainer) custContainer.innerHTML = html;
 }
 
 if (typeof window !== 'undefined') {

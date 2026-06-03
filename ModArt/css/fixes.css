@@ -572,3 +572,959 @@ textarea:focus-visible {
 .skeleton-card-line.medium { width: 75%; }
 .skeleton-card-line.full   { width: 100%; }
 .skeleton-card-line.price  { width: 40%; height: 14px; }
+
+/* =================================================================
+   RESPONSIVE UI BALANCE FIXES
+   Addresses layout, spacing, and breakpoint inconsistencies across
+   mobile and desktop. Applied last — highest specificity wins.
+   ================================================================= */
+
+/* ── 1. HOME ARRIVALS GRID
+      Desktop: 4-col even grid, no overflow scroll
+      Tablet:  2-col
+      Mobile:  2-col (already in responsive.css)
+   ─────────────────────────────────────────────────────────────── */
+.home-arrivals-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(10px, 2vw, 20px);
+}
+
+@media (min-width: 600px) {
+  .home-arrivals-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .home-arrivals-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: clamp(14px, 2vw, 22px);
+  }
+}
+
+/* Carousel dots: visible on mobile, hidden on desktop */
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 14px;
+}
+
+@media (min-width: 600px) {
+  .carousel-dots { display: none; }
+}
+
+.carousel-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(0,0,0,.2);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: all .3s ease;
+  flex-shrink: 0;
+}
+
+.carousel-dot.active {
+  background: var(--black);
+  width: 20px;
+  border-radius: 3px;
+}
+
+/* ── 2. BAG & CHECKOUT SIDEBAR WIDTH
+      768-1023px: sidebar is 320px max — not 400px fixed
+      1024px+:    sidebar is 380px — not 400px
+   ─────────────────────────────────────────────────────────────── */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .bag-layout,
+  .checkout-layout {
+    grid-template-columns: 1fr 300px;
+    gap: 24px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .bag-layout,
+  .checkout-layout {
+    grid-template-columns: 1fr 380px;
+    gap: 40px;
+  }
+}
+
+/* ── 3. FOOTER GRID — 3 columns (brand + shop + support)
+      The responsive.css defines a 4-col rule at 1024px+ which is now
+      wrong (we removed the "Create" column). Override to 3-col.
+   ─────────────────────────────────────────────────────────────── */
+@media (min-width: 1024px) {
+  .footer-grid {
+    grid-template-columns: 1.8fr 1fr 1fr !important;
+    gap: 48px;
+  }
+  /* Ensure brand col is full width on mobile still */
+}
+
+@media (min-width: 600px) and (max-width: 1023px) {
+  .footer-grid {
+    grid-template-columns: 1.4fr 1fr 1fr !important;
+    gap: 32px;
+  }
+}
+
+/* ── 4. MOBILE BOTTOM NAV — center Design button overflow
+      Allow the center raised button to overflow the nav bar.
+      The nav bar clips it without overflow:visible.
+   ─────────────────────────────────────────────────────────────── */
+.mobile-bottom-nav {
+  overflow: visible;
+}
+
+/* Fix the center button — use translateY instead of negative margin
+   so it rises above the nav without needing overflow on parent */
+.mob-nav-center {
+  overflow: visible;
+  padding-top: 0;
+  padding-bottom: 8px;
+}
+
+.mob-nav-center > div {
+  /* The raised circle — transform up instead of negative margin */
+  margin-top: 0 !important;
+  transform: translateY(-14px);
+}
+
+/* ── 5. MOBILE HEADER — logo button layout
+      CSS sets position:absolute left:50% transform, but inline HTML
+      overrides to position:static. Ensure the header flexes correctly
+      without absolute positioning conflicts.
+   ─────────────────────────────────────────────────────────────── */
+.mobile-hdr {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  height: var(--nav-h);
+  gap: 8px;
+}
+
+/* Override the class default (absolute positioning) since the HTML
+   already uses position:static via inline style */
+.mobile-hdr .mobile-logo-btn {
+  position: static !important;
+  transform: none !important;
+  flex-shrink: 0;
+}
+
+/* ── 6. PRODUCT DETAIL GRID BREAKPOINT
+      At 768px the 1fr/1fr is cramped. Shift the split so images get
+      more room. Below 900px revert to single column.
+   ─────────────────────────────────────────────────────────────── */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .product-detail-grid {
+    grid-template-columns: 1fr !important;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+}
+
+@media (min-width: 1024px) {
+  .product-detail-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(32px, 4vw, 56px);
+  }
+}
+
+/* ── 7. BAG PAGE — avoid double top-padding on mobile
+      The .page gets padding-top: var(--nav-h) from layout.
+      .bag-layout already has its own internal padding.
+      Remove the internal padding on mobile to avoid double gap.
+   ─────────────────────────────────────────────────────────────── */
+@media (max-width: 767px) {
+  .bag-layout {
+    padding-top: 16px !important;
+  }
+  .checkout-layout {
+    padding-top: 16px !important;
+  }
+}
+
+/* ── 8. SECTION PADDING — mobile sections were slightly too tall
+      clamp already handles most of this, but sections inside dark
+      backgrounds had inconsistent padding on small screens.
+   ─────────────────────────────────────────────────────────────── */
+@media (max-width: 599px) {
+  /* Reviews — reduce gap between cards */
+  .review-grid { gap: 10px; }
+
+  /* Drop archive — tighter rows */
+  .drop-row { padding: 12px 0; }
+
+  /* Trust strip — ensure it stays single row */
+  .trust-items {
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    gap: 4px;
+    padding: 0 4px;
+  }
+  .trust-item {
+    flex-direction: column;
+    text-align: center;
+    gap: 4px;
+    flex: 1;
+    min-width: 0;
+  }
+  .trust-item .icon { font-size: 18px; }
+  .trust-item-txt {
+    font-size: 8px;
+    letter-spacing: .04em;
+    line-height: 1.2;
+  }
+}
+
+/* ── 9. SHOP GRID — mobile 2-col must override .shop-grid's auto-fill
+      .shop-grid sets minmax(148px,1fr) which can create 3-col on some
+      430px phones. Force 2-col on phones.
+   ─────────────────────────────────────────────────────────────── */
+@media (max-width: 599px) {
+  .shop-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+  .shop-grid .product-card-img {
+    aspect-ratio: 3/4;
+  }
+}
+
+/* ── 10. PAGE TRANSITION — home page flex direction
+       .page is display:flex flex-direction:column which can push
+       sections to share the remaining viewport height.
+       Use min-height:auto on children so they stack naturally.
+   ─────────────────────────────────────────────────────────────── */
+#page-home > section,
+#page-home > footer,
+#page-home > div {
+  flex-shrink: 0;
+}
+
+/* ── 11. NAV "SIGN IN" BUTTON
+       The inline-styled Sign In button in desktop nav has 8px 12px
+       padding which makes it shorter than the icon buttons (40px).
+       Standardise height.
+   ─────────────────────────────────────────────────────────────── */
+.nav-icon-btn[data-show-when="logged-out"] {
+  height: 40px;
+  padding: 0 14px;
+  border-radius: var(--r-full);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  border: 1.5px solid var(--border);
+  transition: background var(--t), border-color var(--t), color var(--t);
+}
+
+.nav-icon-btn[data-show-when="logged-out"]:hover {
+  background: var(--black);
+  border-color: var(--black);
+  color: #fff;
+}
+
+/* ── 12. ORDERS PAGE — stepper labels overflow on narrow phones
+   ─────────────────────────────────────────────────────────────── */
+@media (max-width: 380px) {
+  .stepper-lbl { font-size: 7px; letter-spacing: .04em; }
+  .stepper-dot { width: 8px; height: 8px; }
+}
+
+/* ── 13. WISHLIST / ACCOUNT page balance on tablet ── */
+@media (min-width: 768px) and (max-width: 1023px) {
+  #wishlist-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+/* ── 14. CONFIRMATION PAGE — dark bg padding ── */
+@media (max-width: 599px) {
+  .confirmation-hero .container {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  .confirmation-step {
+    gap: 12px;
+  }
+  .confirmation-step > div:first-child {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    flex-shrink: 0;
+  }
+}
+
+/* ── 15. ABOUT / CONTACT / FAQ / LEGAL pages — balanced column width
+       on medium screens. These simple pages look too wide otherwise.
+   ─────────────────────────────────────────────────────────────── */
+@media (min-width: 768px) {
+  #page-about .container > section,
+  #page-contact .container > div,
+  #page-faq .container > div,
+  #page-privacy .container > div,
+  #page-terms .container > div {
+    max-width: 760px;
+  }
+}
+
+/* ── 16. MODAL CARD — ensure it's never wider than the viewport
+   ─────────────────────────────────────────────────────────────── */
+.modal-card {
+  max-width: min(480px, calc(100vw - 32px));
+  width: 100%;
+}
+
+/* ── 17. DESKTOP NAV height consistency
+       Ensure the 3-col grid keeps the sign-in button vertically
+       centered and doesn't clip the Live badge.
+   ─────────────────────────────────────────────────────────────── */
+.desktop-nav {
+  height: var(--nav-h);
+  display: block;
+}
+
+.nav-inner-grid {
+  height: 100%;
+  align-items: center;
+}
+
+/* ── 18. SHOP FILTER BAR — tablet layout tweak
+       On 600-767px the filter bar wraps awkwardly with the sort select.
+       Keep filter chips scrollable, sort on the right.
+   ─────────────────────────────────────────────────────────────── */
+@media (min-width: 600px) and (max-width: 767px) {
+  .shop-filter-bar {
+    flex-wrap: nowrap;
+    align-items: center;
+  }
+  .shop-filter-btns {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    flex: 1;
+    padding-bottom: 0;
+  }
+  .shop-filter-btns::-webkit-scrollbar { display: none; }
+  .shop-sort-select { flex-shrink: 0; }
+}
+
+/* ── 19. SKELETON CARDS — match shop-grid density ── */
+@media (max-width: 599px) {
+  .skeleton-card-img { aspect-ratio: 3/4; }
+}
+
+/* ── 20. PRODUCT CARD hover state on touch devices ── */
+@media (hover: none) {
+  .product-card { transform: none !important; }
+  .product-card:hover { transform: none !important; }
+}
+
+/* =================================================================
+   ADDITIONAL PAGE-LEVEL BALANCE FIXES
+   ================================================================= */
+
+/* ── DROP ARCHIVE rows — define grid columns at every breakpoint ── */
+.drop-row {
+  grid-template-columns: 48px 1fr auto 24px;
+}
+
+@media (max-width: 599px) {
+  .drop-row {
+    grid-template-columns: 40px 1fr auto;
+  }
+  /* Hide the arrow icon on very small screens to save space */
+  .drop-row > .material-symbols-outlined:last-child {
+    display: none;
+  }
+}
+
+@media (min-width: 600px) and (max-width: 1023px) {
+  .drop-row {
+    grid-template-columns: 56px 1fr auto 28px;
+  }
+}
+
+/* ── CONFIRMATION DELIVERY GRID — single column on mobile ── */
+@media (max-width: 499px) {
+  #confirmation-delivery > div > div[style*="grid-template-columns"] {
+    grid-template-columns: 1fr !important;
+    gap: 12px;
+  }
+}
+
+/* ── PRODUCT DETAIL — image stack improvements ── */
+.product-img-main {
+  width: 100%;
+  aspect-ratio: 3/4;
+  object-fit: cover;
+  border-radius: var(--r-lg);
+  display: block;
+}
+
+.product-img-thumb {
+  width: 72px;
+  height: 86px;
+  object-fit: cover;
+  border-radius: var(--r-md);
+  cursor: pointer;
+  opacity: .65;
+  transition: opacity var(--t), outline var(--t);
+  flex-shrink: 0;
+}
+
+.product-img-thumb.active,
+.product-img-thumb:hover {
+  opacity: 1;
+  outline: 2px solid var(--black);
+  outline-offset: 2px;
+}
+
+@media (max-width: 599px) {
+  .product-img-thumb {
+    width: 60px;
+    height: 72px;
+  }
+  .product-img-main {
+    border-radius: var(--r-md);
+  }
+}
+
+/* ── SIZE BUTTON BALANCE — consistent width regardless of label ── */
+.size-btn {
+  min-width: 48px;
+  width: auto;
+  padding: 10px 12px;
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  font-family: var(--font);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--black);
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  transition: all var(--t);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.size-btn:hover:not(.dis) {
+  border-color: var(--black);
+}
+
+.size-btn.sel {
+  background: var(--black);
+  border-color: var(--black);
+  color: #fff;
+}
+
+.size-btn.dis {
+  opacity: .35;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+/* ── BAG ITEM — image aspect ratio ── */
+.bag-img {
+  width: clamp(90px, 20vw, 130px);
+  aspect-ratio: 3/4;
+  border-radius: var(--r-md);
+  overflow: hidden;
+  background: var(--bg-d);
+}
+
+@media (max-width: 599px) {
+  .bag-img {
+    width: 80px;
+    aspect-ratio: 3/4;
+  }
+}
+
+/* ── QUANTITY CONTROL — uniform sizing ── */
+.qty-control {
+  display: inline-flex;
+  align-items: center;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-full);
+  overflow: hidden;
+  height: 40px;
+}
+
+.qty-btn {
+  width: 40px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  font-size: 18px;
+  font-weight: 300;
+  color: var(--black);
+  cursor: pointer;
+  transition: background var(--t);
+  flex-shrink: 0;
+}
+
+.qty-btn:hover {
+  background: var(--bg-c);
+}
+
+.qty-display {
+  min-width: 32px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--black);
+  padding: 0 4px;
+  user-select: none;
+}
+
+/* ── PRINT TYPE BUTTONS — consistent height ── */
+.print-type-btn {
+  min-height: 52px;
+  justify-content: center;
+}
+
+.print-type-btn.sel {
+  border-color: var(--black);
+  background: var(--black);
+  color: #fff;
+}
+
+.print-type-btn.sel .print-type-plus {
+  color: rgba(255,255,255,.6);
+}
+
+/* ── FABRIC SPECS — better mobile layout ── */
+@media (max-width: 599px) {
+  .fabric-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .fabric-item {
+    padding: 10px;
+  }
+  .fabric-item-val {
+    font-size: 12px;
+  }
+}
+
+/* ── FORM SECTIONS — consistent spacing across pages ── */
+.form-section-title {
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+
+/* ── LOGIN / REGISTER — max width constraint with better centering ── */
+#page-login .container,
+#page-register .container,
+#page-forgot-password .container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#page-login .container > div,
+#page-register .container > div,
+#page-forgot-password .container > div {
+  width: 100%;
+}
+
+/* ── ACCOUNT PAGE — quick action cards uniform height ── */
+#page-account #account-logged-in .container > div[style*="grid-template-columns"] button {
+  min-height: 72px;
+}
+
+/* ── ORDERS PAGE — load more button consistent width ── */
+#orders-load-more {
+  display: block;
+  width: 100%;
+  max-width: 320px;
+  margin: 24px auto 0;
+  padding: 14px;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-full);
+  font-family: var(--font);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--black);
+  cursor: pointer;
+  transition: all var(--t);
+  text-align: center;
+}
+
+#orders-load-more:hover {
+  border-color: var(--black);
+  background: var(--black);
+  color: #fff;
+}
+
+/* ── COOKIE BANNER — ensure it sits above mobile nav ── */
+#cookie-banner {
+  z-index: 1600;
+  bottom: 0;
+}
+
+@media (max-width: 767px) {
+  /* Lift cookie banner above mobile bottom nav (72px) */
+  #cookie-banner {
+    bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* ── SEARCH OVERLAY — mobile full-screen ── */
+@media (max-width: 599px) {
+  #search-overlay {
+    padding-top: calc(var(--nav-h) + 8px);
+    padding-left: 0;
+    padding-right: 0;
+    align-items: flex-start;
+  }
+  #search-overlay > div {
+    padding: 0 12px;
+    width: 100%;
+    max-width: 100%;
+  }
+  #search-overlay input {
+    font-size: 16px; /* prevents iOS zoom */
+    border-radius: var(--r-lg);
+  }
+}
+
+/* ── TOAST CONTAINER — on desktop push above normal bottom ── */
+@media (min-width: 768px) {
+  #customer-toast-container {
+    bottom: 32px !important;
+  }
+}
+
+/* ── PRODUCT CARD — uniform bottom section height in grid ── */
+.product-card-name {
+  /* Clamp to 2 lines for consistency in grid layouts */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.6em;
+}
+
+/* ── DROP ARCHIVE SECTION — 3 col grid on desktop ── */
+.drop-archive-grid {
+  display: block;
+}
+
+@media (min-width: 1024px) {
+  .drop-archive-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  #drop-list-fallback {
+    display: none !important;
+  }
+}
+
+/* ── HERO COUNTDOWN — visible vertical divider ── */
+.hero-countdown {
+  border-top: 1px solid rgba(255,255,255,.1);
+  padding-top: clamp(12px, 2.5vh, 24px);
+  margin-top: clamp(12px, 2.5vh, 24px);
+}
+
+/* ── MANIFESTO SECTION — image on desktop, text fills width on mobile ── */
+@media (min-width: 1024px) {
+  .manifesto-layout {
+    grid-template-columns: 1fr 1fr;
+  }
+  /* Show image on desktop */
+  .manifesto-layout > div:last-child {
+    display: block !important;
+  }
+}
+
+@media (max-width: 1023px) {
+  /* Keep image hidden on tablet/mobile per existing responsive.css */
+  .manifesto-layout > div:last-child {
+    display: none !important;
+  }
+  .manifesto-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── PAGE FADE-IN — prevent flash of unstyled content ── */
+.page {
+  will-change: opacity, transform;
+}
+
+/* ── FOCUS RING — consistent across all interactive elements ── */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 2px;
+  border-radius: var(--r-sm);
+}
+
+/* =================================================================
+   FINAL POLISH — remaining edge cases
+   ================================================================= */
+
+/* ── DROPS PAGE — card grids collapse to 1-col on narrow phones ── */
+#drops-page-live,
+#drops-page-upcoming,
+#drops-page-ended {
+  grid-template-columns: 1fr !important;
+}
+
+@media (min-width: 600px) {
+  #drops-page-live,
+  #drops-page-upcoming,
+  #drops-page-ended {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+  }
+}
+
+/* ── ACCOUNT PAGE — quick actions 2-col grid min height ── */
+@media (max-width: 380px) {
+  /* Prevent text truncation on very narrow phones */
+  #page-account #account-logged-in .container > div[style*="grid-template-columns:1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ── ABOUT PAGE — stats grid responsive ── */
+@media (max-width: 499px) {
+  #page-about div[style*="grid-template-columns:repeat(auto-fill,minmax(200px"] {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+}
+
+/* ── CONTACT PAGE — business info grid responsive ── */
+@media (max-width: 499px) {
+  #page-contact div[style*="grid-template-columns:repeat(auto-fill,minmax(200px"] {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+}
+
+/* ── FORM ROW 2 — always 1-col on mobile to prevent squished fields ── */
+@media (max-width: 499px) {
+  .form-row-2 {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ── HERO — min-height fix for very short screens (landscape mobile) ── */
+@media (max-height: 500px) and (max-width: 900px) {
+  .home-hero {
+    min-height: unset !important;
+    height: auto !important;
+  }
+  .home-hero-content {
+    padding-top: calc(var(--nav-h) + 12px);
+    padding-bottom: 20px;
+  }
+  .hero-title { font-size: 28px; }
+}
+
+/* ── EARLY ACCESS FORM — input/button stack on narrow phones ── */
+@media (max-width: 499px) {
+  .early-access-form {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0;
+  }
+  .early-input {
+    min-width: unset;
+    width: 100%;
+  }
+  .early-access-form .btn-red-pill {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ── SHOP SCARCITY STRIP — not showing on some screens ── */
+#shop-scarcity-strip {
+  display: none; /* hide if empty — JS populates */
+}
+
+/* ── NAV LOGO WIDTH — prevent logo from being clipped ── */
+.nav-logo-wrap {
+  min-width: 0;
+  overflow: visible;
+}
+
+/* ── PAGE MIN-HEIGHT — prevent short pages from showing bg ── */
+#page-login,
+#page-register,
+#page-forgot-password,
+#page-about,
+#page-contact,
+#page-faq,
+#page-privacy,
+#page-terms {
+  min-height: 100vh;
+}
+
+/* ── BAG EMPTY STATE — center properly ── */
+#bag-empty {
+  width: 100%;
+}
+
+/* ── CHECKOUT ORDER SUMMARY SIDEBAR — mobile collapse ── */
+@media (max-width: 1023px) {
+  /* Sidebar stacks below form on mobile/tablet */
+  .checkout-layout .bag-summary-col {
+    position: static;
+  }
+}
+
+/* ── WISHLIST GRID — mobile 2-col ── */
+@media (max-width: 599px) {
+  #wishlist-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    display: grid !important;
+  }
+}
+
+/* ── PRODUCT DETAIL BREADCRUMB — wraps on mobile ── */
+@media (max-width: 399px) {
+  #pdp-breadcrumb-name {
+    display: none;
+  }
+}
+
+/* ── PRINT TYPE SECTION — wraps cleanly on all sizes ── */
+.print-types {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+@media (max-width: 499px) {
+  .print-type-btn {
+    flex: 1;
+    min-width: 80px;
+  }
+}
+
+/* ── MANIFESTO STATS — 3-col always ── */
+.manifesto-stats {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* ── HOME PRODUCT CARD — the arrivals grid uses full card styles ── */
+.home-arrivals-grid .product-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  transition: box-shadow var(--t), transform var(--t);
+}
+
+.home-arrivals-grid .product-card:hover {
+  box-shadow: var(--sh-md);
+  transform: translateY(-3px);
+}
+
+.home-arrivals-grid .product-card-img {
+  aspect-ratio: 3/4;
+  border-radius: 0;
+  margin-bottom: 0;
+}
+
+.home-arrivals-grid .product-card-series {
+  padding: 10px 12px 2px;
+  font-size: 9px;
+}
+
+.home-arrivals-grid .product-card-name {
+  padding: 0 12px 4px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.home-arrivals-grid .product-card-footer {
+  padding: 4px 12px 12px;
+}
+
+.home-arrivals-grid .product-card-price {
+  font-size: 14px;
+  font-weight: 800;
+}
+
+/* ── SHOP PAGE TOP OFFSET — page-shop has desktop-nav padding but also
+   the ticker bar which needs to sit directly below nav ── */
+#page-shop {
+  display: flex;
+  flex-direction: column;
+}
+
+#page-shop > .ticker-bar {
+  flex-shrink: 0;
+}
+
+#page-shop > .container {
+  flex: 1;
+}
+
+/* ── DROPS PAGE SECTION HEADERS — spacing ── */
+#drops-section-live,
+#drops-section-upcoming,
+#drops-section-ended {
+  margin-bottom: clamp(32px, 5vw, 56px);
+}
+
+@media (max-width: 599px) {
+  #drops-section-live,
+  #drops-section-upcoming,
+  #drops-section-ended {
+    margin-bottom: 28px;
+  }
+}
+
+/* ── ORDERS PAGE — max-width centering ── */
+.orders-page-layout {
+  max-width: 720px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ── PASSWORD STRENGTH BAR ── */
+#pw-strength-bar {
+  display: block;
+  height: 3px;
+  border-radius: 2px;
+  transition: width .3s ease, background .3s ease;
+}
+
+/* ── REGISTER TERMS CHECKBOX — proper alignment ── */
+#register-terms {
+  margin-top: 1px;
+  accent-color: var(--red);
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}

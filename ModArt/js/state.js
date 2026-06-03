@@ -3,12 +3,12 @@
    ================================================================ */
 
 /* ================================================================
-   PRODUCTS STATE — fallback data used when Supabase is unavailable
-   Synced with supabase_setup.sql seed data — real ModArt catalogue
+   PRODUCTS STATE ï¿½ fallback data used when Supabase is unavailable
+   Synced with supabase_setup.sql seed data ï¿½ real ModArt catalogue
    Images: placeholder until real photos uploaded to Supabase Storage
    ================================================================ */
 
-// Product images — real Unsplash photos matching each category
+// Product images ï¿½ real Unsplash photos matching each category
 const PRODUCT_IMGS = {
   'regular-tee':         'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&q=80',
   'full-sleeve-tee':     'https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=600&q=80',
@@ -201,7 +201,7 @@ export const PRODUCTS = [
 ];
 
 /* ================================================================
-   WISHLIST STATE — persisted to localStorage
+   WISHLIST STATE ï¿½ persisted to localStorage
    ================================================================ */
 function loadWishlist() {
   try {
@@ -418,7 +418,7 @@ export const cart = {
 };
 
 /* ================================================================
-   DISCOUNT STATE — persisted to sessionStorage so it survives refresh
+   DISCOUNT STATE ï¿½ persisted to sessionStorage so it survives refresh
    ================================================================ */
 function _loadDiscount() {
   try {
@@ -472,7 +472,10 @@ export function addCustToCart() {
     if (window.showCustomerToast) window.showCustomerToast('No product selected', 'error');
     return;
   }
-  const size = document.querySelector('#page-customize .size-btn.sel')?.dataset?.size || 'M';
+  // Read size from the customizer-specific container first, fall back to any selected size
+  const size = document.querySelector('#customizer-size-options .size-btn.sel')?.dataset?.size
+    || document.querySelector('#page-customize .size-btn.sel')?.dataset?.size
+    || 'M';
   cart.add(productId, size);
   if (typeof window !== 'undefined' && window.goTo) window.goTo('bag');
 }
