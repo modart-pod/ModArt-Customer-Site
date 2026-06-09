@@ -15,17 +15,25 @@ import { getCredentials } from './admin-config.js';
 let _supabaseClient = null;
 
 export function getSupabase() {
+  // Only return cached client if it was successfully created
   if (_supabaseClient) return _supabaseClient;
   
   // Read credentials lazily — at call time the config fetch has resolved
   const { url: SUPABASE_URL, anonKey: SUPABASE_ANON_KEY } = getCredentials();
 
-  // Validate credentials
+  // Validate credentials — silently return null, don't log on every call
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-    console.error('❌ CRITICAL: Supabase credentials not configured');
+    // Only log once to avoid console spam
+    if (!getSupabase._warnedOnce) {
+      console.warn('[ModArt] Supabase credentials not ready yet — will retry on next call');
+      getSupabase._warnedOnce = true;
+    }
     return null;
   }
   
+  // Credentials available — reset the warn flag for future debug sessions
+  getSupabase._warnedOnce = false;
+
   if (window.supabase?.createClient) {
     try {
       _supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
@@ -36,6 +44,7 @@ export function getSupabase() {
           detectSessionInUrl: true
         }
       });
+      console.log('[ModArt] Supabase client created ✅');
       return _supabaseClient;
     } catch (e) {
       console.warn('Supabase createClient failed:', e.message);
