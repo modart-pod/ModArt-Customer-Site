@@ -55,13 +55,10 @@ body.layout-desktop #page-home         { padding-top: 0; }
   gap: 8px;
 }
 
+/* Override the class default (absolute positioning) since the HTML
+   now uses position:absolute for centred logo in mobile header */
 .mobile-hdr .mobile-logo-btn {
-  position: static !important;
-  transform: none !important;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
+  /* Centred logo via position:absolute in HTML — do not override */
   flex-shrink: 0;
 }
 

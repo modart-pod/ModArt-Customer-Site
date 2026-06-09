@@ -454,9 +454,9 @@ export function updateBadges() {
     }
   });
 
-  // Update wishlist badge on desktop nav and mobile nav
+  // Update wishlist badge on desktop nav, mobile nav, and mobile header
   const wishCount = wishlist.size;
-  ['wishlist-badge-desk', 'wishlist-badge-nav'].forEach(id => {
+  ['wishlist-badge-desk', 'wishlist-badge-nav', 'wishlist-badge-mob-hdr'].forEach(id => {
     const el = document.getElementById(id);
     if (el) {
       el.textContent = wishCount;
@@ -483,6 +483,15 @@ export function updateBadges() {
         : "'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24";
       icon.style.color = wishCount > 0 ? 'var(--red)' : '';
     }
+  }
+
+  // Update mobile header wishlist icon (H4 fix)
+  const mobHdrWishIcon = document.getElementById('mob-hdr-wish-icon');
+  if (mobHdrWishIcon) {
+    mobHdrWishIcon.style.fontVariationSettings = wishCount > 0
+      ? "'FILL' 1,'wght' 600,'GRAD' 0,'opsz' 24"
+      : "'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24";
+    mobHdrWishIcon.style.color = wishCount > 0 ? 'var(--red)' : '';
   }
 }
 

@@ -126,7 +126,7 @@ body.layout-mobile #page-home {
    ================================================================ */
 
 body.layout-mobile .home-hero {
-  min-height: 85vw; /* give hero meaningful height on mobile */
+  min-height: min(85vw, 65vh); /* cap in landscape so it doesn't fill whole screen */
   max-height: unset;
   height: auto;
 }
@@ -261,16 +261,17 @@ body.layout-mobile #shop-filter-bar {
   scrollbar-width: none;
   -ms-overflow-style: none;
   padding-bottom: 4px;
-  /* Fade right edge to hint scrollability */
-  -webkit-mask-image: linear-gradient(to right, black 80%, transparent 100%);
-  mask-image: linear-gradient(to right, black 80%, transparent 100%);
 }
 
 body.layout-mobile #shop-filter-bar::-webkit-scrollbar { display: none; }
 
+/* Apply fade mask only to the chips, not the sort select */
 body.layout-mobile .shop-filter-btns {
   flex-wrap: nowrap;
   flex-shrink: 0;
+  /* Fade right edge to hint scrollability — applied to chips only */
+  -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
+  mask-image: linear-gradient(to right, black 85%, transparent 100%);
 }
 
 body.layout-mobile .shop-filter-btn {
@@ -506,16 +507,28 @@ body.layout-mobile .form-row-2 {
 }
 
 /* ================================================================
-   13. MOBILE MODAL
+   13. MOBILE MODAL — bottom-sheet style
    ================================================================ */
 
+/* Override modal container to anchor at bottom */
+body.layout-mobile #modal {
+  align-items: flex-end !important;
+  padding: 0 !important;
+}
+
 body.layout-mobile .modal-card {
-  width: calc(100vw - 24px);
+  width: 100%;
   max-width: 100%;
   border-radius: var(--r-xl) var(--r-xl) 0 0;
-  margin-bottom: 0;
+  margin: 0;
   /* Slide up from bottom on mobile */
-  align-self: flex-end;
+  transform: translateY(100%);
+  transition: transform .3s ease;
+  max-height: 92vh;
+}
+
+body.layout-mobile #modal.open .modal-card {
+  transform: translateY(0);
 }
 
 /* ================================================================
@@ -545,4 +558,69 @@ body.layout-mobile #search-overlay > div {
 body.layout-mobile #search-input {
   font-size: 16px; /* no iOS zoom */
   border-radius: var(--r-lg);
+}
+
+/* ================================================================
+   16. MOBILE COOKIE BANNER — sit above bottom nav (C4 fix)
+   ================================================================ */
+
+body.layout-mobile #cookie-banner {
+  bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+  z-index: 1600;
+}
+
+/* ================================================================
+   17. HIDDEN PAGES — collapse height to prevent document overflow
+   Layout.css uses position:absolute for hidden pages, but
+   min-height still allocates space in some browsers (M1 fix)
+   ================================================================ */
+
+body.layout-mobile .page:not(.active) {
+  min-height: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+}
+
+/* ================================================================
+   18. ACCESSIBILITY — Design+ button aria label (A1 fix)
+   Applied via CSS content trick for screen readers, but the real
+   fix is in HTML (aria-label added below)
+   ================================================================ */
+
+/* Ensure mob-nav-center label is readable by screen readers
+   even though it's visually shifted with negative margin */
+body.layout-mobile .mob-nav-center span:last-child {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+}
+
+/* ================================================================
+   19. DROPS LIVE BADGE — pulse dot instead of text (M7 fix)
+   ================================================================ */
+
+#drops-live-badge {
+  /* Override cart-badge number styling */
+  width: 8px !important;
+  height: 8px !important;
+  font-size: 0 !important; /* hide ● character */
+  padding: 0 !important;
+  border-radius: 50% !important;
+  background: var(--red) !important;
+  top: 6px !important;
+  right: calc(50% - 22px) !important;
+  animation: blink 1.2s ease infinite;
+}
+
+/* ================================================================
+   20. MOBILE PAGE TRANSITION — no translateY on mobile pages
+   Prevent the page-level transform from causing layout issues
+   ================================================================ */
+
+body.layout-mobile .page {
+  transform: none !important;
+  transition: opacity .2s ease !important;
 }

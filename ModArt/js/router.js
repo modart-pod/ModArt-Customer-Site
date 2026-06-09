@@ -54,11 +54,15 @@ export function goTo(pageName) {
 export function showPage(pageName) {
   if (!PAGES[pageName]) pageName = 'home';
 
-  document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(el => {
+    el.classList.remove('active');
+    el.setAttribute('aria-hidden', 'true'); // A2 fix: hide inactive pages from screen readers
+  });
 
   const target = document.getElementById(PAGES[pageName]);
   if (target) {
     target.classList.add('active');
+    target.removeAttribute('aria-hidden'); // expose active page to screen readers
     // Scroll after paint so the newly-active page is in layout flow
     requestAnimationFrame(() => window.scrollTo(0, 0));
   }
@@ -164,6 +168,8 @@ export function initRouter() {
   // Show initial page from URL path
   const initial = pathToPage(window.location.pathname);
   history.replaceState({ page: initial }, '', window.location.pathname);
+  // Set aria-hidden on all pages before showPage activates the correct one
+  document.querySelectorAll('.page').forEach(el => el.setAttribute('aria-hidden', 'true'));
   showPage(initial);
   updateMeta(initial);
 

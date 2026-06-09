@@ -709,10 +709,10 @@ textarea:focus-visible {
 }
 
 /* Override the class default (absolute positioning) since the HTML
-   already uses position:static via inline style */
+   now uses position:absolute for centred logo in mobile header */
 .mobile-hdr .mobile-logo-btn {
-  position: static !important;
-  transform: none !important;
+  /* Do NOT force position:static — the new hamburger layout needs
+     the logo absolutely centred. Let the HTML inline style control this. */
   flex-shrink: 0;
 }
 

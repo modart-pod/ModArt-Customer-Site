@@ -401,3 +401,61 @@ body.layout-tablet #drops-page-upcoming,
 body.layout-tablet #drops-page-ended {
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
 }
+
+/* ================================================================
+   13. DESKTOP HIDDEN PAGES — collapse height (M1 fix)
+   ================================================================ */
+
+body.layout-desktop .page:not(.active),
+body.layout-tablet .page:not(.active) {
+  min-height: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+}
+
+/* ================================================================
+   14. DESKTOP MODAL — centred, not bottom-sheet
+   ================================================================ */
+
+body.layout-desktop #modal,
+body.layout-tablet #modal {
+  align-items: center !important;
+  padding: 20px !important;
+}
+
+body.layout-desktop .modal-card,
+body.layout-tablet .modal-card {
+  width: 100%;
+  max-width: 480px;
+  border-radius: var(--r-xl);
+  transform: translateY(20px) scale(.95);
+  transition: transform .28s ease, opacity .28s ease;
+  opacity: 0;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+body.layout-desktop #modal.open .modal-card,
+body.layout-tablet #modal.open .modal-card {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+/* ================================================================
+   15. DESKTOP COOKIE BANNER — bottom:0, no nav offset needed
+   ================================================================ */
+
+body.layout-desktop #cookie-banner,
+body.layout-tablet #cookie-banner {
+  bottom: 0;
+}
+
+/* ================================================================
+   16. DESKTOP DROPS LIVE BADGE
+   ================================================================ */
+
+body.layout-desktop #drops-live-badge,
+body.layout-tablet #drops-live-badge {
+  /* Desktop nav doesn't show drops badge, but just in case */
+  display: none !important;
+}

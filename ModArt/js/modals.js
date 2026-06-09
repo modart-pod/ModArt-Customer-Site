@@ -228,85 +228,15 @@ document.addEventListener('click', e => {
 // ================================================================
 // SEARCH OVERLAY
 // ================================================================
-
-function toggleSearch() {
-  const overlay = document.getElementById('search-overlay');
-  if (!overlay) return;
-  const isOpen = overlay.style.display === 'flex';
-  overlay.style.display = isOpen ? 'none' : 'flex';
-  if (!isOpen) {
-    const input = document.getElementById('search-input');
-    if (input) { input.value = ''; input.focus(); }
-    const results = document.getElementById('search-results');
-    if (results) results.innerHTML = '';
-  }
-}
-
-function handleSearchInput(query) {
-  const results = document.getElementById('search-results');
-  if (!results) return;
-  const q = query.trim().toLowerCase();
-  if (!q) { results.innerHTML = ''; return; }
-
-  const src = (window._PRODUCTS && window._PRODUCTS.length > 0) ? window._PRODUCTS : [];
-
-  // Show loading state if products haven't loaded yet
-  if (!window._PRODUCTS || window._PRODUCTS.length === 0) {
-    results.innerHTML = '<div style="padding:16px;font-size:13px;color:var(--g3);text-align:center">Loading products…</div>';
-    return;
-  }
-  const matches = src.filter(p =>
-    p.name.toLowerCase().includes(q) || p.series.toLowerCase().includes(q)
-  ).slice(0, 6);
-
-  if (matches.length === 0) {
-    results.innerHTML = '<div style="padding:16px;font-size:13px;color:var(--g3);text-align:center">No products found</div>';
-    return;
-  }
-
-  results.innerHTML = matches.map(p => `
-    <button onclick="toggleSearch();window.openProduct&&window.openProduct('${p.id}')"
-      style="display:flex;align-items:center;gap:14px;width:100%;padding:12px 16px;background:none;border:none;border-bottom:1px solid var(--border);cursor:pointer;text-align:left;transition:background .15s"
-      onmouseover="this.style.background='var(--bg-c)'" onmouseout="this.style.background='none'">
-      <img src="${p.img}" alt="${p.name}" style="width:44px;height:52px;object-fit:cover;border-radius:6px;flex-shrink:0"/>
-      <div>
-        <div style="font-size:13px;font-weight:700;color:var(--black)">${p.name}</div>
-        <div style="font-size:11px;color:var(--g3)">${p.series} · ${window.formatPrice ? window.formatPrice(p.price) : '₹'+p.price}</div>
-      </div>
-    </button>`).join('');
-}
+// NOTE: toggleSearch and handleSearchInput are defined in utils.js
+// and assigned to window.toggleSearch / window.handleSearchInput there.
+// Do not redefine here to avoid overwriting the utils.js version.
 
 // ================================================================
 // COOKIE BANNER
 // ================================================================
-
-function initCookieBanner() {
-  const banner = document.getElementById('cookie-banner');
-  if (!banner) return;
-  try {
-    if (!localStorage.getItem('modart_cookies_accepted')) {
-      banner.style.display = 'flex';
-    }
-  } catch {}
-}
-
-function acceptCookies() {
-  try { localStorage.setItem('modart_cookies_accepted', '1'); } catch {}
-  const banner = document.getElementById('cookie-banner');
-  if (banner) banner.style.display = 'none';
-}
-
-function declineCookies() {
-  try { localStorage.setItem('modart_cookies_accepted', '0'); } catch {}
-  const banner = document.getElementById('cookie-banner');
-  if (banner) banner.style.display = 'none';
-}
-
-window.toggleSearch       = toggleSearch;
-window.handleSearchInput  = handleSearchInput;
-window.initCookieBanner   = initCookieBanner;
-window.acceptCookies      = acceptCookies;
-window.declineCookies     = declineCookies;
+// NOTE: initCookieBanner, acceptCookies, declineCookies are defined
+// in utils.js. Do not redefine here.
 
 // ================================================================
 // NOTIFY ME (sold-out products)
