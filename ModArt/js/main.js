@@ -236,12 +236,16 @@ async function initApplication() {
   document.querySelectorAll('.section, .manifesto, .community, .reviews-section, .early-access, .drop-archive')
     .forEach(el => { el.classList.add('fade-in-section'); fadeObserver.observe(el); });
 
-  // 10. Re-render current page
+  // 10. Re-render current page with live data
   try {
     const currentPage = window.getCurrentPage ? window.getCurrentPage() : 'home';
     if (currentPage === 'home' || currentPage === 'shop') {
       renderProducts(currentPage);
       if (currentPage === 'home') window._rebuildCarouselDots && window._rebuildCarouselDots();
+    } else if (currentPage === 'drops') {
+      window.renderDropsPage && window.renderDropsPage();
+    } else if (currentPage === 'customize') {
+      window.changeCustProduct && window.changeCustProduct('hoodie');
     }
   } catch (e) {
     console.warn('renderProducts failed during init:', e);

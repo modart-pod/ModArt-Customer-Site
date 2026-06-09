@@ -316,6 +316,7 @@ export function renderDropsPage() {
 export async function initDrops() {
   await fetchDrops();
   renderDropsSection();
+  renderDropsPage(); // ✅ FIX: always render full drops page on init (uses fallback if Supabase empty)
   _updateManifestoCounter();
 
   // Listen for realtime drop updates from realtime.js

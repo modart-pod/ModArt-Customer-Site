@@ -91,6 +91,14 @@ function triggerPageRender(pageName) {
         window.renderSizeOptions && window.renderSizeOptions(window._PRODUCTS[0].id);
       }
       break;
+    case 'customize':
+      // Refresh customizer product image with live catalogue data if available
+      if (window.changeCustProduct) window.changeCustProduct('hoodie');
+      if (window.renderSizeOptions) {
+        const pid = window._customizerProductId || 'hoodie';
+        window.renderSizeOptions(pid);
+      }
+      break;
     case 'bag':
       window.renderBag && window.renderBag();
       break;

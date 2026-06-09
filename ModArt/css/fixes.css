@@ -1739,13 +1739,14 @@ textarea:focus-visible,
    ================================================================= */
 
 /* ── DROPS PAGE — remove double top gap ── */
+/* .page has padding-top: var(--nav-h). The inner div's own padding adds
+   more space. Set inner top padding to 0 so content starts right after nav. */
 #page-drops {
-  /* .page adds padding-top: var(--nav-h). The inner div now uses
-     clamp(16px,...) so total top gap = nav-h + 16px = ~84px. Fine. */
+  /* no extra rules needed — padding-top: var(--nav-h) from .page is correct */
 }
 
 #page-drops .container > div {
-  padding-top: clamp(16px, 2.5vw, 28px) !important;
+  padding-top: 0 !important;
   padding-bottom: clamp(28px, 4vw, 48px) !important;
 }
 
@@ -1757,14 +1758,12 @@ textarea:focus-visible,
 
 /* ── CUSTOMIZE PAGE — flush topbar, no double nav gap ── */
 /* The .page class adds padding-top: var(--nav-h) via responsive.css.
-   The customizer has its own sticky topbar. We must cancel the page
-   padding so the topbar sits flush under the nav, not 68px below it. */
+   The customizer has its own sticky topbar. Cancel the page padding
+   so the topbar sits flush under the nav, not 68px below it.         */
 body.layout-desktop #page-customize,
 body.layout-tablet  #page-customize {
   padding-top: 0 !important;
 }
-
-/* The customizer-page div fills the remaining viewport height */
 #page-customize .customizer-page {
   min-height: calc(100vh - var(--nav-h));
   flex: 1;
@@ -1831,17 +1830,15 @@ body.layout-mobile #page-customize .customizer-page {
    ================================================================= */
 
 /* ── PAGE TRANSITION: prevent flash of invisible content on route change ── */
+/* NOTE: layout.css already sets .page { opacity:0; transform:translateY(6px) }
+   and .page.active { opacity:1; transform:translateY(0) }.
+   We only add pointer-events here — do NOT re-declare opacity/transform
+   as that would override layout.css and cause blank pages. */
 .page {
-  /* Page starts hidden and fades in when .active is added */
-  opacity: 0;
-  transform: translateY(6px);
-  transition: opacity .24s ease, transform .24s ease;
   pointer-events: none;
 }
 
 .page.active {
-  opacity: 1;
-  transform: translateY(0);
   pointer-events: auto;
 }
 

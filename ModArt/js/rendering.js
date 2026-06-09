@@ -766,7 +766,7 @@ export function renderRelatedProducts(excludeId) {
   const grid = document.getElementById('related-product-grid');
   if (!grid) return;
   const productSource = (window._PRODUCTS && window._PRODUCTS.length > 0) ? window._PRODUCTS : PRODUCTS;
-  const related = productSource.filter(p => p.id !== (excludeId || currentProductId || 'vanta-hoodie')).slice(0, 3);
+  const related = productSource.filter(p => p.id !== (excludeId || currentProductId || productSource[0]?.id)).slice(0, 3);
   grid.innerHTML = related.map(p => {
     const wish = wishlist.has(p.id);
     const sold = p.stock === 0;

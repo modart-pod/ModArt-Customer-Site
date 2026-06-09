@@ -566,18 +566,43 @@ function selectColour(sw, _colour, img) {
 }
 
 function changeCustProduct(val) {
-  const priceMap = { hoodie: 19999, tee: 9999, cargo: 14599 };
-  cust.baseCost = priceMap[val] || 19999;
-
-  // Track which product is selected so addCustToCart uses the right one
-  const productIdMap = { hoodie: 'vanta-hoodie', tee: 'vanta-tee', cargo: 'cargo-pants' };
-  window._customizerProductId = productIdMap[val] || 'vanta-hoodie';
-
-  const imgs = {
-    hoodie: 'https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=700&q=85',
-    tee:    'https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=700&q=85',
-    cargo:  'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=700&q=85',
+  // ✅ FIX: Map dropdown values to real catalogue product IDs from state.js
+  const priceMap = {
+    hoodie:    600,
+    tee:       500,
+    sweatshirt:500,
+    joggers:   400,
+    varsity:   900,
   };
+  cust.baseCost = priceMap[val] || 600;
+
+  // Map to real catalogue product IDs
+  const productIdMap = {
+    hoodie:    'hoodie',
+    tee:       'oversized-tee',
+    sweatshirt:'sweatshirt',
+    joggers:   'joggers',
+    varsity:   'varsity-jacket',
+  };
+  window._customizerProductId = productIdMap[val] || 'hoodie';
+
+  // Use real catalogue images from state.js PRODUCT_IMGS
+  const imgs = {
+    hoodie:    'https://images.unsplash.com/photo-1578587018452-892bacefd3f2?w=700&q=85',
+    tee:       'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=700&q=85',
+    sweatshirt:'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=700&q=85',
+    joggers:   'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=700&q=85',
+    varsity:   'https://images.unsplash.com/photo-1551537482-f2075a1d41f2?w=700&q=85',
+  };
+
+  // If live products are loaded from Supabase, prefer their images
+  if (window._PRODUCTS && window._PRODUCTS.length > 0) {
+    const pid = productIdMap[val] || 'hoodie';
+    const liveP = window._PRODUCTS.find(p => p.id === pid);
+    if (liveP && liveP.img) {
+      imgs[val] = liveP.img;
+    }
+  }
 
   const el = document.getElementById('cust-product-img') || document.getElementById('canvas-product-img');
   if (el) el.src = imgs[val] || imgs.hoodie;
@@ -585,10 +610,12 @@ function changeCustProduct(val) {
   const name = document.getElementById('cust-product-name');
   if (name) {
     name.textContent = {
-      hoodie: 'Vanta Hoodie — Black',
-      tee:    'Vanta Black Tee — Black',
-      cargo:  'Grid Cargo Pants — Black',
-    }[val] || '';
+      hoodie:    'Hoodie',
+      tee:       'Oversized Tee',
+      sweatshirt:'Sweatshirt',
+      joggers:   'Joggers',
+      varsity:   'Varsity Jacket',
+    }[val] || 'Hoodie';
   }
 
   updateCost();
@@ -659,8 +686,9 @@ function toggleAcc(btn) {
 // ================================================================
 
 function initCustomizer() {
-  // Set default product ID for addCustToCart
-  window._customizerProductId = 'vanta-hoodie';
+  // ✅ FIX: Set real catalogue product ID (hoodie = 'hoodie' from state.js)
+  window._customizerProductId = 'hoodie';
+  cust.baseCost = 600; // matches hoodie price in catalogue
 
   updateCost();
   
