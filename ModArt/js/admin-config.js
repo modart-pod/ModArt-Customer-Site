@@ -1,16 +1,13 @@
 /**
  * ModArt Admin Configuration
  *
- * Static site — no build step.
- * The anon key is safe to include here — it is public by design and
- * protected by Supabase Row Level Security policies.
- * The service role key is NEVER placed here (server-side only).
+ * Credentials are injected at runtime by /api/config.
+ * No keys are hardcoded here — they must come from Vercel env vars.
+ * If window globals are absent the app will show a configuration error.
  */
 
-// Use window globals if injected by /api/config, otherwise fall back to
-// the hardcoded public anon key (safe — protected by RLS).
-export const SUPABASE_URL      = window.__SUPABASE_URL__      || 'https://ddodctzzsrlgyhtclabz.supabase.co';
-export const SUPABASE_ANON_KEY = window.__SUPABASE_ANON_KEY__ || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRkb2RjdHp6c3JsZ3lodGNsYWJ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1MDY5MzEsImV4cCI6MjA4OTA4MjkzMX0.Wfrlocx56uR_8-5EZoBajIzHt09GX_JcrBCSeZuVqMY';
+export const SUPABASE_URL      = window.__SUPABASE_URL__;
+export const SUPABASE_ANON_KEY = window.__SUPABASE_ANON_KEY__;
 
 export const ADMIN_CONFIG = {
   SESSION_TIMEOUT:           30 * 60 * 1000,
@@ -24,8 +21,9 @@ export const ADMIN_CONFIG = {
   ALLOWED_IMAGE_TYPES:       ['image/jpeg', 'image/png', 'image/webp'],
 };
 
-// Admin email — used for ADMIN_ALLOWED_EMAILS check in admin.html
-export const ADMIN_EMAIL = window.__ADMIN_EMAIL__ || 'modart.pod@gmail.com';
+// Admin email is server-side only — never expose in client JS.
+// The admin check is handled by the profiles.role column via is_admin() RPC.
+// export const ADMIN_EMAIL = '...'; // REMOVED — use Supabase profiles.role
 
 export const API_ENDPOINTS = {
   ADMIN_LOGIN:      '/api/admin-login',

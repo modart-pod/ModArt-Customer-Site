@@ -1,8 +1,9 @@
 import { checkRateLimit } from './utils/rate-limiter.js';
+import { validateOrigin } from './utils/csrf.js';
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const FROM_EMAIL     = process.env.FROM_EMAIL || 'orders@modart.store';
-const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || 'https://modart-print-on-demand.vercel.app';
+const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || 'https://modart-modart-pods-projects.vercel.app';
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGIN);
@@ -12,6 +13,10 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(204).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
+  // CSRF: reject requests from disallowed origins
+  const originError = validateOrigin(req);
+  if (originError) return res.status(403).json(originError);
+
   // Redis-based rate limit: 20 order emails per IP per hour
   const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || 'unknown';
   const rateLimit = await checkRateLimit(ip, 20, 3600, 'order_email');
@@ -20,12 +25,13 @@ export default async function handler(req, res) {
   res.setHeader('X-RateLimit-Limit', '20');
   res.setHeader('X-RateLimit-Remaining', rateLimit.remaining.toString());
   res.setHeader('X-RateLimit-Reset', rateLimit.resetIn.toString());
-  
+
   if (!rateLimit.allowed) {
-    res.setHeader('Retry-After', rateLimit.retryAfter.toString());
-    return res.status(429).json({ 
+    // Only set Retry-After when actually blocking the request
+    res.setHeader('Retry-After', Math.max(1, rateLimit.retryAfter).toString());
+    return res.status(429).json({
       error: 'Too many requests. Please try again later.',
-      retryAfter: rateLimit.retryAfter 
+      retryAfter: rateLimit.retryAfter
     });
   }
 

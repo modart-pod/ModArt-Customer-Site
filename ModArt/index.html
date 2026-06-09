@@ -1241,7 +1241,7 @@
         <div class="form-group"><label class="form-label">Full Name</label><input id="register-name" class="form-input" type="text" autocomplete="name" placeholder="Your name"/></div>
         <div class="form-group"><label class="form-label">Email</label><input id="register-email" class="form-input" type="email" autocomplete="email" placeholder="you@email.com"/></div>
         <div class="form-group"><label class="form-label">Password</label>
-          <input id="register-password" class="form-input" type="password" autocomplete="new-password" placeholder="Min 8 characters" oninput="checkPasswordStrength(this.value)"/>
+          <input id="register-password" class="form-input" type="password" autocomplete="new-password" placeholder="8+ chars, uppercase, number, symbol" oninput="checkPasswordStrength(this.value)"/>
           <div style="margin-top:6px;height:3px;background:var(--border);border-radius:2px;overflow:hidden"><div id="pw-strength-bar" style="height:100%;width:0%;transition:width .3s,background .3s;border-radius:2px"></div></div>
           <div id="pw-strength-lbl" style="font-size:10px;color:var(--g3);margin-top:4px;font-weight:600"></div>
         </div>

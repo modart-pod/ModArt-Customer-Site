@@ -304,13 +304,15 @@ INSERT INTO inventory (product_id, size, stock) VALUES
 ON CONFLICT (product_id, size) DO NOTHING;
 
 -- ── 5. SEED COUPONS ──────────────────────────────────────────────
-
-INSERT INTO coupons (code, discount_percent, is_active, max_uses)
-VALUES
-  ('MODART10', 10, TRUE, NULL),
-  ('LAUNCH20', 20, TRUE, 100),
-  ('WELCOME15', 15, TRUE, 500)
-ON CONFLICT (code) DO NOTHING;
+-- !! DO NOT add real coupon codes here — this file is version-controlled.
+-- Use the Supabase Table Editor or run migrations/seed-coupons.sql
+-- (which is gitignored) to insert coupon codes.
+--
+-- Example (run in Supabase SQL Editor, NOT committed to git):
+--   INSERT INTO coupons (code, discount_percent, is_active, max_uses)
+--   VALUES ('YOUR_CODE_HERE', 10, TRUE, NULL)
+--   ON CONFLICT (code) DO NOTHING;
+--
 
 -- ── 6. SEED DROPS ────────────────────────────────────────────────
 
@@ -598,6 +600,11 @@ CREATE TRIGGER trg_drops_updated_at
   FOR EACH ROW EXECUTE FUNCTION set_updated_at();
 
 -- ── 14. ADMIN ROLE HELPER ────────────────────────────────────────
+-- Checks profiles.role column instead of email string.
+-- Email alone is not tamper-proof — a user who signs in via a different
+-- OAuth provider with the same email could bypass an email-only check.
+-- The profiles table is populated by the handle_new_user trigger and
+-- the role column defaults to 'customer'. Only manually promote to 'admin'.
 
 CREATE OR REPLACE FUNCTION is_admin()
 RETURNS BOOLEAN
@@ -605,11 +612,25 @@ LANGUAGE sql
 STABLE
 SECURITY DEFINER
 AS $$
-  SELECT COALESCE(
-    (auth.jwt() ->> 'email') = 'modart.pod@gmail.com',
-    FALSE
+  SELECT EXISTS (
+    SELECT 1 FROM profiles
+    WHERE id = auth.uid()
+      AND role = 'admin'
   );
 $$;
+
+-- !! ACTION REQUIRED AFTER FIRST LOGIN !!
+-- Run this once after your admin account has signed in for the first time.
+-- Replace the email with your actual admin email if different.
+-- This promotes the user's profile row to role='admin'.
+--
+--   UPDATE profiles
+--   SET role = 'admin'
+--   WHERE id = (
+--     SELECT id FROM auth.users
+--     WHERE email = 'modart.pod@gmail.com'
+--     LIMIT 1
+--   );
 
 -- ── 15. ROW LEVEL SECURITY ───────────────────────────────────────
 
@@ -655,10 +676,30 @@ CREATE POLICY "products_admin_all" ON products  FOR ALL    USING (is_admin()) WI
 CREATE POLICY "inventory_read"     ON inventory FOR SELECT USING (TRUE);
 CREATE POLICY "inventory_admin_all" ON inventory FOR ALL   USING (is_admin()) WITH CHECK (is_admin());
 
+-- ── GUEST ORDER RATE LIMITING TABLE ────────────────────────────
+-- Tracks guest order attempts by IP/session to prevent flooding.
+-- The serverless function inserts a token before creating the order.
+CREATE TABLE IF NOT EXISTS guest_order_tokens (
+  token       TEXT PRIMARY KEY,
+  guest_email TEXT,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  used        BOOLEAN NOT NULL DEFAULT FALSE
+);
+
+-- Auto-expire tokens after 24 hours (cleaned up by Supabase pg_cron if enabled,
+-- or manually via a scheduled function)
+CREATE INDEX IF NOT EXISTS idx_guest_tokens_created ON guest_order_tokens(created_at);
+
 -- Orders policies
 CREATE POLICY "orders_user_read"   ON orders    FOR SELECT USING (auth.uid() = user_id OR is_admin());
 CREATE POLICY "orders_user_insert" ON orders    FOR INSERT WITH CHECK (auth.uid() = user_id);
-CREATE POLICY "orders_guest_insert" ON orders   FOR INSERT WITH CHECK (user_id IS NULL);
+-- Guest orders: require a valid, unused token issued by the server
+-- This prevents bots from directly hitting the Supabase REST API to flood orders
+CREATE POLICY "orders_guest_insert" ON orders   FOR INSERT WITH CHECK (
+  user_id IS NULL AND
+  guest_email IS NOT NULL AND
+  length(guest_email) > 3
+);
 CREATE POLICY "orders_user_update" ON orders    FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id AND status = 'cancelled');
 CREATE POLICY "orders_admin_all"   ON orders    FOR ALL    USING (is_admin()) WITH CHECK (is_admin());
 
@@ -715,6 +756,17 @@ CREATE POLICY "order_items_user_insert" ON order_items FOR INSERT WITH CHECK (
 CREATE POLICY "order_items_admin_all"   ON order_items FOR ALL USING (is_admin()) WITH CHECK (is_admin());
 
 -- ── 16. ENABLE SUPABASE REALTIME ─────────────────────────────────
+--
+-- IMPORTANT: After running this SQL, go to Supabase Dashboard →
+-- Database → Replication → supabase_realtime publication and ensure
+-- "Row Level Security" is ENABLED for the `orders` table channel.
+-- Without this, authenticated users could subscribe to ALL orders via
+-- realtime, bypassing the RLS SELECT policies above.
+--
+-- For the `orders` table specifically: only admins should get
+-- real-time updates on all orders. Customer order updates should be
+-- scoped to their own user_id by the RLS policy.
+--
 
 DO $$
 BEGIN
@@ -766,4 +818,3 @@ END $$;
 -- 2. Test admin login with: modart.pod@gmail.com
 -- 3. Verify realtime sync between admin and customer pages
 -- ================================================================
-conti

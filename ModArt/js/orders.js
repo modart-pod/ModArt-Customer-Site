@@ -23,6 +23,40 @@ function esc(str) {
 }
 
 /**
+ * Client-side guest order rate limiter.
+ * Uses sessionStorage to track submission attempts within a 10-minute window.
+ * This is a UX-level guard — the real protection is the server-side RLS + API layer.
+ */
+function checkGuestOrderRateLimit() {
+  const KEY    = 'modart_guest_order_attempts';
+  const WINDOW = 10 * 60 * 1000; // 10 minutes
+  const MAX    = 3;               // max 3 guest orders per 10 minutes
+
+  try {
+    const raw     = sessionStorage.getItem(KEY);
+    const record  = raw ? JSON.parse(raw) : { count: 0, start: Date.now() };
+    const now     = Date.now();
+
+    // Reset window if expired
+    if (now - record.start > WINDOW) {
+      record.count = 0;
+      record.start = now;
+    }
+
+    record.count++;
+    sessionStorage.setItem(KEY, JSON.stringify(record));
+
+    if (record.count > MAX) {
+      const waitMins = Math.ceil((WINDOW - (now - record.start)) / 60000);
+      return { allowed: false, message: `Too many order attempts. Please wait ${waitMins} minute${waitMins !== 1 ? 's' : ''} and try again.` };
+    }
+  } catch {
+    // sessionStorage unavailable — fail open
+  }
+  return { allowed: true };
+}
+
+/**
  * Rolls back stock for an entire order using the Supabase RPC.
  * Used when order confirmation fails.
  */
@@ -633,6 +667,16 @@ export async function handleCheckoutSubmit() {
 
   // Clear any previous inline errors
   showCheckoutError(null, null);
+
+  // Guest order rate limit — prevent bot flooding via the checkout form
+  if (!currentUser) {
+    const guestLimit = checkGuestOrderRateLimit();
+    if (!guestLimit.allowed) {
+      if (btn) { btn.textContent = 'Place Order — Cash on Delivery'; btn.disabled = false; }
+      showCheckoutError('name', guestLimit.message);
+      return;
+    }
+  }
 
   const formRowInputs = document.querySelectorAll('#page-checkout .form-row-2 input[type="text"]');
 

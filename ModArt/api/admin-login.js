@@ -1,19 +1,31 @@
 // Support both VITE_ prefixed (client) and plain (server) env var names
-const SUPABASE_URL     = process.env.SUPABASE_URL     || process.env.VITE_SUPABASE_URL     || 'https://ddodctzzsrlgyhtclabz.supabase.co';
+import { validateOrigin } from './utils/csrf.js';
+
+const SUPABASE_URL     = process.env.SUPABASE_URL     || process.env.VITE_SUPABASE_URL;
 const SUPABASE_SERVICE = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!SUPABASE_URL) {
+  console.error('CRITICAL: SUPABASE_URL env var not set');
+}
 
 // Admin emails — comma-separated list in env, fallback to known admin
 const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || process.env.ADMIN_EMAIL || 'modart.pod@gmail.com')
   .split(',').map(e => e.trim().toLowerCase()).filter(Boolean);
 
+// Admin login must only accept requests from known origins — never wildcard
+const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || 'https://modart-modart-pods-projects.vercel.app';
+
 export default async function handler(req, res) {
-  // Allow requests from same origin (no CORS restriction needed for same-domain API)
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGIN);
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') return res.status(204).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+
+  // CSRF: reject requests from disallowed origins
+  const originError = validateOrigin(req);
+  if (originError) return res.status(403).json(originError);
 
   const { email, password } = req.body || {};
   if (!email || !password) return res.status(400).json({ error: 'Email and password required' });

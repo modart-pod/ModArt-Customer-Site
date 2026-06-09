@@ -13,6 +13,10 @@
 secrets/
 credentials/
 
+# Private seed files — contain real coupon codes and operational data
+migrations/seed-coupons.sql
+migrations/seed-*.sql
+
 # Node modules
 node_modules/
 npm-debug.log*

@@ -83,6 +83,10 @@ export async function handleRegister() {
     showAuthError('register-error', 'Password must contain at least one number.');
     return;
   }
+  if (!/[^A-Za-z0-9]/.test(password)) {
+    showAuthError('register-error', 'Password must contain at least one special character (e.g. ! @ # $).');
+    return;
+  }
   if (!terms) {
     showAuthError('register-error', 'Please accept the Terms and Privacy Policy.');
     return;
@@ -130,11 +134,14 @@ export function checkPasswordStrength(password) {
   if (!bar || !lbl) return;
 
   let score = 0;
-  if (password.length >= 8)          score++;
-  if (/[A-Z]/.test(password))        score++;
-  if (/[0-9]/.test(password))        score++;
-  if (/[^A-Za-z0-9]/.test(password)) score++;
+  if (password.length >= 8)             score++;
+  if (password.length >= 12)            score++;   // bonus for longer passwords
+  if (/[A-Z]/.test(password))           score++;
+  if (/[0-9]/.test(password))           score++;
+  if (/[^A-Za-z0-9]/.test(password))    score++;
 
+  // Cap at 4 levels for the bar
+  const capped = Math.min(4, score);
   const levels = [
     { w: '0%',   bg: 'transparent', t: '' },
     { w: '25%',  bg: '#EF4444',     t: 'Weak' },
@@ -142,7 +149,7 @@ export function checkPasswordStrength(password) {
     { w: '75%',  bg: '#3B82F6',     t: 'Good' },
     { w: '100%', bg: '#22C55E',     t: 'Strong' },
   ];
-  const level = levels[score] || levels[0];
+  const level = levels[capped] || levels[0];
   bar.style.width      = level.w;
   bar.style.background = level.bg;
   lbl.textContent      = level.t;

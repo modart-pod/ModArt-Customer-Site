@@ -1,10 +1,10 @@
-const SUPABASE_URL     = process.env.SUPABASE_URL     || 'https://ddodctzzsrlgyhtclabz.supabase.co';
-const SUPABASE_SERVICE = process.env.SUPABASE_SERVICE_KEY;
-const ALLOWED_ORIGIN   = process.env.ALLOWED_ORIGIN || 'https://modart-print-on-demand.vercel.app';
-const FALLBACK_CODES   = { 'MODART10': 10 };
+import { validateOrigin } from './utils/csrf.js';
+import { checkRateLimit } from './utils/rate-limiter.js';
 
-// Rate limit: 10 coupon attempts per IP per hour
-const rateLimitMap = new Map();
+const SUPABASE_URL     = process.env.SUPABASE_URL     || process.env.VITE_SUPABASE_URL;
+const SUPABASE_SERVICE = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+const ALLOWED_ORIGIN   = process.env.ALLOWED_ORIGIN || 'https://modart-modart-pods-projects.vercel.app';
+const FALLBACK_CODES   = { 'MODART10': 10 };
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGIN);
@@ -14,14 +14,20 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(204).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  // Rate limit: 10 attempts per IP per hour
-  const ip  = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || 'unknown';
-  const now = Date.now();
-  const rec = rateLimitMap.get(ip) || { count: 0, start: now };
-  if (now - rec.start > 3600000) { rec.count = 0; rec.start = now; }
-  rec.count++;
-  rateLimitMap.set(ip, rec);
-  if (rec.count > 10) return res.status(429).json({ error: 'Too many attempts. Please wait.' });
+  // CSRF: reject requests from disallowed origins
+  const originError = validateOrigin(req);
+  if (originError) return res.status(403).json(originError);
+
+  // Rate limit via shared utility (Redis-first, in-memory fallback)
+  const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || 'unknown';
+  const rateLimit = await checkRateLimit(ip, 10, 3600, 'coupon');
+  res.setHeader('X-RateLimit-Limit', '10');
+  res.setHeader('X-RateLimit-Remaining', rateLimit.remaining.toString());
+  res.setHeader('X-RateLimit-Reset', rateLimit.resetIn.toString());
+  if (!rateLimit.allowed) {
+    res.setHeader('Retry-After', rateLimit.retryAfter.toString());
+    return res.status(429).json({ error: 'Too many attempts. Please wait.' });
+  }
 
   const code = ((req.body || {}).code || '').trim().toUpperCase();
   const userEmail = ((req.body || {}).userEmail || '').trim().toLowerCase(); // Optional: pass user email from frontend
