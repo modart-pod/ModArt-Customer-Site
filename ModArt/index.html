@@ -54,6 +54,8 @@
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/responsive.css">
   <link rel="stylesheet" href="css/fixes.css">
+  <link rel="stylesheet" href="css/mobile.css">
+  <link rel="stylesheet" href="css/desktop.css">
   <link rel="stylesheet" href="css/loader.css">
   <style>
     .fade-in-section{opacity:0;transform:translateY(20px);transition:opacity .55s ease,transform .55s ease}
@@ -254,13 +256,17 @@
   </nav>
 
   <!-- ============================================================
-       MOBILE HEADER — Logo left, actions right
+       MOBILE HEADER — Hamburger left, Logo centre, Actions right
        ============================================================ -->
   <header class="mobile-hdr" id="mobile-hdr">
-    <!-- Logo — top left -->
-    <button class="mobile-logo-btn" onclick="goTo('home')" aria-label="ModArt home" style="position:static;transform:none;display:flex;align-items:center;gap:6px">
-      <img src="assets/images/logo-black.png" alt="ModArt" style="height:36px;width:auto" onerror="this.style.display='none'"/>
-      <span style="font-size:15px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:var(--black)">MODART</span>
+    <!-- Hamburger — top left, opens drawer -->
+    <button class="nav-icon-btn" aria-label="Open menu" onclick="toggleMobileMenu()" style="flex-shrink:0">
+      <span class="material-symbols-outlined icon">menu</span>
+    </button>
+    <!-- Logo — centred -->
+    <button class="mobile-logo-btn" onclick="goTo('home')" aria-label="ModArt home" style="position:absolute;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:6px;background:none;border:none;cursor:pointer;padding:0">
+      <img src="assets/images/logo-black.png" alt="ModArt" style="height:32px;width:auto" onerror="this.style.display='none'"/>
+      <span style="font-size:14px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:var(--black)">MODART</span>
     </button>
     <!-- Actions — top right -->
     <div class="mobile-hdr-actions" style="display:flex;align-items:center;gap:2px;margin-left:auto">

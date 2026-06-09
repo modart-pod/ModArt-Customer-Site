@@ -1,0 +1,403 @@
+/* =================================================================
+   MODART DESKTOP LAYOUT — desktop.css
+   Dedicated styles for laptop/desktop (≥1024px).
+   Applied via body.layout-desktop class set by LayoutManager.js.
+   All rules here are DESKTOP-ONLY — not shared with mobile.
+   ================================================================= */
+
+/* ================================================================
+   1. DESKTOP NAVIGATION
+   ================================================================ */
+
+body.layout-desktop .desktop-nav {
+  display: block;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  height: var(--nav-h);
+  transition: background .28s ease, border-color .28s ease, backdrop-filter .28s ease;
+}
+
+body.layout-desktop .mobile-hdr,
+body.layout-desktop .mobile-bottom-nav,
+body.layout-desktop .mob-nav-spacer {
+  display: none !important;
+}
+
+/* Nav links — slightly larger on desktop for clarity */
+body.layout-desktop .nav-link {
+  font-size: 11px;
+  letter-spacing: .16em;
+}
+
+/* Active nav link indicator */
+body.layout-desktop .nav-link.active {
+  color: var(--black);
+}
+
+/* Search overlay — centred on desktop */
+body.layout-desktop #search-overlay {
+  padding-top: 100px;
+  align-items: flex-start;
+}
+
+body.layout-desktop #search-overlay > div {
+  max-width: 600px;
+  width: 90%;
+  margin: 0 auto;
+}
+
+/* ================================================================
+   2. DESKTOP PAGE PADDING
+   ================================================================ */
+
+body.layout-desktop .page {
+  padding-top: var(--nav-h);
+}
+
+body.layout-desktop #page-home {
+  padding-top: 0;
+}
+
+/* Customize page — flush under nav, topbar handles spacing */
+body.layout-desktop #page-customize {
+  padding-top: 0 !important;
+}
+
+/* ================================================================
+   3. DESKTOP HERO
+   ================================================================ */
+
+body.layout-desktop .home-hero {
+  min-height: calc(100vh - var(--nav-h));
+}
+
+body.layout-desktop .home-hero-overlay {
+  background: linear-gradient(to right,
+    rgba(0,0,0,.88) 0%,
+    rgba(0,0,0,.5) 50%,
+    rgba(0,0,0,.08) 100%);
+}
+
+body.layout-desktop .home-hero-content {
+  padding-top: calc(var(--nav-h) + clamp(48px, 6vh, 80px));
+  padding-left: clamp(48px, 5.5vw, 100px);
+  padding-right: clamp(48px, 5.5vw, 100px);
+  max-width: 780px;
+  justify-content: flex-start;
+}
+
+body.layout-desktop .hero-title {
+  font-size: clamp(44px, 6vw, 82px);
+  line-height: .88;
+  margin-bottom: 20px;
+}
+
+body.layout-desktop .hero-sub {
+  font-size: clamp(14px, 1.4vw, 17px);
+  max-width: 460px;
+  margin-bottom: 28px;
+  color: rgba(255, 255, 255, .6);
+}
+
+body.layout-desktop .hero-actions {
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+body.layout-desktop .hero-actions .btn-red-pill,
+body.layout-desktop .hero-actions .btn-outline {
+  width: auto;
+}
+
+body.layout-desktop .hero-countdown {
+  margin-top: 32px;
+  padding-top: 32px;
+}
+
+body.layout-desktop .hero-cd-unit {
+  font-size: clamp(28px, 3.5vw, 40px);
+}
+
+/* ================================================================
+   4. DESKTOP PRODUCT GRID
+   ================================================================ */
+
+body.layout-desktop #home-product-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(14px, 2vw, 22px);
+}
+
+body.layout-desktop #shop-product-grid {
+  /* shop-grid class already handles this via auto-fill */
+}
+
+body.layout-desktop .product-card-img {
+  aspect-ratio: 3 / 4;
+  border-radius: var(--r-md);
+}
+
+body.layout-desktop .product-card-name {
+  font-size: clamp(12px, 1.2vw, 14px);
+  letter-spacing: .06em;
+}
+
+body.layout-desktop .product-card-price {
+  font-size: clamp(14px, 1.4vw, 16px);
+}
+
+/* Hover overlay — desktop only interaction */
+body.layout-desktop .product-card-overlay {
+  opacity: 0;
+  transition: opacity .22s ease;
+}
+
+body.layout-desktop .product-card:hover .product-card-overlay {
+  opacity: 1;
+}
+
+body.layout-desktop .card-quick-cta {
+  display: inline-flex;
+}
+
+/* Carousel arrows — visible on desktop */
+body.layout-desktop .carousel-btn {
+  display: flex;
+}
+
+/* Carousel dots — hidden on desktop */
+body.layout-desktop .carousel-dots {
+  display: none;
+}
+
+/* ================================================================
+   5. DESKTOP SHOP FILTER BAR
+   ================================================================ */
+
+body.layout-desktop #shop-filter-bar {
+  position: sticky;
+  top: calc(var(--nav-h) + 8px);
+  z-index: 100;
+  background: var(--bg);
+  padding: 8px 0;
+  margin-top: -8px;
+}
+
+/* ================================================================
+   6. DESKTOP SECTIONS
+   ================================================================ */
+
+/* Section headers — more breathing room */
+body.layout-desktop .section-hdr {
+  margin-bottom: clamp(28px, 4vw, 48px);
+}
+
+body.layout-desktop .section-title {
+  font-size: clamp(26px, 3.5vw, 40px);
+}
+
+/* Manifesto — 2 column with image */
+body.layout-desktop .manifesto {
+  padding: clamp(72px, 9vw, 120px) 0;
+}
+
+body.layout-desktop .manifesto-layout {
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(48px, 6vw, 80px);
+}
+
+body.layout-desktop .manifesto-layout > div:last-child {
+  display: block !important;
+}
+
+body.layout-desktop .manifesto-title {
+  font-size: clamp(40px, 6vw, 72px);
+}
+
+body.layout-desktop .manifesto-body {
+  font-size: clamp(14px, 1.5vw, 18px);
+}
+
+body.layout-desktop .manifesto-stat-num {
+  font-size: clamp(32px, 4vw, 52px);
+}
+
+/* Drop archive — 4-column rows */
+body.layout-desktop .drop-row {
+  grid-template-columns: 72px 1fr 160px 32px;
+  padding: clamp(20px, 2.5vw, 28px) 0;
+}
+
+body.layout-desktop .drop-num  { font-size: clamp(32px, 4vw, 52px); }
+body.layout-desktop .drop-name { font-size: clamp(18px, 2.5vw, 26px); }
+
+/* Reviews — 3 column */
+body.layout-desktop .review-grid {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* Early access — inline form */
+body.layout-desktop .early-access-form {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+body.layout-desktop .early-input {
+  min-width: 260px;
+  font-size: 14px;
+}
+
+/* ================================================================
+   7. DESKTOP PRODUCT DETAIL
+   ================================================================ */
+
+body.layout-desktop .product-detail-grid {
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(40px, 5vw, 64px);
+  align-items: start;
+}
+
+body.layout-desktop .product-detail-title {
+  font-size: clamp(32px, 5vw, 56px);
+}
+
+body.layout-desktop .fabric-grid {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* ================================================================
+   8. DESKTOP BAG & CHECKOUT
+   ================================================================ */
+
+body.layout-desktop .bag-layout,
+body.layout-desktop .checkout-layout {
+  grid-template-columns: 1fr 400px;
+  gap: 40px;
+}
+
+body.layout-desktop .bag-summary-col {
+  position: sticky;
+  top: calc(var(--nav-h) + 20px);
+}
+
+/* ================================================================
+   9. DESKTOP FOOTER
+   ================================================================ */
+
+body.layout-desktop .footer-grid {
+  grid-template-columns: 1.8fr 1fr 1fr !important;
+  gap: 48px !important;
+  margin-bottom: 40px !important;
+}
+
+/* ================================================================
+   10. DESKTOP CUSTOMIZER
+   ================================================================ */
+
+body.layout-desktop .customizer-body {
+  flex-direction: row;
+}
+
+body.layout-desktop .customizer-tools-col {
+  width: clamp(220px, 22vw, 280px);
+  border-right: 1px solid var(--border);
+  border-bottom: none;
+  order: 0;
+}
+
+body.layout-desktop .customizer-canvas-col {
+  flex: 1;
+  order: 0;
+}
+
+body.layout-desktop .customizer-layers-col {
+  display: flex;
+  flex-direction: column;
+  width: clamp(180px, 18vw, 220px);
+  border-left: 1px solid var(--border);
+  order: 0;
+}
+
+body.layout-desktop .canvas-wrap {
+  width: clamp(300px, 38vw, 480px);
+  height: clamp(370px, 48vw, 600px);
+}
+
+/* ================================================================
+   11. DESKTOP DROPS PAGE
+   ================================================================ */
+
+body.layout-desktop #drops-page-live,
+body.layout-desktop #drops-page-upcoming,
+body.layout-desktop #drops-page-ended {
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: clamp(16px, 2.5vw, 24px);
+}
+
+/* ================================================================
+   12. TABLET OVERRIDES (768px–1023px)
+   These use body.layout-tablet — between mobile and full desktop
+   ================================================================ */
+
+body.layout-tablet .desktop-nav,
+body.layout-tablet .mobile-hdr,
+body.layout-tablet .mobile-bottom-nav {
+  /* controlled by base responsive.css */
+}
+
+body.layout-tablet .page {
+  padding-top: var(--nav-h);
+}
+
+body.layout-tablet #page-home {
+  padding-top: 0;
+}
+
+body.layout-tablet #home-product-grid {
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+body.layout-tablet .bag-layout,
+body.layout-tablet .checkout-layout {
+  grid-template-columns: 1fr 300px;
+  gap: 24px;
+}
+
+body.layout-tablet .product-detail-grid {
+  grid-template-columns: 1fr;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+body.layout-tablet .manifesto-layout {
+  grid-template-columns: 1fr;
+}
+
+body.layout-tablet .manifesto-layout > div:last-child {
+  display: none !important;
+}
+
+body.layout-tablet .review-grid {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+body.layout-tablet .footer-grid {
+  grid-template-columns: 1.4fr 1fr 1fr !important;
+  gap: 32px !important;
+}
+
+body.layout-tablet .drop-row {
+  grid-template-columns: 56px 1fr auto 28px;
+}
+
+body.layout-tablet #drops-page-live,
+body.layout-tablet #drops-page-upcoming,
+body.layout-tablet #drops-page-ended {
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
