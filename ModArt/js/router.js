@@ -59,7 +59,8 @@ export function showPage(pageName) {
   const target = document.getElementById(PAGES[pageName]);
   if (target) {
     target.classList.add('active');
-    window.scrollTo(0, 0);
+    // Scroll after paint so the newly-active page is in layout flow
+    requestAnimationFrame(() => window.scrollTo(0, 0));
   }
 
   // Track current page on body so nav scroll can detect it

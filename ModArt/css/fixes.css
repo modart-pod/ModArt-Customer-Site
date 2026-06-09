@@ -182,7 +182,7 @@ body {
   overflow-x: hidden;
 }
 
-.page {
+.page.active {
   overflow-x: hidden;
 }
 
@@ -1268,10 +1268,7 @@ textarea:focus-visible {
   }
 }
 
-/* ── PAGE FADE-IN — prevent flash of unstyled content ── */
-.page {
-  will-change: opacity, transform;
-}
+/* ── PAGE FADE-IN — handled in layout.css via opacity+visibility ── */
 
 /* ── FOCUS RING — consistent across all interactive elements ── */
 button:focus-visible,
@@ -1829,18 +1826,8 @@ body.layout-mobile #page-customize .customizer-page {
    transition smoothness, accessibility, and loading states.
    ================================================================= */
 
-/* ── PAGE TRANSITION: prevent flash of invisible content on route change ── */
-/* NOTE: layout.css already sets .page { opacity:0; transform:translateY(6px) }
-   and .page.active { opacity:1; transform:translateY(0) }.
-   We only add pointer-events here — do NOT re-declare opacity/transform
-   as that would override layout.css and cause blank pages. */
-.page {
-  pointer-events: none;
-}
-
-.page.active {
-  pointer-events: auto;
-}
+/* ── PAGE TRANSITION: layout.css handles opacity+visibility transition ── */
+/* pointer-events and position are already set in layout.css .page / .page.active */
 
 /* ── STAR RATING — correct icon visibility on shop cards ── */
 /* Ensure Material Symbols icons in card stars always render */

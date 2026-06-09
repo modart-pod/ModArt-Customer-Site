@@ -20,18 +20,32 @@
    PAGE SYSTEM
    ================================================================= */
 .page {
-  display: none;
-  min-height: calc(100vh - var(--nav-h));
+  /* Hidden by default — use visibility+opacity so transitions work
+     display:none → display:flex cannot be transitioned, causing the
+     content-below-viewport bug where pages appear scrolled to bottom */
+  display: flex;
   flex-direction: column;
+  min-height: calc(100vh - var(--nav-h));
   opacity: 0;
-  transform: translateY(6px);
-  transition: opacity .26s ease, transform .26s ease;
+  visibility: hidden;
+  pointer-events: none;
+  /* No translateY here — it was pushing content off-screen */
+  transition: opacity .22s ease, visibility .22s ease;
+  /* Collapse all non-active pages to zero height so they don't push layout */
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
 }
 
 .page.active {
-  display: flex;
   opacity: 1;
-  transform: translateY(0);
+  visibility: visible;
+  pointer-events: auto;
+  position: relative;
+  top: auto;
+  left: auto;
+  right: auto;
 }
 
 /* =================================================================

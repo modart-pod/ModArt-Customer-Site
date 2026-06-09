@@ -865,6 +865,8 @@ img {
 
   .page {
     transition: none;
+    opacity: 1;
+    visibility: visible;
   }
 }
 
