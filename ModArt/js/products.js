@@ -241,10 +241,21 @@ export async function initProducts() {
   await fetchProducts();
   await fetchInventory();
   if (typeof window !== 'undefined') {
-    window._PRODUCTS      = LIVE_PRODUCTS;
+    // ✅ FIX: Only overwrite window._PRODUCTS if we actually got live data.
+    // If Supabase fetch failed, window._PRODUCTS keeps the state.js fallback (19 items).
+    if (LIVE_PRODUCTS.length > 0) {
+      window._PRODUCTS      = LIVE_PRODUCTS;
+    } else {
+      console.warn('[ModArt] No live products from Supabase — keeping local fallback');
+      // Ensure window._PRODUCTS has at least the fallback data
+      if (!window._PRODUCTS || window._PRODUCTS.length === 0) {
+        const { PRODUCTS: fallback } = await import('./state.js');
+        window._PRODUCTS = fallback;
+      }
+    }
     window.LIVE_INVENTORY = LIVE_INVENTORY;
   }
-  return LIVE_PRODUCTS;
+  return LIVE_PRODUCTS.length > 0 ? LIVE_PRODUCTS : (window._PRODUCTS || []);
 }
 
 if (typeof window !== 'undefined') {

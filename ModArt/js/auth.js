@@ -6,7 +6,7 @@
  */
 
 // Import credentials from config (now using environment variables)
-import { SUPABASE_URL, SUPABASE_ANON_KEY } from './admin-config.js';
+import { getCredentials } from './admin-config.js';
 
 /**
  * Creates the Supabase client.
@@ -17,6 +17,9 @@ let _supabaseClient = null;
 export function getSupabase() {
   if (_supabaseClient) return _supabaseClient;
   
+  // Read credentials lazily — at call time the config fetch has resolved
+  const { url: SUPABASE_URL, anonKey: SUPABASE_ANON_KEY } = getCredentials();
+
   // Validate credentials
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
     console.error('❌ CRITICAL: Supabase credentials not configured');
@@ -43,10 +46,9 @@ export function getSupabase() {
   return null;
 }
 
-// Export a stable reference
-export const supabase = (() => {
-  return getSupabase();
-})();
+// Export a lazy reference — returns the live client on each call.
+// Do NOT cache this at module init time because credentials aren't ready yet.
+export const supabase = null; // deprecated; use getSupabase() directly
 
 export let currentUser = null;
 

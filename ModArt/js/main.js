@@ -22,6 +22,7 @@ import './account.js';
 import { initCarousel } from './utils.js';
 import './modals.js';
 import { showCustomerToast } from './toast.js';
+import { resolveSupabaseCredentials } from './admin-config.js';
 
 /* ================================================================
    COUNTDOWN TIMER
@@ -133,6 +134,11 @@ function withTimeout(promise, ms, label) {
 async function initApplication() {
   // 0. Wait for Supabase credentials before doing anything auth-related
   if (window.__configReady) await withTimeout(window.__configReady, 4000, 'config fetch');
+  // ✅ FIX: Resolve credentials into admin-config module variables AFTER config resolves
+  const credOk = resolveSupabaseCredentials();
+  if (!credOk) {
+    console.warn('[ModArt] Supabase credentials missing — products will use local fallback data');
+  }
 
   // 1. Router + Layout
   lp(8, 'Initialising\u2026');

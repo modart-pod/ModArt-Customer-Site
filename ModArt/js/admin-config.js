@@ -4,10 +4,30 @@
  * Credentials are injected at runtime by /api/config.
  * No keys are hardcoded here — they must come from Vercel env vars.
  * If window globals are absent the app will show a configuration error.
+ *
+ * ✅ FIX: Credentials are read lazily (via getters) so modules that import
+ *    this file at parse time don't capture undefined values before the async
+ *    /api/config fetch has resolved and set window.__SUPABASE_URL__ etc.
  */
 
-export const SUPABASE_URL      = window.__SUPABASE_URL__;
-export const SUPABASE_ANON_KEY = window.__SUPABASE_ANON_KEY__;
+// Lazy getters — evaluated at call time, not at import time
+export let SUPABASE_URL      = null;
+export let SUPABASE_ANON_KEY = null;
+
+// Called by main.js after window.__configReady resolves
+export function resolveSupabaseCredentials() {
+  SUPABASE_URL      = window.__SUPABASE_URL__      || null;
+  SUPABASE_ANON_KEY = window.__SUPABASE_ANON_KEY__ || null;
+  return !!(SUPABASE_URL && SUPABASE_ANON_KEY);
+}
+
+// Accessor used by auth.js — always reads the current window value
+export function getCredentials() {
+  return {
+    url:     SUPABASE_URL      || window.__SUPABASE_URL__      || null,
+    anonKey: SUPABASE_ANON_KEY || window.__SUPABASE_ANON_KEY__ || null,
+  };
+}
 
 export const ADMIN_CONFIG = {
   SESSION_TIMEOUT:           30 * 60 * 1000,

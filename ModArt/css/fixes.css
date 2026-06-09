@@ -1822,3 +1822,182 @@ body.layout-mobile #page-customize .customizer-page {
     padding-bottom: 20px !important;
   }
 }
+
+
+/* =================================================================
+   SHOP PAGE FIX PACK — v2
+   Addresses: blank page flash, star rating visibility, card layout,
+   transition smoothness, accessibility, and loading states.
+   ================================================================= */
+
+/* ── PAGE TRANSITION: prevent flash of invisible content on route change ── */
+.page {
+  /* Page starts hidden and fades in when .active is added */
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity .24s ease, transform .24s ease;
+  pointer-events: none;
+}
+
+.page.active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* ── STAR RATING — correct icon visibility on shop cards ── */
+/* Ensure Material Symbols icons in card stars always render */
+.card-stars .material-symbols-outlined {
+  visibility: visible !important; /* override fonts-loaded guard for card stars */
+  font-size: 12px;
+  line-height: 1;
+  vertical-align: middle;
+  user-select: none;
+}
+
+/* Empty star colour — use a more visible grey (#C8C5BE) vs --border (#E2DFD8) */
+.card-stars .icon[style*="star_border"],
+.card-stars .icon:last-of-type {
+  color: #C0BBB4;
+}
+
+/* Star row alignment */
+.card-stars {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  padding: 4px 10px 6px;
+  flex-wrap: nowrap;
+}
+
+.card-stars-count {
+  font-size: 10px;
+  color: var(--g2);
+  margin-left: 3px;
+  white-space: nowrap;
+}
+
+/* ── SHOP GRID — minimum viable visibility fallback ── */
+/* If JS fails to run, show a "Products loading" message instead of blank */
+#shop-product-grid:empty::after {
+  content: 'Loading products…';
+  display: block;
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 48px 0;
+  font-size: 13px;
+  color: var(--g3);
+  letter-spacing: .06em;
+  font-weight: 600;
+}
+
+/* ── PRODUCT CARD — stable hover behaviour ── */
+.shop-grid .product-card {
+  /* Ensure cards start at opacity 1 (skeleton-to-card transition) */
+  animation: cardFadeIn .3s ease forwards;
+}
+
+@keyframes cardFadeIn {
+  from { opacity: 0; transform: scale(.97); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* Don't animate skeleton cards */
+.skeleton-card {
+  animation: none !important;
+}
+
+/* ── SHOP PRODUCT COUNT — visible, not clipped ── */
+#shop-product-count {
+  min-height: 18px; /* prevent layout shift */
+}
+
+/* ── WISHLIST HEART — always 32px on shop compact cards, not 44px ──
+   fixes.css sets .wishlist-icon-btn to 44px which is too large for
+   the compact shop grid. Override to 32px inside shop-grid.         */
+.shop-grid .wishlist-icon-btn {
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  min-height: 32px !important;
+}
+
+/* ── PRODUCT CARD IMAGE — shimmer should stop once image loads ── */
+.product-card-img img.loaded ~ * {
+  display: none; /* hide shimmer pseudo-element after load */
+}
+
+/* Fade in product images on load */
+.product-card-img img {
+  opacity: 0;
+  transition: opacity .3s ease;
+}
+
+.product-card-img img.loaded,
+.product-card-img img[src]:not([src=""]) {
+  opacity: 1;
+}
+
+/* ── FILTER BAR STICKY on desktop ── */
+@media (min-width: 768px) {
+  #shop-filter-bar {
+    position: sticky;
+    top: calc(var(--nav-h) + 8px);
+    z-index: 100;
+    background: var(--bg);
+    padding: 8px 0;
+    margin-top: -8px;
+  }
+}
+
+/* ── ACCESSIBILITY: skip to products link ── */
+.skip-to-products {
+  position: absolute;
+  top: -100%;
+  left: 16px;
+  z-index: 9999;
+  background: var(--red);
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 0 0 var(--r-sm) var(--r-sm);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: top .2s;
+}
+.skip-to-products:focus { top: var(--nav-h); }
+
+/* ── RATING: apparel-specific colour (amber instead of red) ── */
+.card-stars .icon {
+  color: var(--amber); /* amber for filled stars */
+}
+
+/* ── SOLD OUT card — reduce visual weight, not hidden ── */
+.shop-grid .product-card[data-product-stock="0"] {
+  opacity: 0.75;
+}
+.shop-grid .product-card[data-product-stock="0"]:hover {
+  opacity: 1;
+}
+
+/* ── LOW STOCK badge pulse ── */
+.badge-low {
+  animation: badgePulse 2s ease infinite;
+}
+@keyframes badgePulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: .75; }
+}
+
+/* ── BACK TO TOP button ── */
+.btn-ghost:hover {
+  color: var(--black);
+}
+
+/* ── SHOP SORT SELECT — accessible focus ring ── */
+.shop-sort-select:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 2px;
+}

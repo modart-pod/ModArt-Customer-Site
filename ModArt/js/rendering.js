@@ -36,7 +36,9 @@ function esc(str) {
  */
 export function renderSkeletonProducts(gridId, count = 8) {
   const grid = document.getElementById(gridId);
-  if (!grid || grid.children.length > 0) return; // don't overwrite existing content
+  if (!grid) return;
+  // Only inject skeletons if grid is completely empty (no real cards, no skeletons yet)
+  if (grid.children.length > 0) return;
   grid.innerHTML = Array.from({ length: count }, () => `
     <div class="skeleton-card" aria-hidden="true">
       <div class="skeleton-card-img skeleton"></div>
@@ -86,9 +88,28 @@ function renderStars(rating) {
   const full  = Math.floor(rating);
   const half  = rating - full >= 0.5 ? 1 : 0;
   const empty = 5 - full - half;
-  return '<span class="material-symbols-outlined icon" style="font-size:12px;color:var(--amber)">star</span>'.repeat(full)
-    + (half ? '<span class="material-symbols-outlined icon" style="font-size:12px;color:var(--amber)">star_half</span>' : '')
-    + '<span class="material-symbols-outlined icon" style="font-size:12px;color:var(--border)">star</span>'.repeat(empty);
+  // ✅ FIX: Use star_border for empty stars (not "star" which renders filled).
+  // Use font-variation-settings to ensure fill state is correct per icon.
+  const starFull  = '<span class="material-symbols-outlined icon" style="font-size:12px;color:var(--amber);font-variation-settings:\'FILL\' 1,\'wght\' 500,\'GRAD\' 0,\'opsz\' 20">star</span>';
+  const starHalf  = '<span class="material-symbols-outlined icon" style="font-size:12px;color:var(--amber);font-variation-settings:\'FILL\' 1,\'wght\' 500,\'GRAD\' 0,\'opsz\' 20">star_half</span>';
+  const starEmpty = '<span class="material-symbols-outlined icon" style="font-size:12px;color:var(--border);font-variation-settings:\'FILL\' 0,\'wght\' 300,\'GRAD\' 0,\'opsz\' 20">star_border</span>';
+  return starFull.repeat(full)
+    + (half ? starHalf : '')
+    + starEmpty.repeat(empty);
+}
+
+/**
+ * Generates accessible star rating HTML for display.
+ * @param {number} rating  Numeric rating 0-5
+ * @param {number} count   Review count
+ * @returns {string} HTML string
+ */
+function renderStarRating(rating, count) {
+  const label = `Rated ${rating.toFixed(1)} out of 5 stars${count > 0 ? `, ${count} reviews` : ''}`;
+  return `<div class="card-stars" style="display:flex;align-items:center;gap:2px;padding:4px 0 0" role="img" aria-label="${label}">
+    ${renderStars(rating)}
+    <span class="card-stars-count" style="font-size:10px;color:var(--g2);margin-left:3px">${count > 0 ? '(' + count + ')' : 'New'}</span>
+  </div>`;
 }
 export function renderProducts(page) {
   const id = page === 'home' ? 'home-product-grid' : 'shop-product-grid';
@@ -105,15 +126,11 @@ export function renderProducts(page) {
     const wish = wishlist.has(p.id);
     const rev  = PRODUCT_REVIEWS[p.id] || { rating: 4.5, count: 0 };
 
-    const starsRow = isShop ? `
-      <div class="card-stars" style="display:flex;align-items:center;gap:2px;padding:4px 0 0">
-        ${renderStars(rev.rating)}
-        <span class="card-stars-count" style="font-size:10px;color:var(--g2);margin-left:3px">${rev.count > 0 ? '(' + rev.count + ')' : 'New'}</span>
-      </div>` : '';
+    const starsRow = isShop ? renderStarRating(rev.rating, rev.count) : '';
 
     return `<div class="product-card" data-product-id="${esc(p.id)}" data-product-price="${p.price}" data-product-stock="${p.stock}" data-product-name="${esc(p.name)}" onclick="window.openProduct && window.openProduct('${esc(p.id)}')" role="article" aria-label="${esc(p.name)}">
       <div class="product-card-img">
-        <img src="${esc(p.img)}" alt="${esc(p.name)}" loading="lazy"/>
+        <img src="${esc(p.img)}" alt="${esc(p.name)}" loading="lazy" onload="this.classList.add('loaded')"/>
         ${p.badge ? `<div class="product-card-badge${sold ? ' badge-sold' : low ? ' badge-low' : ''}">${esc(p.badge)}</div>` : ''}
         <!-- Wishlist heart — always visible, top-right corner -->
         <button class="wishlist-icon-btn${wish ? ' wishlisted' : ''}"
@@ -146,6 +163,11 @@ export function renderProducts(page) {
   if (isShop === false && window._rebuildCarouselDots) {
     window._rebuildCarouselDots();
   }
+
+  // Mark already-loaded images (browser cache) as .loaded immediately
+  grid.querySelectorAll('.product-card-img img').forEach(img => {
+    if (img.complete && img.naturalWidth > 0) img.classList.add('loaded');
+  });
 
   // Update product count on shop page
   if (isShop) {
