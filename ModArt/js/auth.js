@@ -258,8 +258,17 @@ export async function initAuth() {
 
 /** Register with email + password. Returns { user, error } */
 export async function register(email, password, fullName) {
-  const client = getSupabase();
-  if (!client) return { user: null, error: { message: 'Auth service unavailable' } };
+  let client = getSupabase();
+  if (!client) {
+    // Wait briefly for config fetch to complete on slow connections
+    await new Promise(r => setTimeout(r, 1500));
+    if (!_supabaseClient && window.__SUPABASE_URL__ && window.__SUPABASE_ANON_KEY__) {
+      const { resolveSupabaseCredentials } = await import('./admin-config.js');
+      resolveSupabaseCredentials();
+    }
+    client = getSupabase();
+  }
+  if (!client) return { user: null, error: { message: 'Sign-up is temporarily unavailable. Please refresh and try again.' } };
   const { data, error } = await client.auth.signUp({
     email,
     password,
@@ -270,16 +279,60 @@ export async function register(email, password, fullName) {
 
 /** Login with email + password. Returns { user, error } */
 export async function login(email, password) {
-  const client = getSupabase();
-  if (!client) return { user: null, error: { message: 'Auth service unavailable' } };
+  let client = getSupabase();
+  if (!client) {
+    await new Promise(r => setTimeout(r, 1500));
+    if (!_supabaseClient && window.__SUPABASE_URL__ && window.__SUPABASE_ANON_KEY__) {
+      const { resolveSupabaseCredentials } = await import('./admin-config.js');
+      resolveSupabaseCredentials();
+    }
+    client = getSupabase();
+  }
+  if (!client) return { user: null, error: { message: 'Sign-in is temporarily unavailable. Please refresh and try again.' } };
   const { data, error } = await client.auth.signInWithPassword({ email, password });
   return { user: data?.user, error };
 }
 
 /** Login with Google OAuth. */
 export async function loginWithGoogle() {
+  // Try to resolve credentials one more time in case the user clicked
+  // before the config fetch completed
+  if (!window.__SUPABASE_URL__ || !window.__SUPABASE_ANON_KEY__) {
+    // Wait up to 3 seconds for config to load
+    await new Promise(resolve => {
+      const deadline = Date.now() + 3000;
+      const check = () => {
+        if ((window.__SUPABASE_URL__ && window.__SUPABASE_ANON_KEY__) || Date.now() > deadline) {
+          resolve();
+        } else {
+          setTimeout(check, 100);
+        }
+      };
+      check();
+    });
+    // Re-resolve credentials now that config may have loaded
+    if (window.__SUPABASE_URL__ && window.__SUPABASE_ANON_KEY__) {
+      const { resolveSupabaseCredentials } = await import('./admin-config.js');
+      resolveSupabaseCredentials();
+      // Reset cached null client so getSupabase() retries
+      _supabaseClient = null;
+    }
+  }
+
   const client = getSupabase();
-  if (!client) { showAuthError('google-error', 'Auth service unavailable'); return; }
+  if (!client) {
+    // Check if it's a config issue vs a transient error
+    const hasUrl  = !!(window.__SUPABASE_URL__);
+    const hasKey  = !!(window.__SUPABASE_ANON_KEY__);
+    if (!hasUrl || !hasKey) {
+      showAuthError('google-error',
+        'Sign-in is temporarily unavailable. Please try again in a moment or use email/password.'
+      );
+    } else {
+      showAuthError('google-error', 'Could not connect to auth service. Please refresh and try again.');
+    }
+    return;
+  }
 
   // Use explicit site URL — never rely on window.location.origin
   // which can be the Vercel preview URL or localhost

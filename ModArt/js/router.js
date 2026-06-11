@@ -104,6 +104,13 @@ function triggerPageRender(pageName) {
         window.renderSizeOptions(pid);
       }
       break;
+    case 'login':
+      // Clear any stale auth errors when navigating to login page
+      ['login-error', 'google-error'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.textContent = ''; el.style.display = 'none'; }
+      });
+      break;
     case 'bag':
       window.renderBag && window.renderBag();
       break;
