@@ -338,24 +338,7 @@ a {
   padding: 5px 10px;
 }
 
-/* Star rating row ΓÇö shown in shop compact cards */
-.shop-grid .card-stars {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  padding: 0 10px 6px;
-}
-
-.shop-grid .card-stars .icon {
-  font-size: 11px;
-  color: var(--amber);
-}
-
-.shop-grid .card-stars-count {
-  font-size: 10px;
-  color: var(--g2);
-  margin-left: 2px;
-}
+/* Star rating styles removed — ratings no longer shown on product cards */
 
 /* ΓöÇΓöÇ Dark mode overrides ΓöÇΓöÇ */
 [data-theme="dark"] .shop-grid .product-card {
@@ -371,7 +354,6 @@ a {
 [data-theme="dark"] .shop-grid .product-card-name { color: var(--white); }
 [data-theme="dark"] .shop-grid .product-card-price { color: var(--white); }
 [data-theme="dark"] .shop-grid .product-card-series { color: var(--g2); }
-[data-theme="dark"] .shop-grid .card-stars-count { color: var(--g2); }
 
 /* =================================================================
    HOME CAROUSEL — redesigned

@@ -1829,38 +1829,6 @@ body.layout-mobile #page-customize .customizer-page {
 /* ── PAGE TRANSITION: layout.css handles opacity+visibility transition ── */
 /* pointer-events and position are already set in layout.css .page / .page.active */
 
-/* ── STAR RATING — correct icon visibility on shop cards ── */
-/* Ensure Material Symbols icons in card stars always render */
-.card-stars .material-symbols-outlined {
-  visibility: visible !important; /* override fonts-loaded guard for card stars */
-  font-size: 12px;
-  line-height: 1;
-  vertical-align: middle;
-  user-select: none;
-}
-
-/* Empty star colour — use a more visible grey (#C8C5BE) vs --border (#E2DFD8) */
-.card-stars .icon[style*="star_border"],
-.card-stars .icon:last-of-type {
-  color: #C0BBB4;
-}
-
-/* Star row alignment */
-.card-stars {
-  display: flex;
-  align-items: center;
-  gap: 1px;
-  padding: 4px 10px 6px;
-  flex-wrap: nowrap;
-}
-
-.card-stars-count {
-  font-size: 10px;
-  color: var(--g2);
-  margin-left: 3px;
-  white-space: nowrap;
-}
-
 /* ── SHOP GRID — minimum viable visibility fallback ── */
 /* If JS fails to run, show a "Products loading" message instead of blank */
 #shop-product-grid:empty::after {
@@ -1952,11 +1920,6 @@ body.layout-mobile #page-customize .customizer-page {
   transition: top .2s;
 }
 .skip-to-products:focus { top: var(--nav-h); }
-
-/* ── RATING: apparel-specific colour (amber instead of red) ── */
-.card-stars .icon {
-  color: var(--amber); /* amber for filled stars */
-}
 
 /* ── SOLD OUT card — reduce visual weight, not hidden ── */
 .shop-grid .product-card[data-product-stock="0"] {

@@ -60,57 +60,6 @@ if (typeof window !== 'undefined') {
 
 // Track currently viewed product
 let currentProductId = null;
-
-// Static review data keyed by product id (display only, not editable)
-const PRODUCT_REVIEWS = {
-  'regular-tee':         { rating: 4.7, count: 128 },
-  'full-sleeve-tee':     { rating: 4.6, count:  94 },
-  'oversized-tee':       { rating: 4.8, count: 214 },
-  'longline-curved-tee': { rating: 4.5, count:  63 },
-  'sweatshirt':          { rating: 4.7, count: 187 },
-  'weighted-sweatshirt': { rating: 4.9, count:  41 },
-  'hoodie':              { rating: 4.8, count: 302 },
-  'hooded-sweatshirt':   { rating: 4.7, count: 156 },
-  'zipper-hoodie':       { rating: 4.6, count: 112 },
-  'weighted-zipper':     { rating: 4.9, count:  38 },
-  'varsity-jacket':      { rating: 4.8, count:  77 },
-  'joggers':             { rating: 4.6, count: 143 },
-  'shorts':              { rating: 4.5, count:  89 },
-  'womens-tee':          { rating: 4.7, count: 201 },
-  'crop-top':            { rating: 4.6, count: 134 },
-  'crop-hoodie':         { rating: 4.8, count:  56 },
-  'crop-tank':           { rating: 4.5, count:  72 },
-  'tote-bag':            { rating: 4.4, count:  48 },
-  'drawstring-bag':      { rating: 4.3, count:  31 },
-};
-
-function renderStars(rating) {
-  const full  = Math.floor(rating);
-  const half  = rating - full >= 0.5 ? 1 : 0;
-  const empty = 5 - full - half;
-  // ✅ FIX: Use star_border for empty stars (not "star" which renders filled).
-  // Use font-variation-settings to ensure fill state is correct per icon.
-  const starFull  = '<span class="material-symbols-outlined icon" style="font-size:12px;color:var(--amber);font-variation-settings:\'FILL\' 1,\'wght\' 500,\'GRAD\' 0,\'opsz\' 20">star</span>';
-  const starHalf  = '<span class="material-symbols-outlined icon" style="font-size:12px;color:var(--amber);font-variation-settings:\'FILL\' 1,\'wght\' 500,\'GRAD\' 0,\'opsz\' 20">star_half</span>';
-  const starEmpty = '<span class="material-symbols-outlined icon" style="font-size:12px;color:var(--border);font-variation-settings:\'FILL\' 0,\'wght\' 300,\'GRAD\' 0,\'opsz\' 20">star_border</span>';
-  return starFull.repeat(full)
-    + (half ? starHalf : '')
-    + starEmpty.repeat(empty);
-}
-
-/**
- * Generates accessible star rating HTML for display.
- * @param {number} rating  Numeric rating 0-5
- * @param {number} count   Review count
- * @returns {string} HTML string
- */
-function renderStarRating(rating, count) {
-  const label = `Rated ${rating.toFixed(1)} out of 5 stars${count > 0 ? `, ${count} reviews` : ''}`;
-  return `<div class="card-stars" style="display:flex;align-items:center;gap:2px;padding:4px 0 0" role="img" aria-label="${label}">
-    ${renderStars(rating)}
-    <span class="card-stars-count" style="font-size:10px;color:var(--g2);margin-left:3px">${count > 0 ? '(' + count + ')' : 'New'}</span>
-  </div>`;
-}
 export function renderProducts(page) {
   const id = page === 'home' ? 'home-product-grid' : 'shop-product-grid';
   const grid = document.getElementById(id);
@@ -124,9 +73,8 @@ export function renderProducts(page) {
     const sold = p.stock === 0;
     const low  = p.stock > 0 && p.stock <= 5;
     const wish = wishlist.has(p.id);
-    const rev  = PRODUCT_REVIEWS[p.id] || { rating: 4.5, count: 0 };
 
-    const starsRow = isShop ? renderStarRating(rev.rating, rev.count) : '';
+    const starsRow = ''; // Stars removed
 
     return `<div class="product-card" data-product-id="${esc(p.id)}" data-product-price="${p.price}" data-product-stock="${p.stock}" data-product-name="${esc(p.name)}" onclick="window.openProduct && window.openProduct('${esc(p.id)}')" role="article" aria-label="${esc(p.name)}">
       <div class="product-card-img">
