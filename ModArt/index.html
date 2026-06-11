@@ -704,7 +704,7 @@
               <img class="product-img-thumb" src="https://images.unsplash.com/photo-1621072156002-e2fccdc0b176?w=200&q=80" alt="Detail" loading="lazy" onclick="switchImg(this,'https://images.unsplash.com/photo-1621072156002-e2fccdc0b176?w=900&q=85')"/>
             </div>
           </div>
-          <div>
+          <div class="pdp-info-col">
             <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px">
               <div class="eyebrow eyebrow-red" style="visibility:hidden" id="pdp-eyebrow"> </div>
               <button onclick="(function(){const url=window.location.href;const name=document.querySelector('#page-product .product-detail-title')?.textContent||'ModArt Product';if(navigator.share){navigator.share({title:name,url:url});}else{navigator.clipboard?.writeText(url).then(()=>{if(window.showCustomerToast)window.showCustomerToast('Link copied','success');});}})();" style="background:none;border:1.5px solid var(--border);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:border-color var(--t)" onmouseover="this.style.borderColor='var(--black)'" onmouseout="this.style.borderColor='var(--border)'" aria-label="Share product">

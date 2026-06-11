@@ -254,30 +254,39 @@ body.layout-desktop .early-input {
 
 /* ================================================================
    7. DESKTOP PRODUCT DETAIL — sticky image gallery
+   Image sticks from top of grid to bottom of right info column.
    ================================================================ */
 
 body.layout-desktop .product-detail-grid {
   grid-template-columns: 1fr 1fr;
   gap: clamp(40px, 5vw, 64px);
-  /* align-items:start is critical — without it both columns stretch
-     to equal height and sticky has nothing to stick against */
+  /* NO align-items here — grid row stretches to height of taller
+     column (the right info col). This gives sticky its travel range. */
   align-items: start;
 }
 
-/* LEFT column: image stack sticks under the nav while details scroll */
+/* LEFT column — sticky image stack.
+   position:sticky + align-self:start is the key combination:
+   - align-self:start makes the left cell only as tall as its content
+   - position:sticky makes it scroll with the page but stop at `top`
+   - It naturally un-sticks when the parent grid ends (right col ends) */
 body.layout-desktop .product-img-stack {
   position: sticky;
-  top: calc(var(--nav-h) + 24px); /* 24px breathing room below nav */
-  /* Max-height prevents the sticky element overflowing the viewport
-     if there are many thumbnails */
+  top: calc(var(--nav-h) + 24px);
+  align-self: start;            /* cell height = image content height */
   max-height: calc(100vh - var(--nav-h) - 48px);
   overflow-y: auto;
-  /* Hide scrollbar — content scrolls via overflow but bar isn't visible */
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
 body.layout-desktop .product-img-stack::-webkit-scrollbar {
   display: none;
+}
+
+/* RIGHT column — flows naturally, drives the grid row height */
+body.layout-desktop .pdp-info-col {
+  /* no special rules — just flows as a normal block */
+  min-height: 0;
 }
 
 body.layout-desktop .product-detail-title {
