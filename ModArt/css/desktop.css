@@ -253,13 +253,31 @@ body.layout-desktop .early-input {
 }
 
 /* ================================================================
-   7. DESKTOP PRODUCT DETAIL
+   7. DESKTOP PRODUCT DETAIL — sticky image gallery
    ================================================================ */
 
 body.layout-desktop .product-detail-grid {
   grid-template-columns: 1fr 1fr;
   gap: clamp(40px, 5vw, 64px);
+  /* align-items:start is critical — without it both columns stretch
+     to equal height and sticky has nothing to stick against */
   align-items: start;
+}
+
+/* LEFT column: image stack sticks under the nav while details scroll */
+body.layout-desktop .product-img-stack {
+  position: sticky;
+  top: calc(var(--nav-h) + 24px); /* 24px breathing room below nav */
+  /* Max-height prevents the sticky element overflowing the viewport
+     if there are many thumbnails */
+  max-height: calc(100vh - var(--nav-h) - 48px);
+  overflow-y: auto;
+  /* Hide scrollbar — content scrolls via overflow but bar isn't visible */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+body.layout-desktop .product-img-stack::-webkit-scrollbar {
+  display: none;
 }
 
 body.layout-desktop .product-detail-title {
