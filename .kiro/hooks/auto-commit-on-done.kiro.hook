@@ -1,13 +1,13 @@
 {
   "enabled": true,
-  "name": "Auto Commit After Task",
-  "description": "Automatically stages and commits all changes after Kiro finishes a task",
+  "name": "Auto Commit and Push After Task",
+  "description": "Automatically stages, commits, and pushes all changes to origin/main after Kiro finishes a task",
   "version": "1",
   "when": {
     "type": "agentStop"
   },
   "then": {
     "type": "runCommand",
-    "command": "cd \"c:\\ModArt Customer Site\\ModArt\" && git add -A && git diff --cached --quiet || git commit -m \"chore: auto-commit after Kiro task\""
+    "command": "cd \"c:\\ModArt Customer Site\\ModArt\" && git add -A && git diff --cached --quiet || git commit -m \"chore: auto-commit after Kiro task\" && git push origin main"
   }
 }
