@@ -565,18 +565,38 @@ function selectColour(sw, _colour, img) {
   if (el && img) el.src = img;
 }
 
-function changeCustProduct(val) {
-  // ✅ FIX: Map dropdown values to real catalogue product IDs from state.js
-  const priceMap = {
-    hoodie:    600,
-    tee:       500,
-    sweatshirt:500,
-    joggers:   400,
-    varsity:   900,
-  };
-  cust.baseCost = priceMap[val] || 600;
+// Canonical fallback prices — match state.js exactly.
+// Used ONLY when Supabase hasn't loaded yet.
+const FALLBACK_PRICES = {
+  'regular-tee':         250,
+  'full-sleeve-tee':     300,
+  'oversized-tee':       500,
+  'longline-curved-tee': 400,
+  'sweatshirt':          500,
+  'weighted-sweatshirt': 600,
+  'hoodie':              600,
+  'hooded-sweatshirt':   650,
+  'zipper-hoodie':       650,
+  'weighted-zipper':     700,
+  'varsity-jacket':      900,
+  'joggers':             400,
+  'shorts':              200,
+  'womens-tee':          250,
+  'crop-top':            300,
+  'crop-hoodie':         500,
+  'crop-tank':           300,
+  'tote-bag':            100,
+  'drawstring-bag':      150,
+};
 
-  // Map to real catalogue product IDs
+/** Returns the live price for a product ID — Supabase first, fallback second. */
+function getProductPrice(productId) {
+  const src = (window._PRODUCTS && window._PRODUCTS.length > 0) ? window._PRODUCTS : [];
+  const live = src.find(p => p.id === productId);
+  return live ? live.price : (FALLBACK_PRICES[productId] || 0);
+}
+
+function changeCustProduct(val) {
   const productIdMap = {
     hoodie:    'hoodie',
     tee:       'oversized-tee',
@@ -586,26 +606,23 @@ function changeCustProduct(val) {
   };
   window._customizerProductId = productIdMap[val] || 'hoodie';
 
-  // Use real catalogue images from state.js PRODUCT_IMGS
-  const imgs = {
+  // Price always from live catalogue or canonical fallback — never hardcoded
+  cust.baseCost = getProductPrice(window._customizerProductId);
+
+  // Image: prefer live Supabase image, fall back to Unsplash
+  const fallbackImgs = {
     hoodie:    'https://images.unsplash.com/photo-1578587018452-892bacefd3f2?w=700&q=85',
     tee:       'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=700&q=85',
     sweatshirt:'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=700&q=85',
     joggers:   'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=700&q=85',
     varsity:   'https://images.unsplash.com/photo-1551537482-f2075a1d41f2?w=700&q=85',
   };
-
-  // If live products are loaded from Supabase, prefer their images
-  if (window._PRODUCTS && window._PRODUCTS.length > 0) {
-    const pid = productIdMap[val] || 'hoodie';
-    const liveP = window._PRODUCTS.find(p => p.id === pid);
-    if (liveP && liveP.img) {
-      imgs[val] = liveP.img;
-    }
-  }
+  const src = (window._PRODUCTS && window._PRODUCTS.length > 0) ? window._PRODUCTS : [];
+  const liveP = src.find(p => p.id === window._customizerProductId);
+  const imgUrl = (liveP && liveP.img) ? liveP.img : (fallbackImgs[val] || fallbackImgs.hoodie);
 
   const el = document.getElementById('cust-product-img') || document.getElementById('canvas-product-img');
-  if (el) el.src = imgs[val] || imgs.hoodie;
+  if (el) el.src = imgUrl;
 
   const name = document.getElementById('cust-product-name');
   if (name) {
@@ -630,7 +647,9 @@ function toggleSnap() {
 // PRODUCT DETAIL FUNCTIONS (SHARED WITH CUSTOMIZER)
 // ================================================================
 
-let baseDetailPrice = 19999;
+// Base price for product detail — always read from the currently viewed product
+// Updated by renderProductDetail() via window._currentProductId
+let baseDetailPrice = 0;
 let printAddon = 0;
 
 function selectPrint(btn, _name, addon) {
@@ -638,7 +657,15 @@ function selectPrint(btn, _name, addon) {
   btn.classList.add('sel');
 
   printAddon = addon;
-  window._printAddon = addon; // expose so addToCart can include it in price
+  window._printAddon = addon;
+
+  // Re-read base price from live product in case it was updated after page load
+  const src = (window._PRODUCTS && window._PRODUCTS.length > 0) ? window._PRODUCTS : [];
+  const pid = window._currentProductId;
+  if (pid) {
+    const p = src.find(p => p.id === pid);
+    if (p) baseDetailPrice = p.price;
+  }
 
   const total = baseDetailPrice + printAddon;
 
@@ -686,9 +713,9 @@ function toggleAcc(btn) {
 // ================================================================
 
 function initCustomizer() {
-  // ✅ FIX: Set real catalogue product ID (hoodie = 'hoodie' from state.js)
+  // Set default product (hoodie) — price from live catalogue or fallback
   window._customizerProductId = 'hoodie';
-  cust.baseCost = 600; // matches hoodie price in catalogue
+  cust.baseCost = getProductPrice('hoodie');
 
   updateCost();
   
